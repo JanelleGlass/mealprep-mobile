@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MealPrep</title>
+
+<!-- iOS home-screen support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="MealPrep">
+<meta name="theme-color" content="#EDEFE4">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">meal<span>prep</span></div>
+    <button class="gear" id="gearBtn" aria-label="Settings">⚙︎</button>
+  </header>
+  <div class="syncline" id="syncline"></div>
+
+  <!-- LOG TAB -->
+  <section id="tab-log" class="tab active">
+    <div class="datenav">
+      <button id="prevDay" aria-label="Previous day">←</button>
+      <div class="dateLabel"><span id="dateLabel"></span><span class="dateSub" id="dateSub"></span></div>
+      <button id="nextDay" aria-label="Next day">→</button>
+    </div>
+
+    <div class="flag" id="lowFlag"></div>
+    <div class="rings" id="rings"></div>
+    <div class="plantsBar"><span class="pLabel">plants this week</span><span class="pVal" id="plantsWeek">0 / 30</span></div>
+
+    <div id="plannedWrap"></div>
+
+    <div class="sectionTitle">Log an item</div>
+    <form class="addForm" id="addForm">
+      <div class="row"><input type="text" id="fName" placeholder="e.g. lentil grain bowl" autocomplete="off"></div>
+      <div class="row grid4">
+        <div><span class="miniLabel">cal</span><input type="number" id="fCal" min="0" step="1" inputmode="decimal"></div>
+        <div><span class="miniLabel">protein g</span><input type="number" id="fProtein" min="0" step="0.1" inputmode="decimal"></div>
+        <div><span class="miniLabel">fiber g</span><input type="number" id="fFiber" min="0" step="0.1" inputmode="decimal"></div>
+        <div><span class="miniLabel">iron mg</span><input type="number" id="fIron" min="0" step="0.1" inputmode="decimal"></div>
+      </div>
+      <label class="plantCheck"><input type="checkbox" id="fPlant"> counts toward 30 plants this week</label>
+      <button type="submit" class="addBtn" id="addBtn" disabled>+ add to log</button>
+      <div class="quickRow" id="quickRow"></div>
+    </form>
+
+    <div class="sectionTitle">Entries</div>
+    <div class="entries" id="entries"></div>
+
+    <div class="sectionTitle">Body — waist to height</div>
+    <div class="bodyCard">
+      <div class="bodyTop">
+        <div class="ratioVal" id="ratioVal">—</div>
+        <div class="ratioLabel" id="ratioTargetLabel">waist ÷ height<br>target under 0.50</div>
+      </div>
+      <div class="bodyRow">
+        <div class="fld"><span class="miniLabel">waist (in)</span><input type="number" id="fWaist" min="0" step="0.1" inputmode="decimal" placeholder="e.g. 32"></div>
+        <div class="fld"><span class="miniLabel">height (in)</span><input type="number" id="fHeight" min="0" step="0.1" inputmode="decimal"></div>
+        <button type="button" class="saveBtn" id="saveWaist">save</button>
+      </div>
+      <div class="bodyNote" id="bodyNote"></div>
+      <div class="bodyHist" id="bodyHist"></div>
+    </div>
+  </section>
+
+  <!-- PLAN TAB -->
+  <section id="tab-plan" class="tab">
+    <div class="datenav">
+      <button id="planPrevWeek" aria-label="Previous week">←</button>
+      <div class="dateLabel"><span id="planWeekLabel"></span><span class="dateSub">planned meals</span></div>
+      <button id="planNextWeek" aria-label="Next week">→</button>
+    </div>
+    <div id="planDays"></div>
+  </section>
+
+  <!-- RECIPES TAB -->
+  <section id="tab-recipes" class="tab">
+    <div id="recipesRoot"></div>
+  </section>
+
+  <!-- PANTRY TAB -->
+  <section id="tab-pantry" class="tab">
+    <div class="segRow">
+      <button class="segBtn active" data-seg="pantry">On hand</button>
+      <button class="segBtn" data-seg="stores">Stores</button>
+    </div>
+    <div id="pantryRoot"></div>
+  </section>
+</div>
+
+<!-- Bottom tab bar -->
+<nav class="tabbar">
+  <button class="tabBtn active" data-tab="log"><span class="tIcon">◎</span>Log</button>
+  <button class="tabBtn" data-tab="plan"><span class="tIcon">▦</span>Plan</button>
+  <button class="tabBtn" data-tab="recipes"><span class="tIcon">✎</span>Recipes</button>
+  <button class="tabBtn" data-tab="pantry"><span class="tIcon">☰</span>Pantry</button>
+</nav>
+
+<!-- Setup overlay -->
+<div class="overlay" id="setupOverlay">
+  <div class="panel">
+    <h2>Connect to your data</h2>
+    <p>This app reads and writes your MealPrep data in a private GitHub repository. Create a fine-grained personal access token limited to that one repo (Contents: read &amp; write), then paste it here. It is stored only on this device.</p>
+    <span class="miniLabel">repository (owner/name)</span>
+    <input type="text" id="setupRepo" placeholder="JanelleGlass/mealprep-data" autocomplete="off">
+    <span class="miniLabel">folder path</span>
+    <input type="text" id="setupPath" value="mealprep-backup" autocomplete="off">
+    <span class="miniLabel">personal access token</span>
+    <input type="password" id="setupToken" placeholder="github_pat_..." autocomplete="off">
+    <div class="btnRow">
+      <button class="cancel" id="setupCancel">cancel</button>
+      <button class="save" id="setupSave">save &amp; sync</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
