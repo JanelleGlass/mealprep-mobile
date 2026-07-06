@@ -1,0 +1,6922 @@
+{
+  "generatedAt": "2026-07-06T23:34:24.6719656Z",
+  "source": "F:\\Apps\\MealPrepWeb\\data\\mealprep.db",
+  "ingredients": [
+    {
+      "ingredientId": 1,
+      "name": "Flour",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 103.2,
+        "proteinG": 2.9,
+        "fiberG": 0.8,
+        "ironMg": 1.3,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 103.1922,
+            "proteinG": 2.9285,
+            "fiberG": 0.7654,
+            "ironMg": 1.3154
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 2,
+      "name": "Salt",
+      "unit": "tsp",
+      "quantity": 1,
+      "computation": {
+        "calories": 0.0,
+        "proteinG": 0.0,
+        "fiberG": 0.0,
+        "ironMg": 0.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 6.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0198
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 3,
+      "name": "Oil",
+      "unit": "fl oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 247.5,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 3,
+            "status": "Counted",
+            "grams": 27.9999,
+            "calories": 247.5192,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 6,
+      "name": "walnuts",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 185.4,
+        "proteinG": 4.3,
+        "fiberG": 1.9,
+        "ironMg": 0.8,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 6,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 185.4057,
+            "proteinG": 4.3176,
+            "fiberG": 1.8994,
+            "ironMg": 0.8250
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 7,
+      "name": "apples",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 65.0,
+        "proteinG": 0.3,
+        "fiberG": 3.0,
+        "ironMg": 0.2,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 7,
+            "status": "CountedApprox",
+            "grams": 125.0,
+            "calories": 65.000,
+            "proteinG": 0.3250,
+            "fiberG": 3.000,
+            "ironMg": 0.1500
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 8,
+      "name": "bananas",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 200.2,
+        "proteinG": 2.5,
+        "fiberG": 5.8,
+        "ironMg": 0.6,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 8,
+            "status": "CountedApprox",
+            "grams": 225.0,
+            "calories": 200.250,
+            "proteinG": 2.4525,
+            "fiberG": 5.850,
+            "ironMg": 0.5850
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 9,
+      "name": "water",
+      "unit": "cup",
+      "quantity": 1,
+      "computation": {
+        "calories": 0,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 9,
+            "status": "Counted",
+            "grams": 236.8000,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 10,
+      "name": "Eggs",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 71.5,
+        "proteinG": 6.3,
+        "fiberG": 0.0,
+        "ironMg": 0.9,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 50.0,
+            "calories": 71.50,
+            "proteinG": 6.280,
+            "fiberG": 0.00,
+            "ironMg": 0.875
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 12,
+      "name": "Cheese (Shredded)",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 114.5,
+        "proteinG": 6.5,
+        "fiberG": 0.0,
+        "ironMg": 0.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 12,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 114.5320,
+            "proteinG": 6.4835,
+            "fiberG": 0.0000,
+            "ironMg": 0.0397
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 13,
+      "name": "Mushrooms",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 6.2,
+        "proteinG": 0.9,
+        "fiberG": 0.3,
+        "ironMg": 0.1,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 13,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 6.2369,
+            "proteinG": 0.8760,
+            "fiberG": 0.2835,
+            "ironMg": 0.1417
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 14,
+      "name": "Onions",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 64.0,
+        "proteinG": 1.8,
+        "fiberG": 2.7,
+        "ironMg": 0.3,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 14,
+            "status": "CountedApprox",
+            "grams": 160.0,
+            "calories": 64.00,
+            "proteinG": 1.76,
+            "fiberG": 2.72,
+            "ironMg": 0.336
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 15,
+      "name": "Kale",
+      "unit": "bunch",
+      "quantity": 1,
+      "computation": {
+        "calories": 7.8,
+        "proteinG": 0.7,
+        "fiberG": 0.6,
+        "ironMg": 0.2,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 15,
+            "status": "CountedApprox",
+            "grams": 16.0,
+            "calories": 7.840,
+            "proteinG": 0.6848,
+            "fiberG": 0.576,
+            "ironMg": 0.2352
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 16,
+      "name": "Tomatoes (Canned)",
+      "unit": "can",
+      "quantity": 1,
+      "computation": {
+        "calories": 38.4,
+        "proteinG": 1.9,
+        "fiberG": 4.6,
+        "ironMg": 1.4,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 16,
+            "status": "CountedApprox",
+            "grams": 240.0,
+            "calories": 38.40,
+            "proteinG": 1.896,
+            "fiberG": 4.56,
+            "ironMg": 1.368
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 17,
+      "name": "Red Pepper Flakes",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 90.2,
+        "proteinG": 3.4,
+        "fiberG": 7.7,
+        "ironMg": 2.2,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 17,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 90.1514,
+            "proteinG": 3.4048,
+            "fiberG": 7.7111,
+            "ironMg": 2.2113
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 18,
+      "name": "Cream",
+      "unit": "fl oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 51.0,
+        "proteinG": 0.4,
+        "fiberG": 0,
+        "ironMg": 0.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 18,
+            "status": "Counted",
+            "grams": 15.0000,
+            "calories": 51.0000,
+            "proteinG": 0.4260,
+            "fiberG": 0,
+            "ironMg": 0.0150
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 19,
+      "name": "Potatoes (Russet 10lb Bag)",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 291.5,
+        "proteinG": 7.9,
+        "fiberG": 4.8,
+        "ironMg": 3.2,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 19,
+            "status": "Counted",
+            "grams": 369.0,
+            "calories": 291.510,
+            "proteinG": 7.8966,
+            "fiberG": 4.797,
+            "ironMg": 3.1734
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 20,
+      "name": "Olive Oil",
+      "unit": "fl oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 238.7,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0.2,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 26.9999,
+            "calories": 238.6792,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.1512
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 21,
+      "name": "Maple Syrup",
+      "unit": "fl oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 104.0,
+        "proteinG": 0.0,
+        "fiberG": 0,
+        "ironMg": 0.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 39.9999,
+            "calories": 103.9996,
+            "proteinG": 0.0160,
+            "fiberG": 0,
+            "ironMg": 0.0440
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 22,
+      "name": "Pineapple (Crushed)",
+      "unit": "can",
+      "quantity": 1,
+      "computation": {
+        "calories": 149.4,
+        "proteinG": 1.0,
+        "fiberG": 2.0,
+        "ironMg": 0.7,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 249.0,
+            "calories": 149.400,
+            "proteinG": 1.0458,
+            "fiberG": 1.992,
+            "ironMg": 0.6972
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 23,
+      "name": "Vanilla",
+      "unit": "fl oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 72.6,
+        "proteinG": 0.0,
+        "fiberG": 0,
+        "ironMg": 0.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 25.2000,
+            "calories": 72.5760,
+            "proteinG": 0.0151,
+            "fiberG": 0,
+            "ironMg": 0.0302
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 24,
+      "name": "Oats (quick)",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 107.4,
+        "proteinG": 3.7,
+        "fiberG": 2.9,
+        "ironMg": 1.2,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 107.4446,
+            "proteinG": 3.7280,
+            "fiberG": 2.8633,
+            "ironMg": 1.2049
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 25,
+      "name": "Raisins (Golden)",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 85.6,
+        "proteinG": 1.0,
+        "fiberG": 1.1,
+        "ironMg": 0.5,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 85.6155,
+            "proteinG": 0.9610,
+            "fiberG": 1.1340,
+            "ironMg": 0.5075
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 26,
+      "name": "Sugar",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 109.7,
+        "proteinG": 0.0,
+        "fiberG": 0.0,
+        "ironMg": 0.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 26,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 109.7126,
+            "proteinG": 0.0000,
+            "fiberG": 0.0000,
+            "ironMg": 0.0142
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 27,
+      "name": "Coconut Milk",
+      "unit": "can",
+      "quantity": 1,
+      "computation": {
+        "calories": 445.2,
+        "proteinG": 4.6,
+        "fiberG": 0.0,
+        "ironMg": 7.5,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 27,
+            "status": "CountedApprox",
+            "grams": 226.0,
+            "calories": 445.220,
+            "proteinG": 4.5652,
+            "fiberG": 0.00,
+            "ironMg": 7.458
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 28,
+      "name": "Lecithin Granules",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 216.3,
+        "proteinG": 0.0,
+        "fiberG": 0.0,
+        "ironMg": 0.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 28,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 216.3067,
+            "proteinG": 0.0000,
+            "fiberG": 0.0000,
+            "ironMg": 0.0000
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 29,
+      "name": "Honey",
+      "unit": "fl oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 128.8,
+        "proteinG": 0.1,
+        "fiberG": 0.1,
+        "ironMg": 0.2,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 29,
+            "status": "Counted",
+            "grams": 42.3750,
+            "calories": 128.8200,
+            "proteinG": 0.1271,
+            "fiberG": 0.0848,
+            "ironMg": 0.1780
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 30,
+      "name": "Guargum",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 94.1,
+        "proteinG": 1.3,
+        "fiberG": 21.9,
+        "ironMg": 0.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 30,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 94.1203,
+            "proteinG": 1.3041,
+            "fiberG": 21.9142,
+            "ironMg": 0.0000
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 31,
+      "name": "Broccoli (Frozen) 32oz",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 40.6,
+        "proteinG": 4.4,
+        "fiberG": 4.7,
+        "ironMg": 1.3,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 31,
+            "status": "CountedApprox",
+            "grams": 156.0,
+            "calories": 40.560,
+            "proteinG": 4.3836,
+            "fiberG": 4.680,
+            "ironMg": 1.2636
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 32,
+      "name": "Peppers",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 29.8,
+        "proteinG": 1.3,
+        "fiberG": 2.5,
+        "ironMg": 0.5,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 32,
+            "status": "CountedApprox",
+            "grams": 149.0,
+            "calories": 29.800,
+            "proteinG": 1.2814,
+            "fiberG": 2.533,
+            "ironMg": 0.5066
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 33,
+      "name": "Tortillas",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 146.9,
+        "proteinG": 3.9,
+        "fiberG": 1.7,
+        "ironMg": 1.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 33,
+            "status": "Counted",
+            "grams": 48.0,
+            "calories": 146.880,
+            "proteinG": 3.936,
+            "fiberG": 1.680,
+            "ironMg": 1.7424
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 34,
+      "name": "Spinach",
+      "unit": "bunch",
+      "quantity": 1,
+      "computation": {
+        "calories": 78.2,
+        "proteinG": 9.7,
+        "fiberG": 7.5,
+        "ironMg": 9.2,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 340.0,
+            "calories": 78.20,
+            "proteinG": 9.724,
+            "fiberG": 7.48,
+            "ironMg": 9.214
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 35,
+      "name": "Tofu",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 40.8,
+        "proteinG": 4.9,
+        "fiberG": 0.7,
+        "ironMg": 0.8,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 35,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 40.8233,
+            "proteinG": 4.8960,
+            "fiberG": 0.6520,
+            "ironMg": 0.7541
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 36,
+      "name": "Nutritional Yeast",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 0,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": "Not counted: Nutritional Yeast",
+        "items": [
+          {
+            "ingredientId": 36,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 37,
+      "name": "Pepper",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 71.2,
+        "proteinG": 2.9,
+        "fiberG": 7.2,
+        "ironMg": 2.8,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 71.1572,
+            "proteinG": 2.9455,
+            "fiberG": 7.1724,
+            "ironMg": 2.7527
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 38,
+      "name": "Garlic Powder",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 93.8,
+        "proteinG": 4.7,
+        "fiberG": 2.6,
+        "ironMg": 1.6,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 38,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 93.8368,
+            "proteinG": 4.6918,
+            "fiberG": 2.5515,
+            "ironMg": 1.6017
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 39,
+      "name": "Tumeric",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 88.5,
+        "proteinG": 2.7,
+        "fiberG": 6.4,
+        "ironMg": 15.6,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 39,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 88.4504,
+            "proteinG": 2.7442,
+            "fiberG": 6.4353,
+            "ironMg": 15.5922
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 40,
+      "name": "Artichoke Hearts",
+      "unit": "can",
+      "quantity": 1,
+      "computation": {
+        "calories": 63.6,
+        "proteinG": 3.5,
+        "fiberG": 6.8,
+        "ironMg": 0.7,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 40,
+            "status": "CountedApprox",
+            "grams": 120.0,
+            "calories": 63.60,
+            "proteinG": 3.468,
+            "fiberG": 6.84,
+            "ironMg": 0.732
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 41,
+      "name": "Tomatoes (Sun Dried)",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 73.1,
+        "proteinG": 4.0,
+        "fiberG": 3.5,
+        "ironMg": 2.6,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 41,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 73.1417,
+            "proteinG": 4.0001,
+            "fiberG": 3.4870,
+            "ironMg": 2.5770
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 43,
+      "name": "Garlic",
+      "unit": "clove",
+      "quantity": 1,
+      "computation": {
+        "calories": 202.6,
+        "proteinG": 8.6,
+        "fiberG": 2.9,
+        "ironMg": 2.3,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 43,
+            "status": "CountedApprox",
+            "grams": 136.0,
+            "calories": 202.640,
+            "proteinG": 8.6496,
+            "fiberG": 2.856,
+            "ironMg": 2.312
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 44,
+      "name": "Salsa",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 8.2,
+        "proteinG": 0.4,
+        "fiberG": 0.5,
+        "ironMg": 0.1,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 8.2214,
+            "proteinG": 0.4309,
+            "fiberG": 0.5386,
+            "ironMg": 0.1191
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 45,
+      "name": "Sriracha",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 26.4,
+        "proteinG": 0.5,
+        "fiberG": 0.6,
+        "ironMg": 0.5,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 45,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 26.3650,
+            "proteinG": 0.5471,
+            "fiberG": 0.6237,
+            "ironMg": 0.4649
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 46,
+      "name": "Green Onions",
+      "unit": "bunch",
+      "quantity": 1,
+      "computation": {
+        "calories": 32.0,
+        "proteinG": 1.8,
+        "fiberG": 2.6,
+        "ironMg": 1.5,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 46,
+            "status": "CountedApprox",
+            "grams": 100.0,
+            "calories": 32.00,
+            "proteinG": 1.830,
+            "fiberG": 2.60,
+            "ironMg": 1.480
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 47,
+      "name": "English Muffins",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 134.0,
+        "proteinG": 4.4,
+        "fiberG": 1.5,
+        "ironMg": 1.4,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 57.0,
+            "calories": 133.950,
+            "proteinG": 4.389,
+            "fiberG": 1.539,
+            "ironMg": 1.425
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 48,
+      "name": "Cheese (Sliced)",
+      "unit": "slice",
+      "quantity": 1,
+      "computation": {
+        "calories": 77.9,
+        "proteinG": 4.6,
+        "fiberG": 0.0,
+        "ironMg": 0.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 19.0,
+            "calories": 77.900,
+            "proteinG": 4.6075,
+            "fiberG": 0.000,
+            "ironMg": 0.0304
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 49,
+      "name": "Sausage Patties (Morning Star)",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 79.8,
+        "proteinG": 9.8,
+        "fiberG": 1.6,
+        "ironMg": 1.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 49,
+            "status": "Counted",
+            "grams": 38.0,
+            "calories": 79.800,
+            "proteinG": 9.804,
+            "fiberG": 1.558,
+            "ironMg": 1.710
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 50,
+      "name": "Mushroom Seasoning",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 0,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": "Not counted: Mushroom Seasoning",
+        "items": [
+          {
+            "ingredientId": 50,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 51,
+      "name": "Sunflower Seeds",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 165.6,
+        "proteinG": 5.9,
+        "fiberG": 2.4,
+        "ironMg": 1.5,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 51,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 165.5611,
+            "proteinG": 5.8910,
+            "fiberG": 2.4381,
+            "ironMg": 1.4883
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 52,
+      "name": "Flax Seeds",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 151.4,
+        "proteinG": 5.2,
+        "fiberG": 7.7,
+        "ironMg": 1.6,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 52,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 151.3863,
+            "proteinG": 5.1851,
+            "fiberG": 7.7394,
+            "ironMg": 1.6244
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 53,
+      "name": "Corn Starch",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 108.0,
+        "proteinG": 0.1,
+        "fiberG": 0.3,
+        "ironMg": 0.1,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 53,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 108.0116,
+            "proteinG": 0.0737,
+            "fiberG": 0.2551,
+            "ironMg": 0.1332
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 55,
+      "name": "Green beans (canned)",
+      "unit": "can",
+      "quantity": 1,
+      "computation": {
+        "calories": 28.4,
+        "proteinG": 1.4,
+        "fiberG": 2.6,
+        "ironMg": 1.2,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 55,
+            "status": "CountedApprox",
+            "grams": 135.0,
+            "calories": 28.350,
+            "proteinG": 1.4175,
+            "fiberG": 2.565,
+            "ironMg": 1.2015
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 56,
+      "name": "Vegetable Boullion",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 124.2,
+        "proteinG": 4.7,
+        "fiberG": 0.1,
+        "ironMg": 0.3,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 56,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 124.1708,
+            "proteinG": 4.7344,
+            "fiberG": 0.0567,
+            "ironMg": 0.2920
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 57,
+      "name": "Golden Seasoning",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 0,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": "Not counted: Golden Seasoning",
+        "items": [
+          {
+            "ingredientId": 57,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 58,
+      "name": "Dark Brown Seasoning",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 0,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": "Not counted: Dark Brown Seasoning",
+        "items": [
+          {
+            "ingredientId": 58,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 59,
+      "name": "Biba\u0027s Eggplant Parmesan",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 0,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": "Not counted: Biba\u0027s Eggplant Parmesan",
+        "items": [
+          {
+            "ingredientId": 59,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 60,
+      "name": "Rice",
+      "unit": "lb",
+      "quantity": 1,
+      "computation": {
+        "calories": 1655.6,
+        "proteinG": 32.3,
+        "fiberG": 5.9,
+        "ironMg": 19.5,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 60,
+            "status": "Counted",
+            "grams": 453.592,
+            "calories": 1655.6108,
+            "proteinG": 32.3411,
+            "fiberG": 5.8967,
+            "ironMg": 19.5498
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 61,
+      "name": "Quinoa",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 104.3,
+        "proteinG": 4.0,
+        "fiberG": 2.0,
+        "ironMg": 1.3,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 61,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 104.3262,
+            "proteinG": 4.0029,
+            "fiberG": 1.9845,
+            "ironMg": 1.2956
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 62,
+      "name": "Chai Pow Yu",
+      "unit": "can",
+      "quantity": 1,
+      "computation": {
+        "calories": 0,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": "Not counted: Chai Pow Yu",
+        "items": [
+          {
+            "ingredientId": 62,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 63,
+      "name": "Rotel",
+      "unit": "can",
+      "quantity": 1,
+      "computation": {
+        "calories": 36.2,
+        "proteinG": 1.7,
+        "fiberG": 0.0,
+        "ironMg": 0.6,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 63,
+            "status": "CountedApprox",
+            "grams": 241.0,
+            "calories": 36.150,
+            "proteinG": 1.6629,
+            "fiberG": 0.00,
+            "ironMg": 0.6266
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 64,
+      "name": "Moroccan Seasoning",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 0,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": "Not counted: Moroccan Seasoning",
+        "items": [
+          {
+            "ingredientId": 64,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 65,
+      "name": "Apple Sauce",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 11.9,
+        "proteinG": 0.0,
+        "fiberG": 0.3,
+        "ironMg": 0.1,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 65,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 11.9068,
+            "proteinG": 0.0482,
+            "fiberG": 0.3118,
+            "ironMg": 0.0652
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 66,
+      "name": "Oats (Rolled)",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 107.4,
+        "proteinG": 3.7,
+        "fiberG": 2.9,
+        "ironMg": 1.2,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 66,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 107.4446,
+            "proteinG": 3.7280,
+            "fiberG": 2.8633,
+            "ironMg": 1.2049
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 67,
+      "name": "Walnuts",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 185.4,
+        "proteinG": 4.3,
+        "fiberG": 1.9,
+        "ironMg": 0.8,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 67,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 185.4057,
+            "proteinG": 4.3176,
+            "fiberG": 1.8994,
+            "ironMg": 0.8250
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 68,
+      "name": "Grapes",
+      "unit": "bunch",
+      "quantity": 1,
+      "computation": {
+        "calories": 104.2,
+        "proteinG": 1.1,
+        "fiberG": 1.4,
+        "ironMg": 0.5,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 68,
+            "status": "CountedApprox",
+            "grams": 151.0,
+            "calories": 104.190,
+            "proteinG": 1.0872,
+            "fiberG": 1.359,
+            "ironMg": 0.5436
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 69,
+      "name": "Corn (Canned)",
+      "unit": "can",
+      "quantity": 1,
+      "computation": {
+        "calories": 141.4,
+        "proteinG": 4.8,
+        "fiberG": 4.2,
+        "ironMg": 0.6,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 69,
+            "status": "Counted",
+            "grams": 211.0,
+            "calories": 141.370,
+            "proteinG": 4.8319,
+            "fiberG": 4.220,
+            "ironMg": 0.5697
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 70,
+      "name": "Brussel Sprouts (Frozen) 12 oz",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 39.0,
+        "proteinG": 3.6,
+        "fiberG": 3.6,
+        "ironMg": 0.9,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 70,
+            "status": "CountedApprox",
+            "grams": 95.0,
+            "calories": 38.950,
+            "proteinG": 3.5910,
+            "fiberG": 3.610,
+            "ironMg": 0.8835
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 71,
+      "name": "Mandarins (19)",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 40.3,
+        "proteinG": 0.6,
+        "fiberG": 1.4,
+        "ironMg": 0.1,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 71,
+            "status": "Counted",
+            "grams": 76.0,
+            "calories": 40.280,
+            "proteinG": 0.6156,
+            "fiberG": 1.368,
+            "ironMg": 0.1140
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 72,
+      "name": "Sausage Links (Morning Star)",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 35.8,
+        "proteinG": 4.3,
+        "fiberG": 0.9,
+        "ironMg": 1.3,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 22.5,
+            "calories": 35.7750,
+            "proteinG": 4.3200,
+            "fiberG": 0.9000,
+            "ironMg": 1.3275
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 73,
+      "name": "Cottage Cheese",
+      "unit": "can",
+      "quantity": 1,
+      "computation": {
+        "calories": 110.7,
+        "proteinG": 12.6,
+        "fiberG": 0.0,
+        "ironMg": 0.1,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 73,
+            "status": "CountedApprox",
+            "grams": 113.0,
+            "calories": 110.740,
+            "proteinG": 12.5656,
+            "fiberG": 0.000,
+            "ironMg": 0.0791
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 74,
+      "name": "Griller Crumbles (Morning Star)",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 45.1,
+        "proteinG": 5.7,
+        "fiberG": 1.3,
+        "ironMg": 1.6,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 74,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 45.0757,
+            "proteinG": 5.7266,
+            "fiberG": 1.3041,
+            "ironMg": 1.5592
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 75,
+      "name": "Navy Beans (Dried)",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 95.5,
+        "proteinG": 6.3,
+        "fiberG": 4.3,
+        "ironMg": 1.6,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 75,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 95.5378,
+            "proteinG": 6.3304,
+            "fiberG": 4.3375,
+            "ironMg": 1.5564
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 76,
+      "name": "Lentils (Dried)",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 99.8,
+        "proteinG": 7.0,
+        "fiberG": 3.0,
+        "ironMg": 1.8,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 76,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 99.7902,
+            "proteinG": 6.9825,
+            "fiberG": 3.0334,
+            "ironMg": 1.8456
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 77,
+      "name": "Lettuce",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 10.1,
+        "proteinG": 0.6,
+        "fiberG": 0.9,
+        "ironMg": 0.3,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 77,
+            "status": "CountedApprox",
+            "grams": 72.0,
+            "calories": 10.080,
+            "proteinG": 0.648,
+            "fiberG": 0.864,
+            "ironMg": 0.2952
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 78,
+      "name": "Milk",
+      "unit": "fl oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 15.2,
+        "proteinG": 1.0,
+        "fiberG": 0.0,
+        "ironMg": 0.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 78,
+            "status": "Counted",
+            "grams": 30.5000,
+            "calories": 15.2500,
+            "proteinG": 1.0065,
+            "fiberG": 0.0000,
+            "ironMg": 0.0061
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 79,
+      "name": "Yeast",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 92.1,
+        "proteinG": 11.5,
+        "fiberG": 7.6,
+        "ironMg": 0.6,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 79,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 92.1359,
+            "proteinG": 11.4645,
+            "fiberG": 7.6260,
+            "ironMg": 0.6152
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 80,
+      "name": "butter",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 203.3,
+        "proteinG": 0.2,
+        "fiberG": 0.0,
+        "ironMg": 0.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 80,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 203.2659,
+            "proteinG": 0.2410,
+            "fiberG": 0.0000,
+            "ironMg": 0.0057
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 81,
+      "name": "Time",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 0.8,
+        "proteinG": 0.0,
+        "fiberG": 0.1,
+        "ironMg": 0.1,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 81,
+            "status": "CountedApprox",
+            "grams": 0.8,
+            "calories": 0.8080,
+            "proteinG": 0.0445,
+            "fiberG": 0.1120,
+            "ironMg": 0.1396
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 82,
+      "name": "English Muffins (Homemade)",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 134.0,
+        "proteinG": 4.4,
+        "fiberG": 1.5,
+        "ironMg": 1.4,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 82,
+            "status": "Counted",
+            "grams": 57.0,
+            "calories": 133.950,
+            "proteinG": 4.389,
+            "fiberG": 1.539,
+            "ironMg": 1.425
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 83,
+      "name": "Potatoes (Red 3lb Bag)",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 258.3,
+        "proteinG": 7.0,
+        "fiberG": 6.3,
+        "ironMg": 2.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 83,
+            "status": "Counted",
+            "grams": 369.0,
+            "calories": 258.300,
+            "proteinG": 6.9741,
+            "fiberG": 6.273,
+            "ironMg": 2.6937
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 84,
+      "name": "TVP granules",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 92.7,
+        "proteinG": 14.6,
+        "fiberG": 5.0,
+        "ironMg": 2.6,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 84,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 92.7029,
+            "proteinG": 14.5887,
+            "fiberG": 4.9612,
+            "ironMg": 2.6195
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 85,
+      "name": "Soy Sauce",
+      "unit": "fl oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 17.0,
+        "proteinG": 2.6,
+        "fiberG": 0.3,
+        "ironMg": 0.5,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 85,
+            "status": "Counted",
+            "grams": 31.9999,
+            "calories": 16.9599,
+            "proteinG": 2.6048,
+            "fiberG": 0.2560,
+            "ironMg": 0.4640
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 86,
+      "name": "Oats (Quick 42oz)",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 107.4,
+        "proteinG": 3.7,
+        "fiberG": 2.9,
+        "ironMg": 1.2,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 86,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 107.4446,
+            "proteinG": 3.7280,
+            "fiberG": 2.8633,
+            "ironMg": 1.2049
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 87,
+      "name": "Paprika",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 79.9,
+        "proteinG": 4.0,
+        "fiberG": 9.9,
+        "ironMg": 6.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 87,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 79.9456,
+            "proteinG": 4.0086,
+            "fiberG": 9.8940,
+            "ironMg": 5.9931
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 88,
+      "name": "Fennel Seeds",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 97.8,
+        "proteinG": 4.5,
+        "fiberG": 11.3,
+        "ironMg": 5.3,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 88,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 97.8058,
+            "proteinG": 4.4792,
+            "fiberG": 11.2831,
+            "ironMg": 5.2560
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 89,
+      "name": "Onion Powder",
+      "unit": "oz",
+      "quantity": 1,
+      "computation": {
+        "calories": 96.7,
+        "proteinG": 3.0,
+        "fiberG": 4.3,
+        "ironMg": 1.1,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 89,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 96.6718,
+            "proteinG": 2.9512,
+            "fiberG": 4.3091,
+            "ironMg": 1.1056
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 90,
+      "name": "Sausage Patties (Homemade)",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 0,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": "Not counted: Sausage Patties (Homemade)",
+        "items": [
+          {
+            "ingredientId": 90,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "ingredientId": 91,
+      "name": "Sweet Potato",
+      "unit": "whole",
+      "quantity": 1,
+      "computation": {
+        "calories": 0,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": "Not counted: Sweet Potato",
+        "items": [
+          {
+            "ingredientId": 91,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    }
+  ],
+  "recipes": [
+    {
+      "recipeId": 1,
+      "name": "bread",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 227.0,
+        "proteinG": 2.9,
+        "fiberG": 0.8,
+        "ironMg": 1.3,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 103.1922,
+            "proteinG": 2.9285,
+            "fiberG": 0.7654,
+            "ironMg": 1.3154
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 4.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0132
+          },
+          {
+            "ingredientId": 3,
+            "status": "Counted",
+            "grams": 14.0000,
+            "calories": 123.7596,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 9,
+            "status": "Counted",
+            "grams": 315.7333,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 1,
+      "name": "bread",
+      "servingsEaten": 6,
+      "computation": {
+        "calories": 1361.7,
+        "proteinG": 17.6,
+        "fiberG": 4.6,
+        "ironMg": 8.0,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 170.0970,
+            "calories": 619.1531,
+            "proteinG": 17.5710,
+            "fiberG": 4.5926,
+            "ironMg": 7.8925
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 24.0000,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0792
+          },
+          {
+            "ingredientId": 3,
+            "status": "Counted",
+            "grams": 83.9997,
+            "calories": 742.5575,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 9,
+            "status": "Counted",
+            "grams": 1894.4000,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 2,
+      "name": "Egg Bites",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 113.8,
+        "proteinG": 7.0,
+        "fiberG": 0.4,
+        "ironMg": 0.6,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 25.0000,
+            "calories": 35.7500,
+            "proteinG": 3.1400,
+            "fiberG": 0,
+            "ironMg": 0.4375
+          },
+          {
+            "ingredientId": 13,
+            "status": "Counted",
+            "grams": 9.4498,
+            "calories": 2.0790,
+            "proteinG": 0.2920,
+            "fiberG": 0.0945,
+            "ironMg": 0.0472
+          },
+          {
+            "ingredientId": 15,
+            "status": "CountedApprox",
+            "grams": 1.3333,
+            "calories": 0.6533,
+            "proteinG": 0.0571,
+            "fiberG": 0.0480,
+            "ironMg": 0.0196
+          },
+          {
+            "ingredientId": 14,
+            "status": "CountedApprox",
+            "grams": 13.3333,
+            "calories": 5.3333,
+            "proteinG": 0.1467,
+            "fiberG": 0.2267,
+            "ironMg": 0.0280
+          },
+          {
+            "ingredientId": 18,
+            "status": "Counted",
+            "grams": 3.7500,
+            "calories": 12.7500,
+            "proteinG": 0.1065,
+            "fiberG": 0.0000,
+            "ironMg": 0.0038
+          },
+          {
+            "ingredientId": 12,
+            "status": "Counted",
+            "grams": 14.1747,
+            "calories": 57.2660,
+            "proteinG": 3.2418,
+            "fiberG": 0,
+            "ironMg": 0.0198
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 2,
+      "name": "Egg Bites",
+      "servingsEaten": 12,
+      "computation": {
+        "calories": 1366.0,
+        "proteinG": 83.8,
+        "fiberG": 4.4,
+        "ironMg": 6.7,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 300.00,
+            "calories": 429.000,
+            "proteinG": 37.6800,
+            "fiberG": 0.000,
+            "ironMg": 5.2500
+          },
+          {
+            "ingredientId": 13,
+            "status": "Counted",
+            "grams": 113.3980,
+            "calories": 24.9476,
+            "proteinG": 3.5040,
+            "fiberG": 1.1340,
+            "ironMg": 0.5670
+          },
+          {
+            "ingredientId": 15,
+            "status": "CountedApprox",
+            "grams": 16.00,
+            "calories": 7.840,
+            "proteinG": 0.6848,
+            "fiberG": 0.576,
+            "ironMg": 0.2352
+          },
+          {
+            "ingredientId": 14,
+            "status": "CountedApprox",
+            "grams": 160.00,
+            "calories": 64.000,
+            "proteinG": 1.760,
+            "fiberG": 2.720,
+            "ironMg": 0.3360
+          },
+          {
+            "ingredientId": 18,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 153.000,
+            "proteinG": 1.2780,
+            "fiberG": 0.000,
+            "ironMg": 0.045
+          },
+          {
+            "ingredientId": 12,
+            "status": "Counted",
+            "grams": 170.0970,
+            "calories": 687.1919,
+            "proteinG": 38.9012,
+            "fiberG": 0.0000,
+            "ironMg": 0.2381
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 12.0000,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0396
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 3,
+      "name": "Vegan Breakfast Burritos",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 395.7,
+        "proteinG": 22.4,
+        "fiberG": 8.2,
+        "ironMg": 6.5,
+        "hasApprox": true,
+        "uncountedNote": "Not counted: Nutritional Yeast",
+        "items": [
+          {
+            "ingredientId": 35,
+            "status": "Counted",
+            "grams": 68.0388,
+            "calories": 97.9759,
+            "proteinG": 11.7503,
+            "fiberG": 1.5649,
+            "ironMg": 1.8098
+          },
+          {
+            "ingredientId": 36,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.2000,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0040
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 0.2268,
+            "calories": 0.5693,
+            "proteinG": 0.0236,
+            "fiberG": 0.0574,
+            "ironMg": 0.0220
+          },
+          {
+            "ingredientId": 38,
+            "status": "Counted",
+            "grams": 1.4175,
+            "calories": 4.6918,
+            "proteinG": 0.2346,
+            "fiberG": 0.1276,
+            "ironMg": 0.0801
+          },
+          {
+            "ingredientId": 39,
+            "status": "Counted",
+            "grams": 0.0992,
+            "calories": 0.3096,
+            "proteinG": 0.0096,
+            "fiberG": 0.0225,
+            "ironMg": 0.0546
+          },
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 2.4570,
+            "calories": 21.7198,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0138
+          },
+          {
+            "ingredientId": 14,
+            "status": "CountedApprox",
+            "grams": 16.000,
+            "calories": 6.4000,
+            "proteinG": 0.1760,
+            "fiberG": 0.2720,
+            "ironMg": 0.0336
+          },
+          {
+            "ingredientId": 32,
+            "status": "CountedApprox",
+            "grams": 14.900,
+            "calories": 2.9800,
+            "proteinG": 0.1281,
+            "fiberG": 0.2533,
+            "ironMg": 0.0507
+          },
+          {
+            "ingredientId": 43,
+            "status": "CountedApprox",
+            "grams": 13.600,
+            "calories": 20.2640,
+            "proteinG": 0.8650,
+            "fiberG": 0.2856,
+            "ironMg": 0.2312
+          },
+          {
+            "ingredientId": 41,
+            "status": "Counted",
+            "grams": 22.6796,
+            "calories": 58.5134,
+            "proteinG": 3.2001,
+            "fiberG": 2.7896,
+            "ironMg": 2.0616
+          },
+          {
+            "ingredientId": 40,
+            "status": "CountedApprox",
+            "grams": 12.000,
+            "calories": 6.3600,
+            "proteinG": 0.3468,
+            "fiberG": 0.6840,
+            "ironMg": 0.0732
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 6.800,
+            "calories": 1.5640,
+            "proteinG": 0.1945,
+            "fiberG": 0.1496,
+            "ironMg": 0.1843
+          },
+          {
+            "ingredientId": 12,
+            "status": "Counted",
+            "grams": 5.6699,
+            "calories": 22.9064,
+            "proteinG": 1.2967,
+            "fiberG": 0.0000,
+            "ironMg": 0.0079
+          },
+          {
+            "ingredientId": 33,
+            "status": "Counted",
+            "grams": 48.000,
+            "calories": 146.8800,
+            "proteinG": 3.9360,
+            "fiberG": 1.6800,
+            "ironMg": 1.7424
+          },
+          {
+            "ingredientId": 46,
+            "status": "CountedApprox",
+            "grams": 10.000,
+            "calories": 3.2000,
+            "proteinG": 0.1830,
+            "fiberG": 0.2600,
+            "ironMg": 0.1480
+          },
+          {
+            "ingredientId": 45,
+            "status": "Counted",
+            "grams": 1.4175,
+            "calories": 1.3183,
+            "proteinG": 0.0274,
+            "fiberG": 0.0312,
+            "ironMg": 0.0232
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 3,
+      "name": "Vegan Breakfast Burritos",
+      "servingsEaten": 10,
+      "computation": {
+        "calories": 3956.5,
+        "proteinG": 223.7,
+        "fiberG": 81.8,
+        "ironMg": 65.4,
+        "hasApprox": true,
+        "uncountedNote": "Not counted: Nutritional Yeast",
+        "items": [
+          {
+            "ingredientId": 35,
+            "status": "Counted",
+            "grams": 680.3880,
+            "calories": 979.7587,
+            "proteinG": 117.5030,
+            "fiberG": 15.6489,
+            "ironMg": 18.0983
+          },
+          {
+            "ingredientId": 36,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 12.0000,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0396
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.2680,
+            "calories": 5.6926,
+            "proteinG": 0.2356,
+            "fiberG": 0.5738,
+            "ironMg": 0.2202
+          },
+          {
+            "ingredientId": 38,
+            "status": "Counted",
+            "grams": 14.1748,
+            "calories": 46.9184,
+            "proteinG": 2.3459,
+            "fiberG": 1.2757,
+            "ironMg": 0.8009
+          },
+          {
+            "ingredientId": 39,
+            "status": "Counted",
+            "grams": 0.9922,
+            "calories": 3.0958,
+            "proteinG": 0.0960,
+            "fiberG": 0.2252,
+            "ironMg": 0.5457
+          },
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 24.5699,
+            "calories": 217.1981,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.1376
+          },
+          {
+            "ingredientId": 14,
+            "status": "CountedApprox",
+            "grams": 160.00,
+            "calories": 64.000,
+            "proteinG": 1.760,
+            "fiberG": 2.720,
+            "ironMg": 0.3360
+          },
+          {
+            "ingredientId": 32,
+            "status": "CountedApprox",
+            "grams": 149.00,
+            "calories": 29.800,
+            "proteinG": 1.2814,
+            "fiberG": 2.533,
+            "ironMg": 0.5066
+          },
+          {
+            "ingredientId": 43,
+            "status": "CountedApprox",
+            "grams": 136.00,
+            "calories": 202.640,
+            "proteinG": 8.6496,
+            "fiberG": 2.856,
+            "ironMg": 2.312
+          },
+          {
+            "ingredientId": 41,
+            "status": "Counted",
+            "grams": 226.7960,
+            "calories": 585.1337,
+            "proteinG": 32.0009,
+            "fiberG": 27.8959,
+            "ironMg": 20.6158
+          },
+          {
+            "ingredientId": 40,
+            "status": "CountedApprox",
+            "grams": 120.00,
+            "calories": 63.600,
+            "proteinG": 3.4680,
+            "fiberG": 6.840,
+            "ironMg": 0.7320
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 68.00,
+            "calories": 15.640,
+            "proteinG": 1.9448,
+            "fiberG": 1.496,
+            "ironMg": 1.8428
+          },
+          {
+            "ingredientId": 12,
+            "status": "Counted",
+            "grams": 56.6990,
+            "calories": 229.0640,
+            "proteinG": 12.9671,
+            "fiberG": 0.0000,
+            "ironMg": 0.0794
+          },
+          {
+            "ingredientId": 33,
+            "status": "Counted",
+            "grams": 480.00,
+            "calories": 1468.800,
+            "proteinG": 39.360,
+            "fiberG": 16.800,
+            "ironMg": 17.4240
+          },
+          {
+            "ingredientId": 46,
+            "status": "CountedApprox",
+            "grams": 100.00,
+            "calories": 32.000,
+            "proteinG": 1.8300,
+            "fiberG": 2.600,
+            "ironMg": 1.4800
+          },
+          {
+            "ingredientId": 45,
+            "status": "Counted",
+            "grams": 14.1748,
+            "calories": 13.1825,
+            "proteinG": 0.2736,
+            "fiberG": 0.3118,
+            "ironMg": 0.2325
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 4,
+      "name": "Breakfast Sandwiches",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 292.6,
+        "proteinG": 19.0,
+        "fiberG": 3.2,
+        "ironMg": 4.3,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 75.0000,
+            "calories": 107.2500,
+            "proteinG": 9.4200,
+            "fiberG": 0,
+            "ironMg": 1.3125
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 18.8997,
+            "calories": 5.4809,
+            "proteinG": 0.2873,
+            "fiberG": 0.3591,
+            "ironMg": 0.0794
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 2.8333,
+            "calories": 0.6517,
+            "proteinG": 0.0810,
+            "fiberG": 0.0623,
+            "ironMg": 0.0768
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 1.1812,
+            "calories": 2.9649,
+            "proteinG": 0.1227,
+            "fiberG": 0.2989,
+            "ironMg": 0.1147
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 57.0000,
+            "calories": 133.9500,
+            "proteinG": 4.3890,
+            "fiberG": 1.5390,
+            "ironMg": 1.4250
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 22.5000,
+            "calories": 35.7750,
+            "proteinG": 4.3200,
+            "fiberG": 0.9000,
+            "ironMg": 1.3275
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 1.5833,
+            "calories": 6.4917,
+            "proteinG": 0.3840,
+            "fiberG": 0,
+            "ironMg": 0.0025
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.5000,
+            "calories": 0.0000,
+            "proteinG": 0.0000,
+            "fiberG": 0.0000,
+            "ironMg": 0.0016
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 4,
+      "name": "Breakfast Sandwiches",
+      "servingsEaten": 12,
+      "computation": {
+        "calories": 3510.8,
+        "proteinG": 228.0,
+        "fiberG": 37.9,
+        "ironMg": 52.1,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 900.00,
+            "calories": 1287.000,
+            "proteinG": 113.0400,
+            "fiberG": 0.000,
+            "ironMg": 15.7500
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 226.7960,
+            "calories": 65.7708,
+            "proteinG": 3.4473,
+            "fiberG": 4.3091,
+            "ironMg": 0.9525
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 34.00,
+            "calories": 7.820,
+            "proteinG": 0.9724,
+            "fiberG": 0.748,
+            "ironMg": 0.9214
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 14.1748,
+            "calories": 35.5786,
+            "proteinG": 1.4728,
+            "fiberG": 3.5862,
+            "ironMg": 1.3764
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 684.00,
+            "calories": 1607.400,
+            "proteinG": 52.668,
+            "fiberG": 18.468,
+            "ironMg": 17.100
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 270.00,
+            "calories": 429.300,
+            "proteinG": 51.840,
+            "fiberG": 10.800,
+            "ironMg": 15.930
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 19.00,
+            "calories": 77.900,
+            "proteinG": 4.6075,
+            "fiberG": 0.000,
+            "ironMg": 0.0304
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 6.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0198
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 5,
+      "name": "Oat Waffles - Lynette\u0027s Recipe",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 121.2,
+        "proteinG": 2.0,
+        "fiberG": 1.8,
+        "ironMg": 0.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 9,
+            "status": "Counted",
+            "grams": 140.6000,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.7500,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0025
+          },
+          {
+            "ingredientId": 29,
+            "status": "Counted",
+            "grams": 7.9453,
+            "calories": 24.1538,
+            "proteinG": 0.0238,
+            "fiberG": 0.0159,
+            "ironMg": 0.0334
+          },
+          {
+            "ingredientId": 53,
+            "status": "Counted",
+            "grams": 10.6311,
+            "calories": 40.5043,
+            "proteinG": 0.0276,
+            "fiberG": 0.0957,
+            "ironMg": 0.0500
+          },
+          {
+            "ingredientId": 51,
+            "status": "Counted",
+            "grams": 1.1694,
+            "calories": 6.8294,
+            "proteinG": 0.2430,
+            "fiberG": 0.1006,
+            "ironMg": 0.0614
+          },
+          {
+            "ingredientId": 52,
+            "status": "Counted",
+            "grams": 1.7718,
+            "calories": 9.4616,
+            "proteinG": 0.3241,
+            "fiberG": 0.4837,
+            "ironMg": 0.1015
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 10.6311,
+            "calories": 40.2917,
+            "proteinG": 1.3980,
+            "fiberG": 1.0737,
+            "ironMg": 0.4518
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 5,
+      "name": "Oat Waffles - Lynette\u0027s Recipe",
+      "servingsEaten": 8,
+      "computation": {
+        "calories": 969.9,
+        "proteinG": 16.1,
+        "fiberG": 14.2,
+        "ironMg": 5.6,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 9,
+            "status": "Counted",
+            "grams": 1124.8000,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 6.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0198
+          },
+          {
+            "ingredientId": 29,
+            "status": "Counted",
+            "grams": 63.5625,
+            "calories": 193.2300,
+            "proteinG": 0.1907,
+            "fiberG": 0.1271,
+            "ironMg": 0.2670
+          },
+          {
+            "ingredientId": 53,
+            "status": "Counted",
+            "grams": 85.0485,
+            "calories": 324.0348,
+            "proteinG": 0.2211,
+            "fiberG": 0.7654,
+            "ironMg": 0.3997
+          },
+          {
+            "ingredientId": 51,
+            "status": "Counted",
+            "grams": 9.3553,
+            "calories": 54.6352,
+            "proteinG": 1.9440,
+            "fiberG": 0.8046,
+            "ironMg": 0.4912
+          },
+          {
+            "ingredientId": 52,
+            "status": "Counted",
+            "grams": 14.1748,
+            "calories": 75.6932,
+            "proteinG": 2.5926,
+            "fiberG": 3.8697,
+            "ironMg": 0.8122
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 85.0485,
+            "calories": 322.3338,
+            "proteinG": 11.1839,
+            "fiberG": 8.5899,
+            "ironMg": 3.6146
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 6,
+      "name": "Soup",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 102.3,
+        "proteinG": 4.5,
+        "fiberG": 2.3,
+        "ironMg": 0.9,
+        "hasApprox": true,
+        "uncountedNote": "Not counted: Dark Brown Seasoning",
+        "items": [
+          {
+            "ingredientId": 31,
+            "status": "CountedApprox",
+            "grams": 26.0000,
+            "calories": 6.760,
+            "proteinG": 0.7306,
+            "fiberG": 0.780,
+            "ironMg": 0.2106
+          },
+          {
+            "ingredientId": 16,
+            "status": "CountedApprox",
+            "grams": 80.0000,
+            "calories": 12.8000,
+            "proteinG": 0.6320,
+            "fiberG": 1.5200,
+            "ironMg": 0.4560
+          },
+          {
+            "ingredientId": 55,
+            "status": "CountedApprox",
+            "grams": 0.0,
+            "calories": 0.00,
+            "proteinG": 0.000,
+            "fiberG": 0.00,
+            "ironMg": 0.000
+          },
+          {
+            "ingredientId": 58,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 56,
+            "status": "Counted",
+            "grams": 18.8997,
+            "calories": 82.7805,
+            "proteinG": 3.1562,
+            "fiberG": 0.0378,
+            "ironMg": 0.1947
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 6,
+      "name": "Soup",
+      "servingsEaten": 6,
+      "computation": {
+        "calories": 614.0,
+        "proteinG": 27.1,
+        "fiberG": 14.0,
+        "ironMg": 5.2,
+        "hasApprox": true,
+        "uncountedNote": "Not counted: Dark Brown Seasoning",
+        "items": [
+          {
+            "ingredientId": 31,
+            "status": "CountedApprox",
+            "grams": 156.00,
+            "calories": 40.560,
+            "proteinG": 4.3836,
+            "fiberG": 4.680,
+            "ironMg": 1.2636
+          },
+          {
+            "ingredientId": 16,
+            "status": "CountedApprox",
+            "grams": 480.00,
+            "calories": 76.800,
+            "proteinG": 3.7920,
+            "fiberG": 9.120,
+            "ironMg": 2.7360
+          },
+          {
+            "ingredientId": 55,
+            "status": "CountedApprox",
+            "grams": 0.00,
+            "calories": 0.000,
+            "proteinG": 0.0000,
+            "fiberG": 0.000,
+            "ironMg": 0.0000
+          },
+          {
+            "ingredientId": 58,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 56,
+            "status": "Counted",
+            "grams": 113.3980,
+            "calories": 496.6832,
+            "proteinG": 18.9375,
+            "fiberG": 0.2268,
+            "ironMg": 1.1680
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 7,
+      "name": "Biba\u0027s Eggplant Parmesan",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 0,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": "Not counted: Biba\u0027s Eggplant Parmesan",
+        "items": [
+          {
+            "ingredientId": 59,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 7,
+      "name": "Biba\u0027s Eggplant Parmesan",
+      "servingsEaten": 20,
+      "computation": {
+        "calories": 0,
+        "proteinG": 0,
+        "fiberG": 0,
+        "ironMg": 0,
+        "hasApprox": false,
+        "uncountedNote": "Not counted: Biba\u0027s Eggplant Parmesan",
+        "items": [
+          {
+            "ingredientId": 59,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 8,
+      "name": "Rice \u0026 Chai Pow Yu",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 573.7,
+        "proteinG": 11.8,
+        "fiberG": 3.6,
+        "ironMg": 7.2,
+        "hasApprox": true,
+        "uncountedNote": "Not counted: Chai Pow Yu",
+        "items": [
+          {
+            "ingredientId": 62,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 63,
+            "status": "CountedApprox",
+            "grams": 40.1667,
+            "calories": 6.0250,
+            "proteinG": 0.2772,
+            "fiberG": 0,
+            "ironMg": 0.1044
+          },
+          {
+            "ingredientId": 16,
+            "status": "CountedApprox",
+            "grams": 40.0000,
+            "calories": 6.4000,
+            "proteinG": 0.3160,
+            "fiberG": 0.7600,
+            "ironMg": 0.2280
+          },
+          {
+            "ingredientId": 55,
+            "status": "CountedApprox",
+            "grams": 45.0000,
+            "calories": 9.4500,
+            "proteinG": 0.4725,
+            "fiberG": 0.8550,
+            "ironMg": 0.4005
+          },
+          {
+            "ingredientId": 60,
+            "status": "Counted",
+            "grams": 151.1973,
+            "calories": 551.8703,
+            "proteinG": 10.7804,
+            "fiberG": 1.9656,
+            "ironMg": 6.5166
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 8,
+      "name": "Rice \u0026 Chai Pow Yu",
+      "servingsEaten": 6,
+      "computation": {
+        "calories": 3442.5,
+        "proteinG": 71.1,
+        "fiberG": 21.5,
+        "ironMg": 43.5,
+        "hasApprox": true,
+        "uncountedNote": "Not counted: Chai Pow Yu",
+        "items": [
+          {
+            "ingredientId": 62,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 63,
+            "status": "CountedApprox",
+            "grams": 241.00,
+            "calories": 36.150,
+            "proteinG": 1.6629,
+            "fiberG": 0.00,
+            "ironMg": 0.6266
+          },
+          {
+            "ingredientId": 16,
+            "status": "CountedApprox",
+            "grams": 240.00,
+            "calories": 38.400,
+            "proteinG": 1.8960,
+            "fiberG": 4.560,
+            "ironMg": 1.3680
+          },
+          {
+            "ingredientId": 55,
+            "status": "CountedApprox",
+            "grams": 270.00,
+            "calories": 56.700,
+            "proteinG": 2.8350,
+            "fiberG": 5.130,
+            "ironMg": 2.4030
+          },
+          {
+            "ingredientId": 60,
+            "status": "Counted",
+            "grams": 907.1840,
+            "calories": 3311.2216,
+            "proteinG": 64.6822,
+            "fiberG": 11.7934,
+            "ironMg": 39.0996
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 9,
+      "name": "Roasted Broccoli \u0026 Quinoa/Rice",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 296.7,
+        "proteinG": 6.4,
+        "fiberG": 1.7,
+        "ironMg": 3.6,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 31,
+            "status": "CountedApprox",
+            "grams": 13.0000,
+            "calories": 3.380,
+            "proteinG": 0.3653,
+            "fiberG": 0.390,
+            "ironMg": 0.1053
+          },
+          {
+            "ingredientId": 60,
+            "status": "Counted",
+            "grams": 75.5987,
+            "calories": 275.9351,
+            "proteinG": 5.3902,
+            "fiberG": 0.9828,
+            "ironMg": 3.2583
+          },
+          {
+            "ingredientId": 61,
+            "status": "Counted",
+            "grams": 4.7249,
+            "calories": 17.3877,
+            "proteinG": 0.6672,
+            "fiberG": 0.3307,
+            "ironMg": 0.2159
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 9,
+      "name": "Roasted Broccoli \u0026 Quinoa/Rice",
+      "servingsEaten": 12,
+      "computation": {
+        "calories": 3560.4,
+        "proteinG": 77.1,
+        "fiberG": 20.4,
+        "ironMg": 43.0,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 31,
+            "status": "CountedApprox",
+            "grams": 156.00,
+            "calories": 40.560,
+            "proteinG": 4.3836,
+            "fiberG": 4.680,
+            "ironMg": 1.2636
+          },
+          {
+            "ingredientId": 60,
+            "status": "Counted",
+            "grams": 907.1840,
+            "calories": 3311.2216,
+            "proteinG": 64.6822,
+            "fiberG": 11.7934,
+            "ironMg": 39.0996
+          },
+          {
+            "ingredientId": 61,
+            "status": "Counted",
+            "grams": 56.6990,
+            "calories": 208.6523,
+            "proteinG": 8.0059,
+            "fiberG": 3.9689,
+            "ironMg": 2.5911
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 10,
+      "name": "Shakshuka",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 98.8,
+        "proteinG": 7.5,
+        "fiberG": 2.3,
+        "ironMg": 1.5,
+        "hasApprox": true,
+        "uncountedNote": "Not counted: Moroccan Seasoning",
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 50.0000,
+            "calories": 71.5000,
+            "proteinG": 6.2800,
+            "fiberG": 0,
+            "ironMg": 0.8750
+          },
+          {
+            "ingredientId": 32,
+            "status": "CountedApprox",
+            "grams": 49.6667,
+            "calories": 9.9333,
+            "proteinG": 0.4271,
+            "fiberG": 0.8443,
+            "ironMg": 0.1689
+          },
+          {
+            "ingredientId": 64,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 4.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0132
+          },
+          {
+            "ingredientId": 15,
+            "status": "CountedApprox",
+            "grams": 2.6667,
+            "calories": 1.3067,
+            "proteinG": 0.1141,
+            "fiberG": 0.0960,
+            "ironMg": 0.0392
+          },
+          {
+            "ingredientId": 13,
+            "status": "Counted",
+            "grams": 4.7249,
+            "calories": 1.0395,
+            "proteinG": 0.1460,
+            "fiberG": 0.0472,
+            "ironMg": 0.0236
+          },
+          {
+            "ingredientId": 17,
+            "status": "Counted",
+            "grams": 4.7249,
+            "calories": 15.0252,
+            "proteinG": 0.5675,
+            "fiberG": 1.2852,
+            "ironMg": 0.3685
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 10,
+      "name": "Shakshuka",
+      "servingsEaten": 6,
+      "computation": {
+        "calories": 592.8,
+        "proteinG": 45.2,
+        "fiberG": 13.6,
+        "ironMg": 8.9,
+        "hasApprox": true,
+        "uncountedNote": "Not counted: Moroccan Seasoning",
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 300.00,
+            "calories": 429.000,
+            "proteinG": 37.6800,
+            "fiberG": 0.000,
+            "ironMg": 5.2500
+          },
+          {
+            "ingredientId": 32,
+            "status": "CountedApprox",
+            "grams": 298.00,
+            "calories": 59.600,
+            "proteinG": 2.5628,
+            "fiberG": 5.066,
+            "ironMg": 1.0132
+          },
+          {
+            "ingredientId": 64,
+            "status": "NoNutritionLink",
+            "grams": null,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 24.0000,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0792
+          },
+          {
+            "ingredientId": 15,
+            "status": "CountedApprox",
+            "grams": 16.00,
+            "calories": 7.840,
+            "proteinG": 0.6848,
+            "fiberG": 0.576,
+            "ironMg": 0.2352
+          },
+          {
+            "ingredientId": 13,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 6.2369,
+            "proteinG": 0.8760,
+            "fiberG": 0.2835,
+            "ironMg": 0.1417
+          },
+          {
+            "ingredientId": 17,
+            "status": "Counted",
+            "grams": 28.3495,
+            "calories": 90.1514,
+            "proteinG": 3.4048,
+            "fiberG": 7.7111,
+            "ironMg": 2.2113
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 11,
+      "name": "Pineapple Cookies",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 134.5,
+        "proteinG": 1.6,
+        "fiberG": 1.0,
+        "ironMg": 0.7,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 6.0000,
+            "calories": 53.0398,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0336
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 4.4444,
+            "calories": 11.5555,
+            "proteinG": 0.0018,
+            "fiberG": 0,
+            "ironMg": 0.0049
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 10.3750,
+            "calories": 6.2250,
+            "proteinG": 0.0436,
+            "fiberG": 0.0830,
+            "ironMg": 0.0290
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.1166,
+            "calories": 0.3359,
+            "proteinG": 0.0001,
+            "fiberG": 0,
+            "ironMg": 0.0001
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 6.6936,
+            "calories": 24.3648,
+            "proteinG": 0.6915,
+            "fiberG": 0.1807,
+            "ironMg": 0.3106
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.0278,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0001
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 4.9927,
+            "calories": 18.9222,
+            "proteinG": 0.6565,
+            "fiberG": 0.5043,
+            "ironMg": 0.2122
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 6.6306,
+            "calories": 20.0245,
+            "proteinG": 0.2248,
+            "fiberG": 0.2652,
+            "ironMg": 0.1187
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 11,
+      "name": "Pineapple Cookies",
+      "servingsEaten": 18,
+      "computation": {
+        "calories": 2420.4,
+        "proteinG": 29.1,
+        "fiberG": 18.6,
+        "ironMg": 12.8,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 107.9996,
+            "calories": 954.7168,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.6048
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 79.9997,
+            "calories": 207.9993,
+            "proteinG": 0.0320,
+            "fiberG": 0,
+            "ironMg": 0.0880
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 186.750,
+            "calories": 112.0500,
+            "proteinG": 0.7844,
+            "fiberG": 1.4940,
+            "ironMg": 0.5229
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 2.0992,
+            "calories": 6.0456,
+            "proteinG": 0.0013,
+            "fiberG": 0,
+            "ironMg": 0.0025
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 120.4854,
+            "calories": 438.5668,
+            "proteinG": 12.4461,
+            "fiberG": 3.2531,
+            "ironMg": 5.5905
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.4998,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0016
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 89.8679,
+            "calories": 340.5994,
+            "proteinG": 11.8176,
+            "fiberG": 9.0767,
+            "ironMg": 3.8194
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 119.3514,
+            "calories": 360.4412,
+            "proteinG": 4.0460,
+            "fiberG": 4.7741,
+            "ironMg": 2.1364
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 12,
+      "name": "English Muffins",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 138.2,
+        "proteinG": 3.9,
+        "fiberG": 0.9,
+        "ironMg": 1.3,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 78,
+            "status": "Counted",
+            "grams": 13.0714,
+            "calories": 6.5357,
+            "proteinG": 0.4314,
+            "fiberG": 0,
+            "ironMg": 0.0026
+          },
+          {
+            "ingredientId": 9,
+            "status": "Counted",
+            "grams": 8.4571,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 79,
+            "status": "Counted",
+            "grams": 0.6682,
+            "calories": 2.1718,
+            "proteinG": 0.2702,
+            "fiberG": 0.1798,
+            "ironMg": 0.0145
+          },
+          {
+            "ingredientId": 26,
+            "status": "Counted",
+            "grams": 1.7617,
+            "calories": 6.8179,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0009
+          },
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 3.5714,
+            "calories": 5.1071,
+            "proteinG": 0.4486,
+            "fiberG": 0,
+            "ironMg": 0.0625
+          },
+          {
+            "ingredientId": 80,
+            "status": "Counted",
+            "grams": 3.0374,
+            "calories": 21.7785,
+            "proteinG": 0.0258,
+            "fiberG": 0,
+            "ironMg": 0.0006
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 26.3245,
+            "calories": 95.8213,
+            "proteinG": 2.7193,
+            "fiberG": 0.7108,
+            "ironMg": 1.2215
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.0900,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0003
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 12,
+      "name": "English Muffins",
+      "servingsEaten": 14,
+      "computation": {
+        "calories": 1935.3,
+        "proteinG": 54.5,
+        "fiberG": 12.5,
+        "ironMg": 18.2,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 78,
+            "status": "Counted",
+            "grams": 183.0000,
+            "calories": 91.5000,
+            "proteinG": 6.0390,
+            "fiberG": 0,
+            "ironMg": 0.0366
+          },
+          {
+            "ingredientId": 9,
+            "status": "Counted",
+            "grams": 118.4000,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 79,
+            "status": "Counted",
+            "grams": 9.3553,
+            "calories": 30.4048,
+            "proteinG": 3.7833,
+            "fiberG": 2.5166,
+            "ironMg": 0.2030
+          },
+          {
+            "ingredientId": 26,
+            "status": "Counted",
+            "grams": 24.6641,
+            "calories": 95.4499,
+            "proteinG": 0.0000,
+            "fiberG": 0.0000,
+            "ironMg": 0.0123
+          },
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 50.00,
+            "calories": 71.500,
+            "proteinG": 6.2800,
+            "fiberG": 0.000,
+            "ironMg": 0.8750
+          },
+          {
+            "ingredientId": 80,
+            "status": "Counted",
+            "grams": 42.5242,
+            "calories": 304.8989,
+            "proteinG": 0.3615,
+            "fiberG": 0.0000,
+            "ironMg": 0.0085
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 368.5435,
+            "calories": 1341.4983,
+            "proteinG": 38.0705,
+            "fiberG": 9.9507,
+            "ironMg": 17.1004
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.2600,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0042
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 13,
+      "name": "Easy Vegan Breakfast Sausage Patties (TVP)",
+      "servingsEaten": 1,
+      "computation": {
+        "calories": 72.8,
+        "proteinG": 3.7,
+        "fiberG": 1.8,
+        "ironMg": 0.9,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 84,
+            "status": "Counted",
+            "grams": 4.7249,
+            "calories": 15.4505,
+            "proteinG": 2.4314,
+            "fiberG": 0.8269,
+            "ironMg": 0.4366
+          },
+          {
+            "ingredientId": 56,
+            "status": "Counted",
+            "grams": 0.3922,
+            "calories": 1.7177,
+            "proteinG": 0.0655,
+            "fiberG": 0.0008,
+            "ironMg": 0.0040
+          },
+          {
+            "ingredientId": 52,
+            "status": "Counted",
+            "grams": 0.8269,
+            "calories": 4.4154,
+            "proteinG": 0.1512,
+            "fiberG": 0.2257,
+            "ironMg": 0.0474
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 0.0000,
+            "calories": 0.0000,
+            "proteinG": 0.0000,
+            "fiberG": 0.0000,
+            "ironMg": 0.0000
+          },
+          {
+            "ingredientId": 85,
+            "status": "Counted",
+            "grams": 2.6667,
+            "calories": 1.4133,
+            "proteinG": 0.2171,
+            "fiberG": 0.0213,
+            "ironMg": 0.0387
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 1.6667,
+            "calories": 4.3333,
+            "proteinG": 0.0007,
+            "fiberG": 0,
+            "ironMg": 0.0018
+          },
+          {
+            "ingredientId": 86,
+            "status": "Counted",
+            "grams": 3.3311,
+            "calories": 12.6247,
+            "proteinG": 0.4380,
+            "fiberG": 0.3364,
+            "ironMg": 0.1416
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 2.5042,
+            "calories": 9.1153,
+            "proteinG": 0.2587,
+            "fiberG": 0.0676,
+            "ironMg": 0.1162
+          },
+          {
+            "ingredientId": 87,
+            "status": "Counted",
+            "grams": 0.4725,
+            "calories": 1.3324,
+            "proteinG": 0.0668,
+            "fiberG": 0.1649,
+            "ironMg": 0.0999
+          },
+          {
+            "ingredientId": 88,
+            "status": "Counted",
+            "grams": 0.1654,
+            "calories": 0.5705,
+            "proteinG": 0.0261,
+            "fiberG": 0.0658,
+            "ironMg": 0.0307
+          },
+          {
+            "ingredientId": 89,
+            "status": "Counted",
+            "grams": 0.1417,
+            "calories": 0.4834,
+            "proteinG": 0.0148,
+            "fiberG": 0.0215,
+            "ironMg": 0.0055
+          },
+          {
+            "ingredientId": 38,
+            "status": "Counted",
+            "grams": 0.1890,
+            "calories": 0.6256,
+            "proteinG": 0.0313,
+            "fiberG": 0.0170,
+            "ironMg": 0.0107
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 0.0472,
+            "calories": 0.1186,
+            "proteinG": 0.0049,
+            "fiberG": 0.0120,
+            "ironMg": 0.0046
+          },
+          {
+            "ingredientId": 3,
+            "status": "Counted",
+            "grams": 2.3333,
+            "calories": 20.6266,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "recipeId": 13,
+      "name": "Easy Vegan Breakfast Sausage Patties (TVP)",
+      "servingsEaten": 12,
+      "computation": {
+        "calories": 873.9,
+        "proteinG": 44.5,
+        "fiberG": 21.1,
+        "ironMg": 11.3,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 84,
+            "status": "Counted",
+            "grams": 56.6990,
+            "calories": 185.4057,
+            "proteinG": 29.1773,
+            "fiberG": 9.9223,
+            "ironMg": 5.2390
+          },
+          {
+            "ingredientId": 56,
+            "status": "Counted",
+            "grams": 4.7060,
+            "calories": 20.6124,
+            "proteinG": 0.7859,
+            "fiberG": 0.0094,
+            "ironMg": 0.0485
+          },
+          {
+            "ingredientId": 52,
+            "status": "Counted",
+            "grams": 9.9223,
+            "calories": 52.9852,
+            "proteinG": 1.8148,
+            "fiberG": 2.7088,
+            "ironMg": 0.5685
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 0.0000,
+            "calories": 0.0000,
+            "proteinG": 0.0000,
+            "fiberG": 0.0000,
+            "ironMg": 0.0000
+          },
+          {
+            "ingredientId": 85,
+            "status": "Counted",
+            "grams": 31.9999,
+            "calories": 16.9599,
+            "proteinG": 2.6048,
+            "fiberG": 0.2560,
+            "ironMg": 0.4640
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 19.9999,
+            "calories": 51.9998,
+            "proteinG": 0.0080,
+            "fiberG": 0,
+            "ironMg": 0.0220
+          },
+          {
+            "ingredientId": 86,
+            "status": "Counted",
+            "grams": 39.9728,
+            "calories": 151.4969,
+            "proteinG": 5.2564,
+            "fiberG": 4.0373,
+            "ironMg": 1.6988
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 30.0505,
+            "calories": 109.3837,
+            "proteinG": 3.1042,
+            "fiberG": 0.8114,
+            "ironMg": 1.3943
+          },
+          {
+            "ingredientId": 87,
+            "status": "Counted",
+            "grams": 5.6699,
+            "calories": 15.9891,
+            "proteinG": 0.8017,
+            "fiberG": 1.9788,
+            "ironMg": 1.1986
+          },
+          {
+            "ingredientId": 88,
+            "status": "Counted",
+            "grams": 1.9845,
+            "calories": 6.8464,
+            "proteinG": 0.3135,
+            "fiberG": 0.7898,
+            "ironMg": 0.3679
+          },
+          {
+            "ingredientId": 89,
+            "status": "Counted",
+            "grams": 1.7010,
+            "calories": 5.8003,
+            "proteinG": 0.1771,
+            "fiberG": 0.2585,
+            "ironMg": 0.0663
+          },
+          {
+            "ingredientId": 38,
+            "status": "Counted",
+            "grams": 2.2680,
+            "calories": 7.5069,
+            "proteinG": 0.3753,
+            "fiberG": 0.2041,
+            "ironMg": 0.1281
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 0.5670,
+            "calories": 1.4231,
+            "proteinG": 0.0589,
+            "fiberG": 0.1434,
+            "ironMg": 0.0551
+          },
+          {
+            "ingredientId": 3,
+            "status": "Counted",
+            "grams": 27.9999,
+            "calories": 247.5192,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    }
+  ],
+  "meals": [
+    {
+      "mealId": 1,
+      "title": "bread",
+      "computation": {
+        "calories": 453.9,
+        "proteinG": 5.9,
+        "fiberG": 1.5,
+        "ironMg": 2.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 56.6990,
+            "calories": 206.3844,
+            "proteinG": 5.8570,
+            "fiberG": 1.5309,
+            "ironMg": 2.6308
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 8.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0264
+          },
+          {
+            "ingredientId": 3,
+            "status": "Counted",
+            "grams": 27.9999,
+            "calories": 247.5192,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 9,
+            "status": "Counted",
+            "grams": 631.4667,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 2,
+      "title": "bread",
+      "computation": {
+        "calories": 453.9,
+        "proteinG": 5.9,
+        "fiberG": 1.5,
+        "ironMg": 2.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 56.6990,
+            "calories": 206.3844,
+            "proteinG": 5.8570,
+            "fiberG": 1.5309,
+            "ironMg": 2.6308
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 8.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0264
+          },
+          {
+            "ingredientId": 3,
+            "status": "Counted",
+            "grams": 27.9999,
+            "calories": 247.5192,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          },
+          {
+            "ingredientId": 9,
+            "status": "Counted",
+            "grams": 631.4667,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 158,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 159,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 160,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 161,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 162,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 163,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 164,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 165,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 537.9,
+        "proteinG": 6.5,
+        "fiberG": 4.1,
+        "ironMg": 2.8,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 23.9999,
+            "calories": 212.1593,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.1344
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 17.7777,
+            "calories": 46.2221,
+            "proteinG": 0.0071,
+            "fiberG": 0,
+            "ironMg": 0.0196
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 41.5000,
+            "calories": 24.9000,
+            "proteinG": 0.1743,
+            "fiberG": 0.3320,
+            "ironMg": 0.1162
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.4665,
+            "calories": 1.3435,
+            "proteinG": 0.0003,
+            "fiberG": 0,
+            "ironMg": 0.0006
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 26.7745,
+            "calories": 97.4593,
+            "proteinG": 2.7658,
+            "fiberG": 0.7229,
+            "ironMg": 1.2423
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.1111,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0004
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 19.9706,
+            "calories": 75.6888,
+            "proteinG": 2.6261,
+            "fiberG": 2.0170,
+            "ironMg": 0.8488
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 26.5225,
+            "calories": 80.0980,
+            "proteinG": 0.8991,
+            "fiberG": 1.0609,
+            "ironMg": 0.4748
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 166,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 537.9,
+        "proteinG": 6.5,
+        "fiberG": 4.1,
+        "ironMg": 2.8,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 23.9999,
+            "calories": 212.1593,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.1344
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 17.7777,
+            "calories": 46.2221,
+            "proteinG": 0.0071,
+            "fiberG": 0,
+            "ironMg": 0.0196
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 41.5000,
+            "calories": 24.9000,
+            "proteinG": 0.1743,
+            "fiberG": 0.3320,
+            "ironMg": 0.1162
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.4665,
+            "calories": 1.3435,
+            "proteinG": 0.0003,
+            "fiberG": 0,
+            "ironMg": 0.0006
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 26.7745,
+            "calories": 97.4593,
+            "proteinG": 2.7658,
+            "fiberG": 0.7229,
+            "ironMg": 1.2423
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.1111,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0004
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 19.9706,
+            "calories": 75.6888,
+            "proteinG": 2.6261,
+            "fiberG": 2.0170,
+            "ironMg": 0.8488
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 26.5225,
+            "calories": 80.0980,
+            "proteinG": 0.8991,
+            "fiberG": 1.0609,
+            "ironMg": 0.4748
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 167,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 537.9,
+        "proteinG": 6.5,
+        "fiberG": 4.1,
+        "ironMg": 2.8,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 23.9999,
+            "calories": 212.1593,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.1344
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 17.7777,
+            "calories": 46.2221,
+            "proteinG": 0.0071,
+            "fiberG": 0,
+            "ironMg": 0.0196
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 41.5000,
+            "calories": 24.9000,
+            "proteinG": 0.1743,
+            "fiberG": 0.3320,
+            "ironMg": 0.1162
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.4665,
+            "calories": 1.3435,
+            "proteinG": 0.0003,
+            "fiberG": 0,
+            "ironMg": 0.0006
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 26.7745,
+            "calories": 97.4593,
+            "proteinG": 2.7658,
+            "fiberG": 0.7229,
+            "ironMg": 1.2423
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.1111,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0004
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 19.9706,
+            "calories": 75.6888,
+            "proteinG": 2.6261,
+            "fiberG": 2.0170,
+            "ironMg": 0.8488
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 26.5225,
+            "calories": 80.0980,
+            "proteinG": 0.8991,
+            "fiberG": 1.0609,
+            "ironMg": 0.4748
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 168,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 537.9,
+        "proteinG": 6.5,
+        "fiberG": 4.1,
+        "ironMg": 2.8,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 23.9999,
+            "calories": 212.1593,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.1344
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 17.7777,
+            "calories": 46.2221,
+            "proteinG": 0.0071,
+            "fiberG": 0,
+            "ironMg": 0.0196
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 41.5000,
+            "calories": 24.9000,
+            "proteinG": 0.1743,
+            "fiberG": 0.3320,
+            "ironMg": 0.1162
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.4665,
+            "calories": 1.3435,
+            "proteinG": 0.0003,
+            "fiberG": 0,
+            "ironMg": 0.0006
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 26.7745,
+            "calories": 97.4593,
+            "proteinG": 2.7658,
+            "fiberG": 0.7229,
+            "ironMg": 1.2423
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.1111,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0004
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 19.9706,
+            "calories": 75.6888,
+            "proteinG": 2.6261,
+            "fiberG": 2.0170,
+            "ironMg": 0.8488
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 26.5225,
+            "calories": 80.0980,
+            "proteinG": 0.8991,
+            "fiberG": 1.0609,
+            "ironMg": 0.4748
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 169,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 537.9,
+        "proteinG": 6.5,
+        "fiberG": 4.1,
+        "ironMg": 2.8,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 23.9999,
+            "calories": 212.1593,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.1344
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 17.7777,
+            "calories": 46.2221,
+            "proteinG": 0.0071,
+            "fiberG": 0,
+            "ironMg": 0.0196
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 41.5000,
+            "calories": 24.9000,
+            "proteinG": 0.1743,
+            "fiberG": 0.3320,
+            "ironMg": 0.1162
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.4665,
+            "calories": 1.3435,
+            "proteinG": 0.0003,
+            "fiberG": 0,
+            "ironMg": 0.0006
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 26.7745,
+            "calories": 97.4593,
+            "proteinG": 2.7658,
+            "fiberG": 0.7229,
+            "ironMg": 1.2423
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.1111,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0004
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 19.9706,
+            "calories": 75.6888,
+            "proteinG": 2.6261,
+            "fiberG": 2.0170,
+            "ironMg": 0.8488
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 26.5225,
+            "calories": 80.0980,
+            "proteinG": 0.8991,
+            "fiberG": 1.0609,
+            "ironMg": 0.4748
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 170,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 537.9,
+        "proteinG": 6.5,
+        "fiberG": 4.1,
+        "ironMg": 2.8,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 23.9999,
+            "calories": 212.1593,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.1344
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 17.7777,
+            "calories": 46.2221,
+            "proteinG": 0.0071,
+            "fiberG": 0,
+            "ironMg": 0.0196
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 41.5000,
+            "calories": 24.9000,
+            "proteinG": 0.1743,
+            "fiberG": 0.3320,
+            "ironMg": 0.1162
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.4665,
+            "calories": 1.3435,
+            "proteinG": 0.0003,
+            "fiberG": 0,
+            "ironMg": 0.0006
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 26.7745,
+            "calories": 97.4593,
+            "proteinG": 2.7658,
+            "fiberG": 0.7229,
+            "ironMg": 1.2423
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.1111,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0004
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 19.9706,
+            "calories": 75.6888,
+            "proteinG": 2.6261,
+            "fiberG": 2.0170,
+            "ironMg": 0.8488
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 26.5225,
+            "calories": 80.0980,
+            "proteinG": 0.8991,
+            "fiberG": 1.0609,
+            "ironMg": 0.4748
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 171,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 537.9,
+        "proteinG": 6.5,
+        "fiberG": 4.1,
+        "ironMg": 2.8,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 23.9999,
+            "calories": 212.1593,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.1344
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 17.7777,
+            "calories": 46.2221,
+            "proteinG": 0.0071,
+            "fiberG": 0,
+            "ironMg": 0.0196
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 41.5000,
+            "calories": 24.9000,
+            "proteinG": 0.1743,
+            "fiberG": 0.3320,
+            "ironMg": 0.1162
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.4665,
+            "calories": 1.3435,
+            "proteinG": 0.0003,
+            "fiberG": 0,
+            "ironMg": 0.0006
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 26.7745,
+            "calories": 97.4593,
+            "proteinG": 2.7658,
+            "fiberG": 0.7229,
+            "ironMg": 1.2423
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.1111,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0004
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 19.9706,
+            "calories": 75.6888,
+            "proteinG": 2.6261,
+            "fiberG": 2.0170,
+            "ironMg": 0.8488
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 26.5225,
+            "calories": 80.0980,
+            "proteinG": 0.8991,
+            "fiberG": 1.0609,
+            "ironMg": 0.4748
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 172,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 268.9,
+        "proteinG": 3.2,
+        "fiberG": 2.1,
+        "ironMg": 1.4,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 12.0000,
+            "calories": 106.0796,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0672
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 8.8889,
+            "calories": 23.1110,
+            "proteinG": 0.0036,
+            "fiberG": 0,
+            "ironMg": 0.0098
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 20.7500,
+            "calories": 12.4500,
+            "proteinG": 0.0872,
+            "fiberG": 0.1660,
+            "ironMg": 0.0581
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.2332,
+            "calories": 0.6717,
+            "proteinG": 0.0001,
+            "fiberG": 0,
+            "ironMg": 0.0003
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 13.3873,
+            "calories": 48.7296,
+            "proteinG": 1.3829,
+            "fiberG": 0.3615,
+            "ironMg": 0.6212
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.0555,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0002
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 9.9853,
+            "calories": 37.8444,
+            "proteinG": 1.3131,
+            "fiberG": 1.0085,
+            "ironMg": 0.4244
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 13.2613,
+            "calories": 40.0490,
+            "proteinG": 0.4496,
+            "fiberG": 0.5305,
+            "ironMg": 0.2374
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 173,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 268.9,
+        "proteinG": 3.2,
+        "fiberG": 2.1,
+        "ironMg": 1.4,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 12.0000,
+            "calories": 106.0796,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0672
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 8.8889,
+            "calories": 23.1110,
+            "proteinG": 0.0036,
+            "fiberG": 0,
+            "ironMg": 0.0098
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 20.7500,
+            "calories": 12.4500,
+            "proteinG": 0.0872,
+            "fiberG": 0.1660,
+            "ironMg": 0.0581
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.2332,
+            "calories": 0.6717,
+            "proteinG": 0.0001,
+            "fiberG": 0,
+            "ironMg": 0.0003
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 13.3873,
+            "calories": 48.7296,
+            "proteinG": 1.3829,
+            "fiberG": 0.3615,
+            "ironMg": 0.6212
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.0555,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0002
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 9.9853,
+            "calories": 37.8444,
+            "proteinG": 1.3131,
+            "fiberG": 1.0085,
+            "ironMg": 0.4244
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 13.2613,
+            "calories": 40.0490,
+            "proteinG": 0.4496,
+            "fiberG": 0.5305,
+            "ironMg": 0.2374
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 174,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 268.9,
+        "proteinG": 3.2,
+        "fiberG": 2.1,
+        "ironMg": 1.4,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 12.0000,
+            "calories": 106.0796,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0672
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 8.8889,
+            "calories": 23.1110,
+            "proteinG": 0.0036,
+            "fiberG": 0,
+            "ironMg": 0.0098
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 20.7500,
+            "calories": 12.4500,
+            "proteinG": 0.0872,
+            "fiberG": 0.1660,
+            "ironMg": 0.0581
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.2332,
+            "calories": 0.6717,
+            "proteinG": 0.0001,
+            "fiberG": 0,
+            "ironMg": 0.0003
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 13.3873,
+            "calories": 48.7296,
+            "proteinG": 1.3829,
+            "fiberG": 0.3615,
+            "ironMg": 0.6212
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.0555,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0002
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 9.9853,
+            "calories": 37.8444,
+            "proteinG": 1.3131,
+            "fiberG": 1.0085,
+            "ironMg": 0.4244
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 13.2613,
+            "calories": 40.0490,
+            "proteinG": 0.4496,
+            "fiberG": 0.5305,
+            "ironMg": 0.2374
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 175,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 268.9,
+        "proteinG": 3.2,
+        "fiberG": 2.1,
+        "ironMg": 1.4,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 12.0000,
+            "calories": 106.0796,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0672
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 8.8889,
+            "calories": 23.1110,
+            "proteinG": 0.0036,
+            "fiberG": 0,
+            "ironMg": 0.0098
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 20.7500,
+            "calories": 12.4500,
+            "proteinG": 0.0872,
+            "fiberG": 0.1660,
+            "ironMg": 0.0581
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.2332,
+            "calories": 0.6717,
+            "proteinG": 0.0001,
+            "fiberG": 0,
+            "ironMg": 0.0003
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 13.3873,
+            "calories": 48.7296,
+            "proteinG": 1.3829,
+            "fiberG": 0.3615,
+            "ironMg": 0.6212
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.0555,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0002
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 9.9853,
+            "calories": 37.8444,
+            "proteinG": 1.3131,
+            "fiberG": 1.0085,
+            "ironMg": 0.4244
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 13.2613,
+            "calories": 40.0490,
+            "proteinG": 0.4496,
+            "fiberG": 0.5305,
+            "ironMg": 0.2374
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 176,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 268.9,
+        "proteinG": 3.2,
+        "fiberG": 2.1,
+        "ironMg": 1.4,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 12.0000,
+            "calories": 106.0796,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0672
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 8.8889,
+            "calories": 23.1110,
+            "proteinG": 0.0036,
+            "fiberG": 0,
+            "ironMg": 0.0098
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 20.7500,
+            "calories": 12.4500,
+            "proteinG": 0.0872,
+            "fiberG": 0.1660,
+            "ironMg": 0.0581
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.2332,
+            "calories": 0.6717,
+            "proteinG": 0.0001,
+            "fiberG": 0,
+            "ironMg": 0.0003
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 13.3873,
+            "calories": 48.7296,
+            "proteinG": 1.3829,
+            "fiberG": 0.3615,
+            "ironMg": 0.6212
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.0555,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0002
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 9.9853,
+            "calories": 37.8444,
+            "proteinG": 1.3131,
+            "fiberG": 1.0085,
+            "ironMg": 0.4244
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 13.2613,
+            "calories": 40.0490,
+            "proteinG": 0.4496,
+            "fiberG": 0.5305,
+            "ironMg": 0.2374
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 177,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 268.9,
+        "proteinG": 3.2,
+        "fiberG": 2.1,
+        "ironMg": 1.4,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 12.0000,
+            "calories": 106.0796,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0672
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 8.8889,
+            "calories": 23.1110,
+            "proteinG": 0.0036,
+            "fiberG": 0,
+            "ironMg": 0.0098
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 20.7500,
+            "calories": 12.4500,
+            "proteinG": 0.0872,
+            "fiberG": 0.1660,
+            "ironMg": 0.0581
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.2332,
+            "calories": 0.6717,
+            "proteinG": 0.0001,
+            "fiberG": 0,
+            "ironMg": 0.0003
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 13.3873,
+            "calories": 48.7296,
+            "proteinG": 1.3829,
+            "fiberG": 0.3615,
+            "ironMg": 0.6212
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.0555,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0002
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 9.9853,
+            "calories": 37.8444,
+            "proteinG": 1.3131,
+            "fiberG": 1.0085,
+            "ironMg": 0.4244
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 13.2613,
+            "calories": 40.0490,
+            "proteinG": 0.4496,
+            "fiberG": 0.5305,
+            "ironMg": 0.2374
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 178,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 268.9,
+        "proteinG": 3.2,
+        "fiberG": 2.1,
+        "ironMg": 1.4,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 12.0000,
+            "calories": 106.0796,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0672
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 8.8889,
+            "calories": 23.1110,
+            "proteinG": 0.0036,
+            "fiberG": 0,
+            "ironMg": 0.0098
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 20.7500,
+            "calories": 12.4500,
+            "proteinG": 0.0872,
+            "fiberG": 0.1660,
+            "ironMg": 0.0581
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.2332,
+            "calories": 0.6717,
+            "proteinG": 0.0001,
+            "fiberG": 0,
+            "ironMg": 0.0003
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 13.3873,
+            "calories": 48.7296,
+            "proteinG": 1.3829,
+            "fiberG": 0.3615,
+            "ironMg": 0.6212
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.0555,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0002
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 9.9853,
+            "calories": 37.8444,
+            "proteinG": 1.3131,
+            "fiberG": 1.0085,
+            "ironMg": 0.4244
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 13.2613,
+            "calories": 40.0490,
+            "proteinG": 0.4496,
+            "fiberG": 0.5305,
+            "ironMg": 0.2374
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 179,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 268.9,
+        "proteinG": 3.2,
+        "fiberG": 2.1,
+        "ironMg": 1.4,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 12.0000,
+            "calories": 106.0796,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0672
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 8.8889,
+            "calories": 23.1110,
+            "proteinG": 0.0036,
+            "fiberG": 0,
+            "ironMg": 0.0098
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 20.7500,
+            "calories": 12.4500,
+            "proteinG": 0.0872,
+            "fiberG": 0.1660,
+            "ironMg": 0.0581
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.2332,
+            "calories": 0.6717,
+            "proteinG": 0.0001,
+            "fiberG": 0,
+            "ironMg": 0.0003
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 13.3873,
+            "calories": 48.7296,
+            "proteinG": 1.3829,
+            "fiberG": 0.3615,
+            "ironMg": 0.6212
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.0555,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0002
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 9.9853,
+            "calories": 37.8444,
+            "proteinG": 1.3131,
+            "fiberG": 1.0085,
+            "ironMg": 0.4244
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 13.2613,
+            "calories": 40.0490,
+            "proteinG": 0.4496,
+            "fiberG": 0.5305,
+            "ironMg": 0.2374
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 180,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 268.9,
+        "proteinG": 3.2,
+        "fiberG": 2.1,
+        "ironMg": 1.4,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 12.0000,
+            "calories": 106.0796,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0672
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 8.8889,
+            "calories": 23.1110,
+            "proteinG": 0.0036,
+            "fiberG": 0,
+            "ironMg": 0.0098
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 20.7500,
+            "calories": 12.4500,
+            "proteinG": 0.0872,
+            "fiberG": 0.1660,
+            "ironMg": 0.0581
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.2332,
+            "calories": 0.6717,
+            "proteinG": 0.0001,
+            "fiberG": 0,
+            "ironMg": 0.0003
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 13.3873,
+            "calories": 48.7296,
+            "proteinG": 1.3829,
+            "fiberG": 0.3615,
+            "ironMg": 0.6212
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.0555,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0002
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 9.9853,
+            "calories": 37.8444,
+            "proteinG": 1.3131,
+            "fiberG": 1.0085,
+            "ironMg": 0.4244
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 13.2613,
+            "calories": 40.0490,
+            "proteinG": 0.4496,
+            "fiberG": 0.5305,
+            "ironMg": 0.2374
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 181,
+      "title": "Pineapple Cookies",
+      "computation": {
+        "calories": 268.9,
+        "proteinG": 3.2,
+        "fiberG": 2.1,
+        "ironMg": 1.4,
+        "hasApprox": true,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 20,
+            "status": "Counted",
+            "grams": 12.0000,
+            "calories": 106.0796,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0672
+          },
+          {
+            "ingredientId": 21,
+            "status": "Counted",
+            "grams": 8.8889,
+            "calories": 23.1110,
+            "proteinG": 0.0036,
+            "fiberG": 0,
+            "ironMg": 0.0098
+          },
+          {
+            "ingredientId": 22,
+            "status": "CountedApprox",
+            "grams": 20.7500,
+            "calories": 12.4500,
+            "proteinG": 0.0872,
+            "fiberG": 0.1660,
+            "ironMg": 0.0581
+          },
+          {
+            "ingredientId": 23,
+            "status": "Counted",
+            "grams": 0.2332,
+            "calories": 0.6717,
+            "proteinG": 0.0001,
+            "fiberG": 0,
+            "ironMg": 0.0003
+          },
+          {
+            "ingredientId": 1,
+            "status": "Counted",
+            "grams": 13.3873,
+            "calories": 48.7296,
+            "proteinG": 1.3829,
+            "fiberG": 0.3615,
+            "ironMg": 0.6212
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 0.0555,
+            "calories": 0,
+            "proteinG": 0,
+            "fiberG": 0,
+            "ironMg": 0.0002
+          },
+          {
+            "ingredientId": 24,
+            "status": "Counted",
+            "grams": 9.9853,
+            "calories": 37.8444,
+            "proteinG": 1.3131,
+            "fiberG": 1.0085,
+            "ironMg": 0.4244
+          },
+          {
+            "ingredientId": 25,
+            "status": "Counted",
+            "grams": 13.2613,
+            "calories": 40.0490,
+            "proteinG": 0.4496,
+            "fiberG": 0.5305,
+            "ironMg": 0.2374
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 184,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 185,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 186,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 187,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 188,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    },
+    {
+      "mealId": 189,
+      "title": "Breakfast Sandwiches",
+      "computation": {
+        "calories": 585.1,
+        "proteinG": 38.0,
+        "fiberG": 6.3,
+        "ironMg": 8.7,
+        "hasApprox": false,
+        "uncountedNote": null,
+        "items": [
+          {
+            "ingredientId": 10,
+            "status": "Counted",
+            "grams": 150.0000,
+            "calories": 214.5000,
+            "proteinG": 18.8400,
+            "fiberG": 0,
+            "ironMg": 2.6250
+          },
+          {
+            "ingredientId": 44,
+            "status": "Counted",
+            "grams": 37.7993,
+            "calories": 10.9618,
+            "proteinG": 0.5745,
+            "fiberG": 0.7182,
+            "ironMg": 0.1588
+          },
+          {
+            "ingredientId": 34,
+            "status": "Counted",
+            "grams": 5.6667,
+            "calories": 1.3033,
+            "proteinG": 0.1621,
+            "fiberG": 0.1247,
+            "ironMg": 0.1536
+          },
+          {
+            "ingredientId": 37,
+            "status": "Counted",
+            "grams": 2.3625,
+            "calories": 5.9298,
+            "proteinG": 0.2455,
+            "fiberG": 0.5977,
+            "ironMg": 0.2294
+          },
+          {
+            "ingredientId": 47,
+            "status": "Counted",
+            "grams": 114.0000,
+            "calories": 267.9000,
+            "proteinG": 8.7780,
+            "fiberG": 3.0780,
+            "ironMg": 2.8500
+          },
+          {
+            "ingredientId": 72,
+            "status": "Counted",
+            "grams": 45.0000,
+            "calories": 71.5500,
+            "proteinG": 8.6400,
+            "fiberG": 1.8000,
+            "ironMg": 2.6550
+          },
+          {
+            "ingredientId": 48,
+            "status": "Counted",
+            "grams": 3.1667,
+            "calories": 12.9833,
+            "proteinG": 0.7679,
+            "fiberG": 0,
+            "ironMg": 0.0051
+          },
+          {
+            "ingredientId": 2,
+            "status": "Counted",
+            "grams": 1.0000,
+            "calories": 0.000,
+            "proteinG": 0.000,
+            "fiberG": 0.000,
+            "ironMg": 0.0033
+          }
+        ]
+      }
+    }
+  ]
+}
