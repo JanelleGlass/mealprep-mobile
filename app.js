@@ -174,7 +174,7 @@ async function flushOutbox(){
     saveOutbox();
     setSync('synced · ' + new Date().toLocaleTimeString());
   } catch (e) {
-    setSync('saved on phone — will sync when online', true);
+    setSync('saved on phone — sync failed: ' + (e.message || 'offline'), true);
   }
   renderAll();
 }
@@ -553,11 +553,11 @@ function openSetup(){
 document.getElementById('gearBtn').addEventListener('click', openSetup);
 document.getElementById('setupCancel').addEventListener('click', () => document.getElementById('setupOverlay').classList.remove('show'));
 document.getElementById('setupSave').addEventListener('click', () => {
-  cfg = {
-    repo: document.getElementById('setupRepo').value.trim(),
-    path: document.getElementById('setupPath').value.trim(),
-    token: document.getElementById('setupToken').value.trim(),
-  };
+  const repo = document.getElementById('setupRepo').value.trim();
+  const token = document.getElementById('setupToken').value.trim();
+  if (!repo || !repo.includes('/')){ setSync('repository must look like owner/name', true); return; }
+  if (!token && repo !== 'local'){ setSync('paste your personal access token', true); return; }
+  cfg = { repo, path: document.getElementById('setupPath').value.trim(), token };
   localStorage.setItem(LS.cfg, JSON.stringify(cfg));
   document.getElementById('setupOverlay').classList.remove('show');
   loadAll();

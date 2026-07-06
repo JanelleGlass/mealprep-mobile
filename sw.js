@@ -1,4 +1,4 @@
-const CACHE = 'mealprep-mobile-v1';
+const CACHE = 'mealprep-mobile-v2';
 const SHELL = ['./', 'index.html', 'app.css', 'app.js', 'manifest.webmanifest', 'icon-180.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
