@@ -77,7 +77,7 @@
   <section id="tab-plan" class="tab">
     <div class="datenav">
       <button id="planPrevWeek" aria-label="Previous week">←</button>
-      <div class="dateLabel"><span id="planWeekLabel"></span><span class="dateSub">planned meals</span></div>
+      <div class="dateLabel"><span id="planWeekLabel"></span><span class="dateSub">tap + to plan a meal</span></div>
       <button id="planNextWeek" aria-label="Next week">→</button>
     </div>
     <div id="planDays"></div>
@@ -92,9 +92,14 @@
   <section id="tab-pantry" class="tab">
     <div class="segRow">
       <button class="segBtn active" data-seg="pantry">On hand</button>
-      <button class="segBtn" data-seg="stores">Stores</button>
+      <button class="segBtn" data-seg="ingredients">Ingredients</button>
     </div>
     <div id="pantryRoot"></div>
+  </section>
+
+  <!-- SETTINGS TAB (via gear) -->
+  <section id="tab-settings" class="tab">
+    <div id="settingsBody"></div>
   </section>
 </div>
 
@@ -106,24 +111,47 @@
   <button class="tabBtn" data-tab="pantry"><span class="tIcon">☰</span>Pantry</button>
 </nav>
 
-<!-- Setup overlay -->
-<div class="overlay" id="setupOverlay">
+<!-- Bottom sheet (editors) -->
+<div class="sheetWrap" id="sheet">
+  <div class="sheetPanel">
+    <div class="sheetHead"><span id="sheetTitle"></span><button class="gear" id="sheetClose">✕</button></div>
+    <div class="sheetBody" id="sheetBody"></div>
+  </div>
+</div>
+
+<!-- Connect overlay -->
+<div class="overlay" id="connectOverlay">
   <div class="panel">
-    <h2>Connect to your data</h2>
-    <p>This app reads and writes your MealPrep data in a private GitHub repository. Create a fine-grained personal access token limited to that one repo (Contents: read &amp; write), then paste it here. It is stored only on this device.</p>
-    <span class="miniLabel">repository (owner/name)</span>
-    <input type="text" id="setupRepo" value="JanelleGlass/mealprep-data" autocomplete="off">
-    <span class="miniLabel">folder path</span>
-    <input type="text" id="setupPath" value="mealprep-backup" autocomplete="off">
-    <span class="miniLabel">personal access token</span>
-    <input type="password" id="setupToken" placeholder="github_pat_..." autocomplete="off">
+    <h2>Connect to your database</h2>
+    <p>From your Supabase project: Project Settings → Data API. Both values are safe to store on this device.</p>
+    <span class="miniLabel">project url</span>
+    <input type="text" id="cnUrl" placeholder="https://xxxx.supabase.co" autocomplete="off">
+    <span class="miniLabel">anon public key</span>
+    <input type="password" id="cnKey" placeholder="eyJ..." autocomplete="off">
     <div class="btnRow">
-      <button class="cancel" id="setupCancel">cancel</button>
-      <button class="save" id="setupSave">save &amp; sync</button>
+      <button class="cancel" id="cnCancel">cancel</button>
+      <button class="save" id="cnSave">save</button>
     </div>
   </div>
 </div>
 
-<script src="app.js"></script>
+<!-- Sign-in overlay -->
+<div class="overlay" id="signinOverlay">
+  <div class="panel">
+    <h2>Sign in</h2>
+    <p>The email + password you created in Supabase (Authentication → Users). You stay signed in on this device.</p>
+    <span class="miniLabel">email</span>
+    <input type="text" id="siEmail" autocomplete="username">
+    <span class="miniLabel">password</span>
+    <input type="password" id="siPass" autocomplete="current-password">
+    <div class="macros" id="siMsg" style="margin-bottom:8px;"></div>
+    <div class="btnRow">
+      <button class="cancel" id="siCancel">cancel</button>
+      <button class="save" id="siGo">sign in</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
 </body>
 </html>

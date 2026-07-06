@@ -130,6 +130,26 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .tabBtn .tIcon{font-size:16px;line-height:1;}
 .tabBtn.active{color:var(--fiber);font-weight:600;}
 
+.sheetWrap{position:fixed;inset:0;background:rgba(35,41,33,0.55);display:none;align-items:flex-end;z-index:45;}
+.sheetWrap.show{display:flex;}
+.sheetPanel{background:var(--card);border-top:1px solid var(--rule);border-radius:16px 16px 0 0;width:100%;max-height:88vh;display:flex;flex-direction:column;}
+.sheetHead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 6px;font-family:'Fraunces',serif;font-weight:600;font-size:16px;}
+.sheetBody{padding:6px 16px calc(env(safe-area-inset-bottom) + 16px);overflow-y:auto;}
+.sheetBody input[type=text],.sheetBody input[type=number],.sheetBody select{margin-bottom:8px;}
+.sheetBody select{font-family:'IBM Plex Sans',sans-serif;background:#fff;border:1px solid var(--rule);border-radius:8px;padding:8px 9px;font-size:16px;color:var(--ink);width:100%;}
+.sheetBody .btnRow{display:flex;gap:8px;margin-top:14px;}
+.sheetBody .btnRow button{flex:1;border:none;border-radius:8px;padding:10px;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:12px;cursor:pointer;}
+.sheetBody .save{background:var(--ink);color:var(--paper);}
+.sheetBody .cancel{background:#fff;border:1px solid var(--rule);color:var(--ink);}
+.qtyIn{width:64px !important;padding:4px 6px !important;font-size:13px !important;text-align:right;}
+.warn{font-size:10px;color:#7A4A26;margin-top:2px;}
+.macros{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);}
+
+.pickList{max-height:45vh;overflow-y:auto;margin:8px 0;}
+.pickRow{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--rule);border-radius:8px;padding:9px 10px;margin-bottom:6px;font-size:13px;color:var(--ink);cursor:pointer;font-family:'IBM Plex Sans',sans-serif;}
+.pickRow .pkMain{display:block;}
+.pickRow .qty{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-soft);}
+
 .overlay{position:fixed;inset:0;background:rgba(35,41,33,0.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
 .overlay.show{display:flex;}
 .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--radius);padding:20px;max-width:440px;width:100%;}

@@ -1,5 +1,8 @@
-const CACHE = 'mealprep-mobile-v2';
-const SHELL = ['./', 'index.html', 'app.css', 'app.js', 'manifest.webmanifest', 'icon-180.png', 'icon-512.png'];
+const CACHE = 'mealprep-mobile-v3';
+const SHELL = ['./', 'index.html', 'app.css', 'manifest.webmanifest', 'icon-180.png', 'icon-512.png',
+  'js/app.js', 'js/supa.js', 'js/store.js', 'js/nutrition.js', 'js/backup.js',
+  'js/ui/common.js', 'js/ui/log.js', 'js/ui/plan.js', 'js/ui/recipes.js', 'js/ui/pantry.js',
+  'js/ui/settings.js', 'js/ui/pickers.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -14,7 +17,7 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  if (url.hostname === 'api.github.com') return; // data goes to the network (app.js handles offline caching)
+  if (url.hostname.endsWith('.supabase.co') || url.hostname === 'api.github.com') return;
   if (e.request.method !== 'GET') return;
   e.respondWith(
     caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
