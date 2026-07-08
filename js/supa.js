@@ -10,7 +10,8 @@ export let client = null;
 export const demoMode = () => !!cfg && cfg.url === 'demo';
 
 export function saveConfig(url, anonKey){
-  cfg = { url: url.trim().replace(/\/+$/, ''), anonKey: anonKey.trim() };
+  const cleaned = url.trim().replace(/\/+$/, '').replace(/\/rest\/v1$/, '').replace(/\/+$/, '');
+  cfg = { url: cleaned, anonKey: anonKey.trim() };
   localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
   client = null;
   return init();
