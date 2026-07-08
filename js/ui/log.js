@@ -163,12 +163,61 @@ function renderBody(){
   }
 }
 
+/* History suggestions: distinct past entry names matching the typed term,
+   ranked by frequency then recency. Tapping one prefills the whole form. */
+function historySuggestions(term){
+  const byName = new Map();
+  for (const e of allFoodEntries()){
+    const k = (e.name || '').toLowerCase();
+    if (!k) continue;
+    const cur = byName.get(k);
+    if (cur){
+      cur.count++;
+      if ((e.date || '') > (cur.entry.date || '')) cur.entry = e;
+    } else {
+      byName.set(k, { count: 1, entry: e });
+    }
+  }
+  const t = term.toLowerCase();
+  return [...byName.values()]
+    .filter(x => x.entry.name.toLowerCase().includes(t))
+    .sort((a, b) => b.count - a.count || ((b.entry.date || '') < (a.entry.date || '') ? -1 : 1))
+    .slice(0, 6)
+    .map(x => x.entry);
+}
+
+function renderSuggestions(term){
+  const box = document.getElementById('nameSuggest');
+  if (!term || term.trim().length < 2){ box.innerHTML = ''; return; }
+  const matches = historySuggestions(term.trim());
+  box.innerHTML = matches.map((e, i) => `
+    <button type="button" class="suggestRow" data-s="${i}">
+      <span class="plantDot ${e.is_plant ? '' : 'hidden'}"></span>
+      <span class="sName">${esc(e.name)}</span>
+      <span class="sMacros">${Math.round(e.calories)} cal · ${(+e.protein_g).toFixed(1)}g P</span>
+    </button>`).join('');
+  box.querySelectorAll('.suggestRow').forEach(b => b.addEventListener('click', () => {
+    const e = matches[+b.getAttribute('data-s')];
+    document.getElementById('fName').value = e.name;
+    document.getElementById('fCal').value = Math.round(e.calories);
+    document.getElementById('fProtein').value = +e.protein_g || 0;
+    document.getElementById('fFiber').value = +e.fiber_g || 0;
+    document.getElementById('fIron').value = +e.iron_mg || 0;
+    document.getElementById('fPlant').checked = !!e.is_plant;
+    document.getElementById('addBtn').disabled = false;
+    box.innerHTML = '';
+  }));
+}
+
 export function wireLogTab(rerenderAll){
   document.getElementById('prevDay').addEventListener('click', () => { logState.currentDate = new Date(logState.currentDate.getTime() - 86400000); renderLog(); });
   document.getElementById('nextDay').addEventListener('click', () => { logState.currentDate = new Date(logState.currentDate.getTime() + 86400000); renderLog(); });
 
   const nameInput = document.getElementById('fName');
-  nameInput.addEventListener('input', () => { document.getElementById('addBtn').disabled = !nameInput.value.trim(); });
+  nameInput.addEventListener('input', () => {
+    document.getElementById('addBtn').disabled = !nameInput.value.trim();
+    renderSuggestions(nameInput.value);
+  });
   document.getElementById('addForm').addEventListener('submit', e => {
     e.preventDefault();
     const name = nameInput.value.trim();
@@ -184,6 +233,7 @@ export function wireLogTab(rerenderAll){
     ['fName', 'fCal', 'fProtein', 'fFiber', 'fIron'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('fPlant').checked = false;
     document.getElementById('addBtn').disabled = true;
+    document.getElementById('nameSuggest').innerHTML = '';
   });
 
   document.getElementById('saveWaist').addEventListener('click', () => {
