@@ -1,6 +1,6 @@
 /* Log tab: rings, planned-meal tap-to-log, quick chips, manual entry,
    entries list, body card. */
-import { cached, queueFoodEntry, queueBodyMeasurement, deleteLogEntry } from '../store.js';
+import { cached, queueFoodEntry, queueBodyMeasurement, deleteLogEntry, setPreference } from '../store.js';
 import { computeForMeal } from '../nutrition.js';
 import { esc, dateKey, isToday, ringSVG, targets, allFoodEntries, allBodyMeasurements,
          buildMealCalc, MEAL_TYPES, entryNameWithNote, macroLine } from './common.js';
@@ -17,6 +17,13 @@ function weeklyPlants(asOf){
   const end = dateKey(asOf);
   const start = dateKey(new Date(asOf.getTime() - 6 * 86400000));
   return allFoodEntries().filter(e => e.is_plant && (e.date || '').slice(0, 10) >= start && (e.date || '').slice(0, 10) <= end).length;
+}
+
+/* Days opted out of averages, synced via the LogSkipDates preference
+   (comma-separated YYYY-MM-DD list). */
+export function skippedDates(){
+  const row = (cached('user_preferences') || []).find(p => p.key === 'LogSkipDates');
+  return new Set((row?.value || '').split(',').filter(Boolean));
 }
 
 export function mealsForDate(key){
@@ -68,7 +75,8 @@ export function renderLog(){
   const T = targets();
   const key = dateKey(logState.currentDate);
   document.getElementById('dateLabel').textContent = logState.currentDate.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
-  document.getElementById('dateSub').textContent = isToday(logState.currentDate) ? 'today' : key;
+  document.getElementById('dateSub').textContent = (isToday(logState.currentDate) ? 'today' : key)
+    + (skippedDates().has(key) ? ' · skipped in averages' : '');
 
   const entries = entriesForDate(key);
   const t = entries.reduce((a, e) => {
@@ -108,7 +116,50 @@ export function renderLog(){
 
   renderQuick();
   renderEntries(entries);
+  renderAverages(key);
   renderBody();
+}
+
+/* Averages over complete days: today, empty days, and opted-out days don't count. */
+function averageLine(days, skip){
+  const t = { cal: 0, protein: 0, fiber: 0, iron: 0 };
+  let counted = 0;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  for (let i = 1; i <= days; i++){
+    const k = dateKey(new Date(today.getTime() - i * 86400000));
+    if (skip.has(k)) continue;
+    const es = entriesForDate(k);
+    if (!es.length) continue;
+    counted++;
+    for (const e of es){
+      t.cal += +e.calories || 0; t.protein += +e.protein_g || 0;
+      t.fiber += +e.fiber_g || 0; t.iron += +e.iron_mg || 0;
+    }
+  }
+  const val = counted
+    ? `${Math.round(t.cal / counted)} cal · ${Math.round(t.protein / counted)}g P · ${(t.fiber / counted).toFixed(1)}g fib · ${(t.iron / counted).toFixed(1)}mg Fe`
+    : 'no data';
+  return `<div class="listRow"><span>last ${days} days${counted ? ` <span style="color:var(--ink-soft)">(${counted}d)</span>` : ''}</span><span class="qty">${val}</span></div>`;
+}
+
+function renderAverages(key){
+  const skip = skippedDates();
+  const el = document.getElementById('avgCard');
+  const label = isToday(logState.currentDate) ? 'today' : key;
+  el.innerHTML = averageLine(7, skip) + averageLine(30, skip)
+    + `<div class="cSub" style="margin-top:6px;">Per logged day. Today, days with nothing logged, and skipped days aren't counted.</div>
+       <div class="quickRow" style="margin-top:8px;"><button class="quickChip" id="avgSkip">${skip.has(key) ? `↺ include ${label} in averages` : `✕ skip ${label} in averages`}</button></div>
+       <div class="cSub" id="avgMsg"></div>`;
+  el.querySelector('#avgSkip').addEventListener('click', async () => {
+    try {
+      const s = skippedDates();
+      s.has(key) ? s.delete(key) : s.add(key);
+      await setPreference('LogSkipDates', [...s].sort().join(','));
+      renderLog();
+    } catch (err) {
+      document.getElementById('avgMsg').textContent = 'save failed: ' + err.message;
+    }
+  });
 }
 
 function renderQuick(){

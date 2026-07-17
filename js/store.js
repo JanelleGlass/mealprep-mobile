@@ -134,7 +134,11 @@ export async function getPreference(key, dflt){
 }
 
 export async function setPreference(key, value){
-  if (demoMode()) return;
+  if (demoMode()){
+    const existing = (S.tables.user_preferences || []).find(p => p.key === key);
+    demoWrite('user_preferences', existing ? { id: existing.id, value: String(value) } : { key, value: String(value) });
+    return;
+  }
   if (!init()) throw new Error('not connected');
   const { error } = await client.from('user_preferences')
     .upsert({ key, value: String(value) }, { onConflict: 'key' });
