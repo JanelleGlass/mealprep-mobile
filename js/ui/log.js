@@ -84,6 +84,15 @@ export function renderLog(){
     <div class="ringCard">${ringSVG(t.fiber / T.fiber, 'var(--fiber)')}<div class="ringVal">${t.fiber.toFixed(1)}g</div><div class="ringTarget">/ ${T.fiber}g</div><div class="ringLabel">fiber</div></div>
     <div class="ringCard">${ringSVG(t.iron / T.iron, 'var(--iron)')}<div class="ringVal">${t.iron.toFixed(1)}mg</div><div class="ringTarget">/ ${T.iron}mg</div><div class="ringLabel">iron</div></div>`;
 
+  const left = (target, got, unit, dp = 0) => {
+    const v = target - got;
+    return v > 0 ? (dp ? v.toFixed(dp) : Math.round(v)) + unit : '✓';
+  };
+  document.getElementById('remainBar').innerHTML =
+    `<span class="pLabel">left today</span><span class="rVal">`
+    + `${left(T.calMax, t.cal, ' cal')} · ${left(T.proteinMin, t.protein, 'g P')}`
+    + ` · ${left(T.fiber, t.fiber, 'g fiber', 1)} · ${left(T.iron, t.iron, 'mg Fe', 1)}</span>`;
+
   const flag = document.getElementById('lowFlag');
   const future = key > dateKey(new Date());
   if (t.cal > 0 && t.cal < T.lowFloor && !future){
