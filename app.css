@@ -26,6 +26,8 @@ header{display:flex;align-items:baseline;justify-content:space-between;margin-bo
 .datenav button{background:none;border:none;font-family:'IBM Plex Mono',monospace;font-size:18px;color:var(--ink);cursor:pointer;padding:4px 10px;}
 .dateLabel{font-family:'Fraunces',serif;font-weight:600;font-size:15px;text-align:center;flex:1;}
 .dateSub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-soft);text-align:center;display:block;margin-top:2px;}
+.todayBtn{display:none;margin-top:4px;font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:2px 10px;cursor:pointer;color:var(--ink);}
+.todayBtn.show{display:inline-block;}
 
 .rings{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
 .ringCard{background:var(--card);border:1px solid var(--rule);border-radius:var(--radius);padding:10px 4px 12px;text-align:center;}

@@ -77,6 +77,7 @@ export function renderLog(){
   document.getElementById('dateLabel').textContent = logState.currentDate.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
   document.getElementById('dateSub').textContent = (isToday(logState.currentDate) ? 'today' : key)
     + (skippedDates().has(key) ? ' · skipped in averages' : '');
+  document.getElementById('todayBtn').classList.toggle('show', !isToday(logState.currentDate));
 
   const entries = entriesForDate(key);
   const t = entries.reduce((a, e) => {
@@ -269,6 +270,9 @@ function renderSuggestions(term){
 export function wireLogTab(rerenderAll){
   document.getElementById('prevDay').addEventListener('click', () => { logState.currentDate = new Date(logState.currentDate.getTime() - 86400000); renderLog(); });
   document.getElementById('nextDay').addEventListener('click', () => { logState.currentDate = new Date(logState.currentDate.getTime() + 86400000); renderLog(); });
+  document.getElementById('todayBtn').addEventListener('click', () => {
+    logState.currentDate = new Date(); logState.currentDate.setHours(0, 0, 0, 0); renderLog();
+  });
 
   const nameInput = document.getElementById('fName');
   nameInput.addEventListener('input', () => {

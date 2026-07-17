@@ -1,4 +1,4 @@
-const CACHE = 'mealprep-mobile-v9';
+const CACHE = 'mealprep-mobile-v10';
 const SHELL = ['./', 'index.html', 'app.css', 'manifest.webmanifest', 'icon-180.png', 'icon-512.png',
   'js/app.js', 'js/supa.js', 'js/store.js', 'js/nutrition.js', 'js/backup.js',
   'js/ui/common.js', 'js/ui/log.js', 'js/ui/plan.js', 'js/ui/recipes.js', 'js/ui/pantry.js',
