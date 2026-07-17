@@ -9,12 +9,19 @@ export const startOfWeek = d => { const x = startOfDay(d); x.setDate(x.getDate()
 export const MEAL_TYPES = ['breakfast', 'lunch', 'dinner'];
 export const COOKING_UNITS = ['tsp','tbsp','fl oz','cup','pt','qt','gal','ml','L','oz','lb','g','kg','pinch','dash','clove','slice','piece','whole','can','bunch','sprig','head','stalk','to taste'];
 
-export function ringSVG(pct, color, size = 58, stroke = 6){
+/* center: {text, sub} rendered inside the donut (e.g. remaining amount + 'left') */
+export function ringSVG(pct, color, size = 58, stroke = 6, center = null){
   const r = (size - stroke) / 2, c = 2 * Math.PI * r, dash = Math.min(Math.max(pct, 0), 1) * c;
+  const centerSVG = !center ? '' : `
+    <text x="${size/2}" y="${size/2 + (center.sub ? 2 : 5)}" text-anchor="middle"
+      font-family="'IBM Plex Mono',monospace" font-weight="600"
+      font-size="${center.text.length > 4 ? 11 : 13}" fill="var(--ink)">${center.text}</text>
+    ${center.sub ? `<text x="${size/2}" y="${size/2 + 12}" text-anchor="middle" font-size="6.5"
+      letter-spacing="0.06em" fill="var(--ink-soft)">${center.sub}</text>` : ''}`;
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
     <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--rule)" stroke-width="${stroke}"/>
     <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}"
-      stroke-linecap="round" stroke-dasharray="${dash} ${c}" transform="rotate(-90 ${size/2} ${size/2})"/>
+      stroke-linecap="round" stroke-dasharray="${dash} ${c}" transform="rotate(-90 ${size/2} ${size/2})"/>${centerSVG}
   </svg>`;
 }
 

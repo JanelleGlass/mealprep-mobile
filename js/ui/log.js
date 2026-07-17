@@ -78,20 +78,15 @@ export function renderLog(){
 
   const calColor = t.cal < T.calMin ? 'var(--protein)' : (t.cal > T.calMax ? 'var(--iron)' : 'var(--fiber)');
   const proteinColor = t.protein < T.proteinMin ? 'var(--calorie)' : 'var(--fiber)';
-  document.getElementById('rings').innerHTML = `
-    <div class="ringCard">${ringSVG(t.cal / T.calMax, calColor)}<div class="ringVal">${Math.round(t.cal)}</div><div class="ringTarget">${T.calMin}-${T.calMax}</div><div class="ringLabel">cal</div></div>
-    <div class="ringCard">${ringSVG(t.protein / T.proteinMax, proteinColor)}<div class="ringVal">${Math.round(t.protein)}g</div><div class="ringTarget">${T.proteinMin}-${T.proteinMax}</div><div class="ringLabel">protein</div></div>
-    <div class="ringCard">${ringSVG(t.fiber / T.fiber, 'var(--fiber)')}<div class="ringVal">${t.fiber.toFixed(1)}g</div><div class="ringTarget">/ ${T.fiber}g</div><div class="ringLabel">fiber</div></div>
-    <div class="ringCard">${ringSVG(t.iron / T.iron, 'var(--iron)')}<div class="ringVal">${t.iron.toFixed(1)}mg</div><div class="ringTarget">/ ${T.iron}mg</div><div class="ringLabel">iron</div></div>`;
-
-  const left = (target, got, unit, dp = 0) => {
+  const left = (target, got, dp = 0) => {
     const v = target - got;
-    return v > 0 ? (dp ? v.toFixed(dp) : Math.round(v)) + unit : '✓';
+    return v > 0 ? { text: dp ? v.toFixed(dp) : String(Math.round(v)), sub: 'left' } : { text: '✓', sub: '' };
   };
-  document.getElementById('remainBar').innerHTML =
-    `<span class="pLabel">left today</span><span class="rVal">`
-    + `${left(T.calMax, t.cal, ' cal')} · ${left(T.proteinMin, t.protein, 'g P')}`
-    + ` · ${left(T.fiber, t.fiber, 'g fiber', 1)} · ${left(T.iron, t.iron, 'mg Fe', 1)}</span>`;
+  document.getElementById('rings').innerHTML = `
+    <div class="ringCard">${ringSVG(t.cal / T.calMax, calColor, 58, 6, left(T.calMax, t.cal))}<div class="ringVal">${Math.round(t.cal)}</div><div class="ringTarget">${T.calMin}-${T.calMax}</div><div class="ringLabel">cal</div></div>
+    <div class="ringCard">${ringSVG(t.protein / T.proteinMax, proteinColor, 58, 6, left(T.proteinMin, t.protein))}<div class="ringVal">${Math.round(t.protein)}g</div><div class="ringTarget">${T.proteinMin}-${T.proteinMax}</div><div class="ringLabel">protein</div></div>
+    <div class="ringCard">${ringSVG(t.fiber / T.fiber, 'var(--fiber)', 58, 6, left(T.fiber, t.fiber, 1))}<div class="ringVal">${t.fiber.toFixed(1)}g</div><div class="ringTarget">/ ${T.fiber}g</div><div class="ringLabel">fiber</div></div>
+    <div class="ringCard">${ringSVG(t.iron / T.iron, 'var(--iron)', 58, 6, left(T.iron, t.iron, 1))}<div class="ringVal">${t.iron.toFixed(1)}mg</div><div class="ringTarget">/ ${T.iron}mg</div><div class="ringLabel">iron</div></div>`;
 
   const flag = document.getElementById('lowFlag');
   const future = key > dateKey(new Date());
