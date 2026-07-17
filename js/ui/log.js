@@ -90,7 +90,9 @@ export function renderLog(){
 
   const flag = document.getElementById('lowFlag');
   const future = key > dateKey(new Date());
-  if (t.cal > 0 && t.cal < T.lowFloor && !future){
+  // for today, hold the low-intake nag until 5pm — being under the floor mid-day is normal
+  const dayFarEnough = !isToday(logState.currentDate) || new Date().getHours() >= 17;
+  if (t.cal > 0 && t.cal < T.lowFloor && !future && dayFarEnough){
     flag.textContent = `Logged so far: ${Math.round(t.cal)} cal. If the day's done, that's under your ~${T.lowFloor} soft floor — fine occasionally, but sustained low days can disrupt cycles and recovery. If you're still eating, ignore this.`;
     flag.classList.add('show');
   } else flag.classList.remove('show');
