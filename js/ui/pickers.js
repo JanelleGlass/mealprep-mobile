@@ -1,7 +1,7 @@
 /* Overlay pickers: ingredient list picker and live USDA nutrition search.
    Promise-based: resolve with the chosen row, or null on cancel. */
 import { cached, searchNutrition } from '../store.js';
-import { esc } from './common.js';
+import { esc, PANTRY_CATEGORIES } from './common.js';
 import { tryConvertToGrams } from '../nutrition.js';
 
 function overlay(html){
@@ -78,6 +78,20 @@ export function pickNutrition(unitForSanity){
       }, 350);
     });
     ov.querySelector('#nuCancel').addEventListener('click', () => { ov.remove(); resolve(null); });
+  });
+}
+
+export function pickCategory(current){
+  return new Promise(resolve => {
+    const ov = overlay(`
+      <h2>Pantry section</h2>
+      <div class="pickList">${PANTRY_CATEGORIES.map(c =>
+        `<button class="pickRow" data-cat="${esc(c)}">${esc(c)}${c === current ? ' <span class="qty">✓</span>' : ''}</button>`).join('')}</div>
+      <div class="btnRow"><button class="cancel" id="pcCancel">cancel</button></div>`);
+    ov.querySelectorAll('.pickRow').forEach(b => b.addEventListener('click', () => {
+      ov.remove(); resolve(b.getAttribute('data-cat'));
+    }));
+    ov.querySelector('#pcCancel').addEventListener('click', () => { ov.remove(); resolve(null); });
   });
 }
 

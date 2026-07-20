@@ -8,6 +8,8 @@ export const startOfDay = d => { const x = new Date(d); x.setHours(0, 0, 0, 0); 
 export const startOfWeek = d => { const x = startOfDay(d); x.setDate(x.getDate() - x.getDay()); return x; };
 export const MEAL_TYPES = ['breakfast', 'lunch', 'dinner'];
 export const COOKING_UNITS = ['tsp','tbsp','fl oz','cup','pt','qt','gal','ml','L','oz','lb','g','kg','pinch','dash','clove','slice','piece','whole','can','bunch','sprig','head','stalk','to taste'];
+/* Pantry sections, in display order. Items with an unknown/empty category render under 'Other'. */
+export const PANTRY_CATEGORIES = ['Fridge','Freezer','Produce','Dry Goods','Canned Goods','Baking','Spices & Seasonings','Sauces & Oils','Drinks','Other'];
 
 /* center: {text, sub} rendered inside the donut (e.g. remaining amount + 'left') */
 export function ringSVG(pct, color, size = 58, stroke = 6, center = null){

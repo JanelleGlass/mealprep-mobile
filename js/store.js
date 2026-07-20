@@ -227,7 +227,10 @@ async function demoLoad(){
       ingredients: fx.recipeIngredients.filter(ri => ri.recipeId === r.id).map(ri => ({ recipe_id: r.id, ingredient_id: ri.ingredientId, quantity: ri.quantity })) })),
     meals: fx.meals.map(m => ({ id: m.id, date: '2026-07-06', meal_type: 0, title: m.title, servings: m.servings, recipe_id: m.recipeId,
       ingredients: fx.mealIngredients.filter(mi => mi.mealId === m.id).map(mi => ({ meal_id: m.id, ingredient_id: mi.ingredientId, quantity: mi.quantity })) })).slice(0, 3),
-    pantry_items: [], quick_add_items: [{ id: 1, name: 'Soft boiled egg', calories: 70, protein_g: 6, fiber_g: 0, iron_mg: 0.6, is_plant: false, sort_order: 0 }],
+    pantry_items: fx.ingredients.slice(0, 6).map((ing, i) => ({
+      id: i + 1, ingredient_id: ing.id, quantity: i + 1,
+      category: ['Fridge', 'Freezer', 'Produce', 'Dry Goods', 'Spices & Seasonings', ''][i],
+    })), quick_add_items: [{ id: 1, name: 'Soft boiled egg', calories: 70, protein_g: 6, fiber_g: 0, iron_mg: 0.6, is_plant: false, sort_order: 0 }],
     user_preferences: [], food_log_entries: [], body_measurements: [],
   };
   return demoData;

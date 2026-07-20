@@ -1,8 +1,8 @@
 /* Pantry tab (editable quantities + add) and the ingredient editor
    (name/unit/price + USDA nutrition linking with live conversion check). */
 import { cached, upsertRow, deleteRow } from '../store.js';
-import { esc, COOKING_UNITS, ingredientById, openSheet, closeSheet } from './common.js';
-import { pickIngredient, pickNutrition, confirmDialog } from './pickers.js';
+import { esc, COOKING_UNITS, PANTRY_CATEGORIES, ingredientById, openSheet, closeSheet } from './common.js';
+import { pickIngredient, pickNutrition, pickCategory, confirmDialog } from './pickers.js';
 import { tryConvertToGrams } from '../nutrition.js';
 
 const seg = { mode: 'pantry' };
@@ -15,11 +15,17 @@ export function renderPantry(){
   if (seg.mode === 'pantry'){
     const items = (cached('pantry_items') || []).map(p => ({ p, ing: ingredientById(p.ingredient_id) }))
       .filter(x => x.ing).sort((a, b) => a.ing.name.localeCompare(b.ing.name));
-    root.innerHTML = '<div class="card">' + (items.map(({ p, ing }) =>
-      `<div class="listRow"><span>${esc(ing.name)}</span>
+    const rowHtml = ({ p, ing }) =>
+      `<div class="listRow"><span data-cat="${p.id}" style="cursor:pointer;">${esc(ing.name)}</span>
         <span class="qty"><input type="number" class="qtyIn" data-p="${p.id}" step="0.5" value="${p.quantity}"> ${esc(ing.unit)}
-        <button class="del" data-rmp="${p.id}">✕</button></span></div>`).join('')
-      || '<div class="empty">Pantry is empty</div>') + '</div>'
+        <button class="del" data-rmp="${p.id}">✕</button></span></div>`;
+    const groups = new Map(PANTRY_CATEGORIES.map(c => [c, []]));
+    items.forEach(x => groups.get(PANTRY_CATEGORIES.includes(x.p.category) ? x.p.category : 'Other').push(x));
+    root.innerHTML = (items.length
+      ? [...groups].filter(([, xs]) => xs.length).map(([cat, xs]) =>
+          `<div class="sectionTitle">${esc(cat)} <span class="qty">${xs.length}</span></div>
+           <div class="card">` + xs.map(rowHtml).join('') + '</div>').join('')
+      : '<div class="card"><div class="empty">Pantry is empty</div></div>')
       + '<button class="addBtn" id="pAdd" style="margin-top:8px;">＋ add pantry item</button>';
     root.querySelectorAll('.qtyIn').forEach(inp => inp.addEventListener('change', async () => {
       try { await upsertRow('pantry_items', { id: +inp.getAttribute('data-p'), quantity: parseFloat(inp.value) || 0 }); }
@@ -29,11 +35,22 @@ export function renderPantry(){
       await deleteRow('pantry_items', +b.getAttribute('data-rmp'));
       renderPantry();
     }));
+    root.querySelectorAll('[data-cat]').forEach(el => el.addEventListener('click', async () => {
+      const p = (cached('pantry_items') || []).find(x => x.id === +el.getAttribute('data-cat'));
+      if (!p) return;
+      const cat = await pickCategory(PANTRY_CATEGORIES.includes(p.category) ? p.category : 'Other');
+      if (cat === null || cat === p.category) return;
+      await upsertRow('pantry_items', { id: p.id, category: cat });
+      renderPantry();
+    }));
     root.querySelector('#pAdd').addEventListener('click', async () => {
       const ing = await pickIngredient();
       if (!ing) return;
       const existing = (cached('pantry_items') || []).find(p => p.ingredient_id === ing.id);
-      if (!existing) await upsertRow('pantry_items', { ingredient_id: ing.id, quantity: 1 });
+      if (!existing){
+        const cat = await pickCategory(null);
+        await upsertRow('pantry_items', { ingredient_id: ing.id, quantity: 1, category: cat ?? '' });
+      }
       renderPantry();
     });
   } else {
