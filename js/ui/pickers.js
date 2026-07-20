@@ -3,6 +3,7 @@
 import { cached, searchNutrition } from '../store.js';
 import { esc, PANTRY_CATEGORIES } from './common.js';
 import { tryConvertToGrams } from '../nutrition.js';
+import { openIngredientEditor } from './pantry.js';
 
 function overlay(html){
   const ov = document.createElement('div');
@@ -12,7 +13,11 @@ function overlay(html){
   return ov;
 }
 
-export function pickIngredient(){
+/* opts.allowCreate: show a "new ingredient" row that opens the ingredient
+   editor (name prefilled from the search term) and resolves with the created
+   row. The editor takes over the bottom sheet, so callers with their own
+   sheet open must re-open and redraw it after this resolves. */
+export function pickIngredient(opts = {}){
   return new Promise(resolve => {
     const ov = overlay(`
       <h2>Choose ingredient</h2>
@@ -24,13 +29,18 @@ export function pickIngredient(){
       const items = (cached('ingredients') || [])
         .filter(i => !term || i.name.toLowerCase().includes(term.toLowerCase()))
         .slice(0, 40);
-      list.innerHTML = items.map(i =>
+      list.innerHTML = (items.map(i =>
         `<button class="pickRow" data-id="${i.id}">${esc(i.name)} <span class="qty">${esc(i.unit)}${i.nutrition_id ? '' : ' · no USDA link'}</span></button>`).join('')
-        || '<div class="empty">No matches</div>';
-      list.querySelectorAll('.pickRow').forEach(b => b.addEventListener('click', () => {
+        || '<div class="empty">No matches</div>')
+        + (opts.allowCreate ? `<button class="pickRow" id="pkNew">＋ new ingredient${term.trim() ? `: “${esc(term.trim())}”` : ''}</button>` : '');
+      list.querySelectorAll('.pickRow[data-id]').forEach(b => b.addEventListener('click', () => {
         const row = (cached('ingredients') || []).find(i => i.id === +b.getAttribute('data-id'));
         ov.remove(); resolve(row);
       }));
+      list.querySelector('#pkNew')?.addEventListener('click', async () => {
+        ov.remove();
+        resolve(await openIngredientEditor(null, { nested: true, name: term.trim() }));
+      });
     };
     render('');
     ov.querySelector('#pkSearch').addEventListener('input', e => render(e.target.value));

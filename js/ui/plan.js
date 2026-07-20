@@ -122,8 +122,11 @@ function openMealSheet(meal, date, mealType){
       draft.rows.splice(+b.getAttribute('data-rm'), 1); draw();
     }));
     body.querySelector('#msAddIng')?.addEventListener('click', async () => {
-      const ing = await pickIngredient();
-      if (ing){ draft.rows.push({ ingredient_id: ing.id, quantity: 1 }); draw(); }
+      const ing = await pickIngredient({ allowCreate: true });
+      if (ing) draft.rows.push({ ingredient_id: ing.id, quantity: 1 });
+      /* creating an ingredient takes over the sheet, so re-open ours */
+      openSheet(`${meal ? 'Edit' : 'Plan'} ${MEAL_TYPES[mealType]} · ${date}`, '');
+      draw();
     });
     body.querySelector('#msCancel')?.addEventListener('click', closeSheet);
     body.querySelector('#msDelete')?.addEventListener('click', async () => {

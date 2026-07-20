@@ -44,7 +44,7 @@ export function renderPantry(){
       renderPantry();
     }));
     root.querySelector('#pAdd').addEventListener('click', async () => {
-      const ing = await pickIngredient();
+      const ing = await pickIngredient({ allowCreate: true });
       if (!ing) return;
       const existing = (cached('pantry_items') || []).find(p => p.ingredient_id === ing.id);
       if (!existing){
@@ -69,14 +69,15 @@ export function renderPantry(){
   }
 }
 
-/* Returns the saved ingredient row (or null). opts.nested: caller redraws its own sheet after. */
+/* Returns the saved ingredient row (or null). opts.nested: caller re-opens and
+   redraws its own sheet after. opts.name: prefill for a new ingredient. */
 export function openIngredientEditor(ingredient, opts = {}){
   return new Promise(resolve => {
     const draft = ingredient ? {
       id: ingredient.id, name: ingredient.name, unit: ingredient.unit,
       price: ingredient.price_per_unit, nutrition_id: ingredient.nutrition_id,
       nutrition: ingredient.nutrition ?? null,
-    } : { name: '', unit: 'whole', price: null, nutrition_id: null, nutrition: null };
+    } : { name: opts.name ?? '', unit: 'whole', price: null, nutrition_id: null, nutrition: null };
 
     const body = openSheet(ingredient ? 'Edit ingredient' : 'New ingredient', '');
 

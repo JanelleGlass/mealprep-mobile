@@ -250,6 +250,8 @@ function demoWrite(table, row){
     const i = rows.findIndex(r => r.id === row.id);
     if (i >= 0){ rows[i] = { ...rows[i], ...row }; saved = rows[i]; }
   } else {
+    /* stay above any cached ids from previous demo sessions */
+    demoNextId = Math.max(demoNextId, ...rows.map(r => (r.id || 0) + 1));
     saved = { id: demoNextId++, ...row };
     rows.push(saved);
   }

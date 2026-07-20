@@ -103,14 +103,17 @@ function openRecipeSheet(recipe){
     body.querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => {
       draft.rows.splice(+b.getAttribute('data-rm'), 1); draw();
     }));
+    /* the ingredient editor takes over the sheet, so re-open ours after */
+    const reopen = () => { openSheet(recipe ? 'Edit recipe' : 'New recipe', ''); draw(); };
     body.querySelector('#rcAddIng').addEventListener('click', async () => {
-      const ing = await pickIngredient();
-      if (ing){ draft.rows.push({ ingredient_id: ing.id, quantity: 1 }); draw(); }
+      const ing = await pickIngredient({ allowCreate: true });
+      if (ing) draft.rows.push({ ingredient_id: ing.id, quantity: 1 });
+      reopen();
     });
     body.querySelector('#rcNewIng').addEventListener('click', async () => {
       const created = await openIngredientEditor(null, { nested: true });
-      if (created){ draft.rows.push({ ingredient_id: created.id, quantity: 1 }); }
-      draw();
+      if (created) draft.rows.push({ ingredient_id: created.id, quantity: 1 });
+      reopen();
     });
     body.querySelector('#rcCancel')?.addEventListener('click', closeSheet);
     body.querySelector('#rcDelete')?.addEventListener('click', async () => {
