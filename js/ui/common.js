@@ -1,6 +1,6 @@
 /* Shared UI + data-shaping helpers. */
 import { S, cached } from '../store.js';
-
+ 
 export const esc = s => { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; };
 export const dateKey = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 export const isToday = d => dateKey(d) === dateKey(new Date());
