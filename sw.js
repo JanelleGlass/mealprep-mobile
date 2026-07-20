@@ -1,11 +1,15 @@
-const CACHE = 'mealprep-mobile-v11';
+const CACHE = 'mealprep-mobile-v12';
 const SHELL = ['./', 'index.html', 'app.css', 'manifest.webmanifest', 'icon-180.png', 'icon-512.png',
   'js/app.js', 'js/supa.js', 'js/store.js', 'js/nutrition.js', 'js/backup.js',
   'js/ui/common.js', 'js/ui/log.js', 'js/ui/plan.js', 'js/ui/recipes.js', 'js/ui/pantry.js',
   'js/ui/settings.js', 'js/ui/pickers.js'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  // cache:'reload' bypasses the browser's HTTP cache so a new SW version
+  // never re-caches stale shell files (e.g. within GitHub Pages' max-age).
+  e.waitUntil(caches.open(CACHE)
+    .then(c => c.addAll(SHELL.map(u => new Request(u, { cache: 'reload' }))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', e => {
