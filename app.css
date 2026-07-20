@@ -71,6 +71,14 @@ input:focus{outline:2px solid var(--fiber);outline-offset:1px;}
 button.addBtn,button.saveBtn{background:var(--ink);color:var(--paper);border:none;border-radius:8px;padding:11px;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;letter-spacing:0.03em;cursor:pointer;}
 button.addBtn{width:100%;}
 button.addBtn:hover{background:var(--fiber);}
+/* floating pill pinned above the tab bar (used on the pantry tab) */
+button.addBtn.floatAdd{
+  position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(env(safe-area-inset-bottom) + 64px);
+  width:auto;padding:11px 20px;border-radius:22px;z-index:39;
+  box-shadow:0 4px 16px rgba(35,41,33,0.35);white-space:nowrap;
+}
+#pantryRoot{padding-bottom:56px;} /* keep the last row clear of the pill */
 button.addBtn:disabled{opacity:0.5;cursor:default;}
 button.saveBtn{padding:9px 16px;align-self:flex-end;}
 

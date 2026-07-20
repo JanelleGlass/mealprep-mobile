@@ -26,7 +26,7 @@ export function renderPantry(){
           `<div class="sectionTitle">${esc(cat)} <span class="qty">${xs.length}</span></div>
            <div class="card">` + xs.map(rowHtml).join('') + '</div>').join('')
       : '<div class="card"><div class="empty">Pantry is empty</div></div>')
-      + '<button class="addBtn" id="pAdd" style="margin-top:8px;">＋ add pantry item</button>';
+      + '<button class="addBtn floatAdd" id="pAdd">＋ add pantry item</button>';
     root.querySelectorAll('.qtyIn').forEach(inp => inp.addEventListener('change', async () => {
       try { await upsertRow('pantry_items', { id: +inp.getAttribute('data-p'), quantity: parseFloat(inp.value) || 0 }); }
       catch (err) { inp.style.outline = '2px solid var(--iron)'; }
@@ -60,7 +60,7 @@ export function renderPantry(){
         <span>${esc(i.name)}</span>
         <span class="qty">${esc(i.unit)} · ${i.nutrition_id ? 'USDA ✓' : 'no USDA'}</span>
       </div>`).join('') + '</div>'
-      + '<button class="addBtn" id="iAdd" style="margin-top:8px;">＋ new ingredient</button>';
+      + '<button class="addBtn floatAdd" id="iAdd">＋ new ingredient</button>';
     root.querySelectorAll('[data-ing]').forEach(r => r.addEventListener('click', () => {
       const ing = ingredientById(+r.getAttribute('data-ing'));
       if (ing) openIngredientEditor(ing);
