@@ -1,11 +1,13 @@
 /* Recipes tab: flat list, detail, editor sheet. */
-import { cached, upsertRow, deleteRow, replaceChildren, refresh, S } from '../store.js';
+import { cached, upsertRow, deleteRow, replaceChildren, refresh, S, queueFoodEntry } from '../store.js';
 import { computeForRecipe } from '../nutrition.js';
-import { esc, ingredientById, buildRecipeCalc, openSheet, closeSheet, macroLine } from './common.js';
+import { esc, ingredientById, buildRecipeCalc, openSheet, closeSheet, macroLine,
+         dateKey, isToday, entryNameWithNote } from './common.js';
 import { pickIngredient, confirmDialog } from './pickers.js';
 import { openIngredientEditor } from './pantry.js';
+import { logState } from './log.js';
 
-const view = { mode: 'list', recipeId: null };
+const view = { mode: 'list', recipeId: null, logFlash: null };
 
 export function renderRecipes(){
   const root = document.getElementById('recipesRoot');
@@ -30,9 +32,45 @@ export function renderRecipes(){
           return `<div class="listRow"><span>${esc(ing ? ing.name : '#' + ri.ingredient_id)}</span><span class="qty">${ri.quantity} ${esc(ing ? ing.unit : '')}</span></div>`;
         }).join('') || '<div class="empty">No ingredients</div>'}
       </div>
+      <div class="card">
+        <div class="cSub">Log this to your day without planning it.</div>
+        <div class="row" style="align-items:flex-end;margin-top:8px;">
+          <div style="flex:0 0 90px;"><span class="miniLabel">servings</span><input type="number" id="rLogServings" min="0.25" step="0.25" value="1"></div>
+          <label class="plantCheck" style="margin:0 0 4px;"><input type="checkbox" id="rLogPlant"> counts as a plant</label>
+        </div>
+        <div class="macros" id="rLogPreview" style="margin-top:8px;"></div>
+        <button class="addBtn" id="rLog" style="margin-top:8px;">+ log to ${isToday(logState.currentDate) ? 'today' : esc(dateKey(logState.currentDate))}</button>
+        ${view.logFlash ? `<div class="cSub" style="color:var(--fiber);">${esc(view.logFlash)}</div>` : ''}
+      </div>
       <button class="addBtn" id="rEdit">✎ edit recipe</button>`;
-    root.querySelector('#rBack').addEventListener('click', () => { view.mode = 'list'; renderRecipes(); });
+    root.querySelector('#rBack').addEventListener('click', () => { view.logFlash = null; view.mode = 'list'; renderRecipes(); });
     root.querySelector('#rEdit').addEventListener('click', () => openRecipeSheet(r));
+
+    const servingsInput = root.querySelector('#rLogServings');
+    const plantInput = root.querySelector('#rLogPlant');
+    const logComp = () => computeForRecipe(buildRecipeCalc(r), Math.max(0, parseFloat(servingsInput.value) || 0));
+    const drawLogPreview = () => {
+      const c = logComp();
+      root.querySelector('#rLogPreview').innerHTML = 'this logs: ' + macroLine(c) +
+        (c.uncountedNote ? `<div class="warn">⚠ ${esc(c.uncountedNote)}</div>` : '');
+    };
+    drawLogPreview();
+    servingsInput.addEventListener('input', drawLogPreview);
+    root.querySelector('#rLog').addEventListener('click', () => {
+      const servings = Math.max(0, parseFloat(servingsInput.value) || 0);
+      if (!(servings > 0)) return;
+      const comp = computeForRecipe(buildRecipeCalc(r), servings);
+      const label = servings === 1 ? r.name : `${r.name} (${+servings.toFixed(2)} servings)`;
+      queueFoodEntry({
+        date: dateKey(logState.currentDate),
+        name: entryNameWithNote(label, comp),
+        calories: comp.calories, protein_g: comp.proteinG,
+        fiber_g: comp.fiberG, iron_mg: comp.ironMg,
+        is_plant: plantInput.checked,
+      });
+      view.logFlash = `Logged ${label} to ${isToday(logState.currentDate) ? 'today' : dateKey(logState.currentDate)}.`;
+      renderRecipes();
+    });
     return;
   }
 
@@ -46,7 +84,7 @@ export function renderRecipes(){
       }).join('')
     + '<button class="addBtn" id="rNew" style="margin-top:8px;">＋ new recipe</button>';
   root.querySelectorAll('[data-r]').forEach(c => c.addEventListener('click', () => {
-    view.recipeId = +c.getAttribute('data-r'); view.mode = 'detail'; renderRecipes();
+    view.recipeId = +c.getAttribute('data-r'); view.mode = 'detail'; view.logFlash = null; renderRecipes();
   }));
   root.querySelector('#rNew').addEventListener('click', () => openRecipeSheet(null));
 }
