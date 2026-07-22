@@ -268,17 +268,26 @@ function renderSuggestions(term){
 }
 
 /* Pasted JSON import: one entry object or an array of them. Only "name" is
-   required; "date" defaults to the day shown. Everything is validated before
-   anything is queued, so a bad entry mid-array adds nothing. */
+   required; "date" defaults to the day shown. Each macro accepts both the
+   food_log_entries column name and the app's shorthand (cal/protein/fiber/
+   iron/plant), so the app's own export shape pastes in as-is; unknown keys
+   like id/components are ignored. Everything is validated before anything is
+   queued, so a bad entry mid-array adds nothing. */
 function parsePastedEntries(text){
   let data;
   try { data = JSON.parse(text); }
   catch { throw new Error('not valid JSON'); }
   const list = Array.isArray(data) ? data : [data];
   if (!list.length) throw new Error('array is empty');
-  const num = (v, field, i) => {
+  // first defined alias wins; returns [value, keyUsed] so errors name the key present
+  const pick = (e, keys) => {
+    for (const k of keys) if (e[k] !== undefined) return [e[k], k];
+    return [undefined, keys[0]];
+  };
+  const num = (e, keys, i) => {
+    const [v, k] = pick(e, keys);
     if (v === undefined || v === null) return 0;
-    if (typeof v !== 'number' || !isFinite(v) || v < 0) throw new Error(`entry ${i + 1}: "${field}" must be a non-negative number`);
+    if (typeof v !== 'number' || !isFinite(v) || v < 0) throw new Error(`entry ${i + 1}: "${k}" must be a non-negative number`);
     return v;
   };
   return list.map((e, i) => {
@@ -290,10 +299,14 @@ function parsePastedEntries(text){
       if (typeof e.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(e.date)) throw new Error(`entry ${i + 1}: "date" must be YYYY-MM-DD`);
       date = e.date;
     }
-    if (e.is_plant !== undefined && typeof e.is_plant !== 'boolean') throw new Error(`entry ${i + 1}: "is_plant" must be true or false`);
-    return { date, name, calories: num(e.calories, 'calories', i),
-      protein_g: num(e.protein_g, 'protein_g', i), fiber_g: num(e.fiber_g, 'fiber_g', i),
-      iron_mg: num(e.iron_mg, 'iron_mg', i), is_plant: !!e.is_plant };
+    const [plant, plantKey] = pick(e, ['is_plant', 'plant']);
+    if (plant !== undefined && typeof plant !== 'boolean') throw new Error(`entry ${i + 1}: "${plantKey}" must be true or false`);
+    return { date, name,
+      calories: num(e, ['calories', 'cal'], i),
+      protein_g: num(e, ['protein_g', 'protein'], i),
+      fiber_g: num(e, ['fiber_g', 'fiber'], i),
+      iron_mg: num(e, ['iron_mg', 'iron'], i),
+      is_plant: !!plant };
   });
 }
 
