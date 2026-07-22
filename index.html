@@ -55,6 +55,13 @@
       <div class="quickRow" id="quickRow"></div>
     </form>
 
+    <button type="button" class="pasteTgl" id="pasteTgl">{ } paste JSON</button>
+    <div class="pasteBox" id="pasteBox" hidden>
+      <textarea id="pasteText" rows="5" spellcheck="false" placeholder='One entry or an array. Only "name" is required; "date" defaults to the shown day.&#10;{"name":"oatmeal","calories":300,"protein_g":10,"fiber_g":8,"iron_mg":2,"is_plant":true}'></textarea>
+      <div class="cSub" id="pasteMsg"></div>
+      <button type="button" class="addBtn" id="pasteAdd">+ add from JSON</button>
+    </div>
+
     <div class="sectionTitle">Entries</div>
     <div class="entries" id="entries"></div>
 
