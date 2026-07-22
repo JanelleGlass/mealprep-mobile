@@ -267,6 +267,36 @@ function renderSuggestions(term){
   }));
 }
 
+/* Pasted JSON import: one entry object or an array of them. Only "name" is
+   required; "date" defaults to the day shown. Everything is validated before
+   anything is queued, so a bad entry mid-array adds nothing. */
+function parsePastedEntries(text){
+  let data;
+  try { data = JSON.parse(text); }
+  catch { throw new Error('not valid JSON'); }
+  const list = Array.isArray(data) ? data : [data];
+  if (!list.length) throw new Error('array is empty');
+  const num = (v, field, i) => {
+    if (v === undefined || v === null) return 0;
+    if (typeof v !== 'number' || !isFinite(v) || v < 0) throw new Error(`entry ${i + 1}: "${field}" must be a non-negative number`);
+    return v;
+  };
+  return list.map((e, i) => {
+    if (!e || typeof e !== 'object' || Array.isArray(e)) throw new Error(`entry ${i + 1}: expected an object`);
+    const name = typeof e.name === 'string' ? e.name.trim() : '';
+    if (!name) throw new Error(`entry ${i + 1}: "name" is required`);
+    let date = dateKey(logState.currentDate);
+    if (e.date !== undefined){
+      if (typeof e.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(e.date)) throw new Error(`entry ${i + 1}: "date" must be YYYY-MM-DD`);
+      date = e.date;
+    }
+    if (e.is_plant !== undefined && typeof e.is_plant !== 'boolean') throw new Error(`entry ${i + 1}: "is_plant" must be true or false`);
+    return { date, name, calories: num(e.calories, 'calories', i),
+      protein_g: num(e.protein_g, 'protein_g', i), fiber_g: num(e.fiber_g, 'fiber_g', i),
+      iron_mg: num(e.iron_mg, 'iron_mg', i), is_plant: !!e.is_plant };
+  });
+}
+
 export function wireLogTab(rerenderAll){
   document.getElementById('prevDay').addEventListener('click', () => { logState.currentDate = new Date(logState.currentDate.getTime() - 86400000); renderLog(); });
   document.getElementById('nextDay').addEventListener('click', () => { logState.currentDate = new Date(logState.currentDate.getTime() + 86400000); renderLog(); });
@@ -295,6 +325,21 @@ export function wireLogTab(rerenderAll){
     document.getElementById('fPlant').checked = false;
     document.getElementById('addBtn').disabled = true;
     document.getElementById('nameSuggest').innerHTML = '';
+  });
+
+  const pasteBox = document.getElementById('pasteBox');
+  document.getElementById('pasteTgl').addEventListener('click', () => { pasteBox.hidden = !pasteBox.hidden; });
+  document.getElementById('pasteAdd').addEventListener('click', () => {
+    const msg = document.getElementById('pasteMsg');
+    const ta = document.getElementById('pasteText');
+    try {
+      const rows = parsePastedEntries(ta.value);
+      rows.forEach(queueFoodEntry);
+      ta.value = '';
+      msg.textContent = `added ${rows.length} ${rows.length === 1 ? 'entry' : 'entries'}`;
+    } catch (err) {
+      msg.textContent = err.message;
+    }
   });
 
   document.getElementById('saveWaist').addEventListener('click', () => {
