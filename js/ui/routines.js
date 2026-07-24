@@ -111,6 +111,16 @@ function sectionsFor(date){
     secs.push({ title: `Workout — ${w.focus}`, note: w.note, groups: [{ tasks }] });
   }
 
+  if (dow === 1){
+    secs.push({ title: 'Meal prep — cook, portion & freeze', groups: [{ tasks: [
+      { id: 'mp-rice', t: 'Rice' },
+      { id: 'mp-soup', t: 'Soup or entrée' },
+      { id: 'mp-chia', t: 'Chia pudding' },
+      { id: 'mp-salad', t: 'Salad' },
+      { id: 'mp-snacks', t: 'Snacks' },
+    ] }] });
+  }
+
   if (dow === 5){
     secs.push({ title: 'Cleaning — in order', tips: CLEAN_TIPS,
       groups: [{ tasks: CLEAN_STEPS.map((s, i) => ({ id: s.id, t: `${i + 1}. ${s.t}`, d: s.d })) }] });
@@ -128,7 +138,9 @@ function habitStatus(dk, habit){
   else if (habit === 'workout'){ const w = WORKOUT[name]; if (!w) return 'off'; ids = w.primer.length ? ['warmup', 'jumps', 'lifts'] : ['warmup', 'lifts']; }
   else if (habit === 'cleaning'){ if (name !== 'Friday') return 'off'; ids = CLEAN_STEPS.map(s => s.id); }
   if (!ids.length) return 'off';
-  return ids.every(id => isChecked(dk, id)) ? 'done' : 'miss';
+  /* workout counts if you did any one piece; other habits need all items */
+  const complete = habit === 'workout' ? ids.some(id => isChecked(dk, id)) : ids.every(id => isChecked(dk, id));
+  return complete ? 'done' : 'miss';
 }
 function vitStreak(){
   const d = startOfDay(new Date());
@@ -209,6 +221,7 @@ export function renderRoutines(){
   /* weekly overview */
   html += `<div class="sectionTitle">This week</div>` + WEEK_ORDER.map(nm => {
     const w = WORKOUT[nm], items = [];
+    if (nm === 'Monday') items.push('🍱 Meal prep — cook, portion & freeze');
     if (nm === 'Thursday') items.push('⛽ Gas in the car');
     if (nm === 'Friday') items.push('🍳 Cook for Sabbath', '🧹 Clean the house');
     if (w) items.push(`Workout — ${w.focus} ${w.note.startsWith('+') ? w.note : '(' + w.note + ')'}`);
