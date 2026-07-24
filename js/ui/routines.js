@@ -156,7 +156,7 @@ function lastDates(n){
 }
 
 /* ---------- view ---------- */
-const view = { date: startOfDay(new Date()) };
+const view = { date: startOfDay(new Date()), tipsOpen: false };
 export function routinesFocusToday(){ view.date = startOfDay(new Date()); }
 
 function taskRow(dk, id, title, desc){
@@ -172,7 +172,7 @@ function historyRow(label, habit, streak){
     return `<button type="button" class="hCell ${st}${isToday(d) ? ' today' : ''}" data-goto="${dk}"
       title="${dk}${st === 'off' ? '' : ' · ' + st}"></button>`;
   }).join('');
-  return `<div class="habitRow"><div class="hMeta"><span class="hLabel">${esc(label)}</span>${
+  return `<div class="habitRow h-${habit}"><div class="hMeta"><span class="hLabel">${esc(label)}</span>${
     streak != null ? `<span class="hStreak">🔥 ${streak}</span>` : ''}</div><div class="hDots">${cells}</div></div>`;
 }
 
@@ -200,8 +200,9 @@ export function renderRoutines(){
   sections.forEach(sec => {
     html += `<div class="sectionTitle">${esc(sec.title)}${sec.note ? `<span class="rNote">${esc(sec.note)}</span>` : ''}</div>`;
     if (sec.tips){
-      html += `<div class="card rTips"><div class="rTipsHead">How this order saves steps</div>${
-        sec.tips.map(t => `<div class="rTip">${esc(t)}</div>`).join('')}</div>`;
+      html += `<details class="card rTips" id="cleanTips"${view.tipsOpen ? ' open' : ''}>
+        <summary class="rTipsHead">How this order saves steps</summary>${
+        sec.tips.map(t => `<div class="rTip">${esc(t)}</div>`).join('')}</details>`;
     }
     html += `<div class="card taskList">${sec.groups.map(g =>
       (g.sub ? `<div class="rSub">${esc(g.sub)}</div>` : '') +
@@ -248,6 +249,8 @@ export function renderRoutines(){
     renderRoutines();
     window.scrollTo(0, y);
   }));
+  const tips = root.querySelector('#cleanTips');
+  if (tips) tips.addEventListener('toggle', () => { view.tipsOpen = tips.open; });
   root.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => {
     view.date = startOfDay(new Date(b.getAttribute('data-goto') + 'T00:00:00'));
     renderRoutines();

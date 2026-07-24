@@ -162,15 +162,26 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .hStreak{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--calorie);}
 .hDots{display:flex;gap:3px;}
 .hCell{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--rule);background:transparent;padding:0;cursor:pointer;flex-shrink:0;}
-.hCell.done{background:var(--fiber);border-color:var(--fiber);}
+.hCell.done{background:var(--ink-soft);border-color:var(--ink-soft);}
 .hCell.miss{background:transparent;border-color:var(--iron);}
 .hCell.off{border-color:var(--rule);opacity:0.4;}
 .hCell.today{outline:2px solid var(--ink);outline-offset:1px;}
+/* per-habit colors */
+.habitRow.h-vitamins .hCell.done{background:var(--gold);border-color:var(--gold);}
+.habitRow.h-workout  .hCell.done{background:var(--protein);border-color:var(--protein);}
+.habitRow.h-cleaning .hCell.done{background:var(--fiber);border-color:var(--fiber);}
+.habitRow.h-vitamins .hLabel{color:var(--calorie);}
+.habitRow.h-workout  .hLabel{color:var(--protein);}
+.habitRow.h-cleaning .hLabel{color:var(--fiber);}
 .hLegend{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:10px;font-size:10px;color:var(--ink-soft);}
 .hLegend .hCell{width:11px;height:11px;cursor:default;}
 
 .rTips{background:#F3EED9;border-color:var(--gold);}
-.rTipsHead{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:var(--calorie);margin-bottom:6px;}
+.rTipsHead{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:var(--calorie);cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;}
+.rTipsHead::-webkit-details-marker{display:none;}
+.rTipsHead::before{content:"▸";font-size:8px;}
+.rTips[open] .rTipsHead{margin-bottom:6px;}
+.rTips[open] .rTipsHead::before{content:"▾";}
 .rTip{font-size:12px;color:var(--ink);line-height:1.5;padding-left:14px;position:relative;margin-bottom:3px;}
 .rTip::before{content:"•";position:absolute;left:2px;color:var(--gold);}
 
