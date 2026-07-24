@@ -5,6 +5,7 @@ import { renderLog, wireLogTab } from './ui/log.js';
 import { renderPlan, wirePlanTab } from './ui/plan.js';
 import { renderRecipes } from './ui/recipes.js';
 import { renderPantry, wirePantryTab } from './ui/pantry.js';
+import { renderRoutines, routinesFocusToday } from './ui/routines.js';
 import { renderSettings, openConnectOverlay, openSignInOverlay, wireOverlays } from './ui/settings.js';
 import { closeSheet } from './ui/common.js';
 
@@ -14,6 +15,7 @@ function renderActive(){
   if (activeTab === 'log') renderLog();
   else if (activeTab === 'plan') renderPlan();
   else if (activeTab === 'recipes') renderRecipes();
+  else if (activeTab === 'routines') renderRoutines();
   else if (activeTab === 'pantry') renderPantry();
   else if (activeTab === 'settings') renderSettings();
 }
@@ -27,6 +29,7 @@ S.onSync = (msg, isErr) => {
 
 document.querySelectorAll('.tabBtn').forEach(b => b.addEventListener('click', () => {
   activeTab = b.getAttribute('data-tab');
+  if (activeTab === 'routines') routinesFocusToday();
   document.querySelectorAll('.tabBtn').forEach(x => x.classList.toggle('active', x === b));
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x.id === 'tab-' + activeTab));
   renderActive();

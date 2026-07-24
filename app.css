@@ -144,6 +144,50 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .segBtn{flex:1;background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);cursor:pointer;}
 .segBtn.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 
+/* ---------- routines tab ---------- */
+.dayProg{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);text-align:center;margin:-6px 0 10px;}
+.dayCard.isToday{border-color:var(--fiber);box-shadow:inset 3px 0 0 var(--fiber);}
+.dayCard .dName{font-family:'Fraunces',serif;font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px;}
+.dayCard .todayTag{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.05em;color:var(--fiber);border:1px solid var(--rule);border-radius:10px;padding:1px 7px;}
+.dayCard .dItems{margin-top:5px;}
+.dayCard .dItem{font-size:12px;color:var(--ink-soft);line-height:1.5;}
+
+.rNote{font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:10px;color:var(--ink-soft);text-transform:none;letter-spacing:0;}
+
+/* habit tracker */
+.habitRow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;padding:8px 0;border-bottom:1px solid var(--rule);}
+.habitRow:last-of-type{border-bottom:none;}
+.hMeta{display:flex;align-items:center;gap:8px;}
+.hLabel{font-size:12px;font-weight:500;}
+.hStreak{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--calorie);}
+.hDots{display:flex;gap:3px;}
+.hCell{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--rule);background:transparent;padding:0;cursor:pointer;flex-shrink:0;}
+.hCell.done{background:var(--fiber);border-color:var(--fiber);}
+.hCell.miss{background:transparent;border-color:var(--iron);}
+.hCell.off{border-color:var(--rule);opacity:0.4;}
+.hCell.today{outline:2px solid var(--ink);outline-offset:1px;}
+.hLegend{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:10px;font-size:10px;color:var(--ink-soft);}
+.hLegend .hCell{width:11px;height:11px;cursor:default;}
+
+.rTips{background:#F3EED9;border-color:var(--gold);}
+.rTipsHead{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:var(--calorie);margin-bottom:6px;}
+.rTip{font-size:12px;color:var(--ink);line-height:1.5;padding-left:14px;position:relative;margin-bottom:3px;}
+.rTip::before{content:"•";position:absolute;left:2px;color:var(--gold);}
+
+.taskList{padding:2px 12px;}
+.rSub{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);margin:10px 0 2px;}
+.rSub:first-child{margin-top:4px;}
+.taskRow{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--rule);padding:10px 0;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;color:var(--ink);}
+.taskList .taskRow:last-child{border-bottom:none;}
+.taskRow .box{flex-shrink:0;width:18px;height:18px;margin-top:1px;border:1.5px solid var(--rule);border-radius:5px;background:#fff;position:relative;}
+.taskRow.done .box{background:var(--fiber);border-color:var(--fiber);}
+.taskRow.done .box::after{content:"✓";position:absolute;inset:0;color:var(--paper);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.taskRow .tText{flex:1;min-width:0;}
+.taskRow .tTitle{display:block;font-size:13px;line-height:1.35;}
+.taskRow .tDesc{display:block;font-size:11px;color:var(--ink-soft);line-height:1.4;margin-top:2px;}
+.taskRow.done .tTitle{color:var(--ink-soft);text-decoration:line-through;}
+.taskRow.done .tDesc{opacity:0.6;}
+
 .tabbar{
   position:fixed;left:0;right:0;bottom:0;display:flex;z-index:40;
   background:var(--card);border-top:1px solid var(--rule);
