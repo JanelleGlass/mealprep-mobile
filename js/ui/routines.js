@@ -101,14 +101,14 @@ function sectionsFor(date){
   const daily = [{ id: 'vit', t: 'Daily vitamins' }];
   if (dow === 4) daily.push({ id: 'gas', t: '⛽ Gas in the car' });
   if (dow === 5) daily.push({ id: 'cook', t: '🍳 Cook for Sabbath' });
-  secs.push({ title: 'Daily', groups: [{ tasks: daily }] });
+  secs.push({ title: 'Daily', hue: 'vitamins', groups: [{ tasks: daily }] });
 
   const w = WORKOUT[name];
   if (w){
     const tasks = [{ id: 'warmup', t: 'Warm-up', d: 'Raise → dynamic → activate → ramp to jumps (6–8 min).' }];
     if (w.primer.length) tasks.push({ id: 'jumps', t: 'Jumps', d: w.primer.join(' · ') });
     tasks.push({ id: 'lifts', t: 'Lifts', d: w.lifts.join(' · ') });
-    secs.push({ title: `Workout — ${w.focus}`, note: w.note, groups: [{ tasks }] });
+    secs.push({ title: `Workout — ${w.focus}`, note: w.note, hue: 'workout', groups: [{ tasks }] });
   }
 
   if (dow === 1){
@@ -122,7 +122,7 @@ function sectionsFor(date){
   }
 
   if (dow === 5){
-    secs.push({ title: 'Cleaning — in order', tips: CLEAN_TIPS,
+    secs.push({ title: 'Cleaning — in order', tips: CLEAN_TIPS, hue: 'cleaning',
       groups: [{ tasks: CLEAN_STEPS.map((s, i) => ({ id: s.id, t: `${i + 1}. ${s.t}`, d: s.d })) }] });
   }
   return secs;
@@ -198,13 +198,14 @@ export function renderRoutines(){
 
   /* the single list, in sections */
   sections.forEach(sec => {
-    html += `<div class="sectionTitle">${esc(sec.title)}${sec.note ? `<span class="rNote">${esc(sec.note)}</span>` : ''}</div>`;
+    const hue = sec.hue ? ` sec-${sec.hue}` : '';
+    html += `<div class="sectionTitle${hue}">${esc(sec.title)}${sec.note ? `<span class="rNote">${esc(sec.note)}</span>` : ''}</div>`;
     if (sec.tips){
       html += `<details class="card rTips" id="cleanTips"${view.tipsOpen ? ' open' : ''}>
         <summary class="rTipsHead">How this order saves steps</summary>${
         sec.tips.map(t => `<div class="rTip">${esc(t)}</div>`).join('')}</details>`;
     }
-    html += `<div class="card taskList">${sec.groups.map(g =>
+    html += `<div class="card taskList${hue}">${sec.groups.map(g =>
       (g.sub ? `<div class="rSub">${esc(g.sub)}</div>` : '') +
       g.tasks.map(t => taskRow(dk, t.id, t.t, t.d)).join('')
     ).join('')}</div>`;
