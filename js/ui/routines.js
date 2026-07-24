@@ -100,15 +100,15 @@ function sectionsFor(date){
 
   const daily = [{ id: 'vit', t: 'Daily vitamins' }];
   if (dow === 4) daily.push({ id: 'gas', t: '⛽ Gas in the car' });
-  if (dow === 5) daily.push({ id: 'cook', t: '🍳 Cook the week’s meals' });
+  if (dow === 5) daily.push({ id: 'cook', t: '🍳 Cook for Sabbath' });
   secs.push({ title: 'Daily', groups: [{ tasks: daily }] });
 
   const w = WORKOUT[name];
   if (w){
-    const groups = [{ sub: 'Warm-up', tasks: WARMUP.map((t, i) => ({ id: `warm${i}`, t })) }];
-    if (w.primer.length) groups.push({ sub: 'Jump primer', tasks: w.primer.map((t, i) => ({ id: `primer${i}`, t })) });
-    groups.push({ sub: 'Lifts', tasks: w.lifts.map((t, i) => ({ id: `lift${i}`, t })) });
-    secs.push({ title: `Workout — ${w.focus}`, note: w.note, groups });
+    const tasks = [{ id: 'warmup', t: 'Warm-up', d: 'Raise → dynamic → activate → ramp to jumps (6–8 min).' }];
+    if (w.primer.length) tasks.push({ id: 'jumps', t: 'Jumps', d: w.primer.join(' · ') });
+    tasks.push({ id: 'lifts', t: 'Lifts', d: w.lifts.join(' · ') });
+    secs.push({ title: `Workout — ${w.focus}`, note: w.note, groups: [{ tasks }] });
   }
 
   if (dow === 5){
@@ -125,7 +125,7 @@ function habitStatus(dk, habit){
   const name = dayName(d);
   let ids = [];
   if (habit === 'vitamins') ids = ['vit'];
-  else if (habit === 'workout'){ const w = WORKOUT[name]; if (!w) return 'off'; ids = w.lifts.map((_, i) => `lift${i}`); }
+  else if (habit === 'workout'){ const w = WORKOUT[name]; if (!w) return 'off'; ids = w.primer.length ? ['warmup', 'jumps', 'lifts'] : ['warmup', 'lifts']; }
   else if (habit === 'cleaning'){ if (name !== 'Friday') return 'off'; ids = CLEAN_STEPS.map(s => s.id); }
   if (!ids.length) return 'off';
   return ids.every(id => isChecked(dk, id)) ? 'done' : 'miss';
@@ -210,7 +210,7 @@ export function renderRoutines(){
   html += `<div class="sectionTitle">This week</div>` + WEEK_ORDER.map(nm => {
     const w = WORKOUT[nm], items = [];
     if (nm === 'Thursday') items.push('⛽ Gas in the car');
-    if (nm === 'Friday') items.push('🍳 Cook the week’s meals', '🧹 Clean the house');
+    if (nm === 'Friday') items.push('🍳 Cook for Sabbath', '🧹 Clean the house');
     if (w) items.push(`Workout — ${w.focus} ${w.note.startsWith('+') ? w.note : '(' + w.note + ')'}`);
     if (!items.length) items.push('Rest');
     const isCur = nm === dayName(view.date);
