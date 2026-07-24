@@ -142,13 +142,6 @@ function habitStatus(dk, habit){
   const complete = habit === 'workout' ? ids.some(id => isChecked(dk, id)) : ids.every(id => isChecked(dk, id));
   return complete ? 'done' : 'miss';
 }
-function vitStreak(){
-  const d = startOfDay(new Date());
-  if (!isChecked(dateKey(d), 'vit')) d.setDate(d.getDate() - 1); // don't break streak just because today isn't done yet
-  let n = 0;
-  while (isChecked(dateKey(d), 'vit')){ n++; d.setDate(d.getDate() - 1); }
-  return n;
-}
 function lastDates(n){
   const out = [], base = startOfDay(new Date());
   for (let i = n - 1; i >= 0; i--){ const x = new Date(base); x.setDate(x.getDate() - i); out.push(x); }
@@ -166,14 +159,13 @@ function taskRow(dk, id, title, desc){
   </button>`;
 }
 
-function historyRow(label, habit, streak){
+function historyRow(label, habit){
   const cells = lastDates(14).map(d => {
     const dk = dateKey(d), st = habitStatus(dk, habit);
     return `<button type="button" class="hCell ${st}${isToday(d) ? ' today' : ''}" data-goto="${dk}"
       title="${dk}${st === 'off' ? '' : ' · ' + st}"></button>`;
   }).join('');
-  return `<div class="habitRow h-${habit}"><div class="hMeta"><span class="hLabel">${esc(label)}</span>${
-    streak != null ? `<span class="hStreak">🔥 ${streak}</span>` : ''}</div><div class="hDots">${cells}</div></div>`;
+  return `<div class="habitRow h-${habit}"><span class="hLabel">${esc(label)}</span><div class="hDots">${cells}</div></div>`;
 }
 
 export function renderRoutines(){
@@ -214,9 +206,9 @@ export function renderRoutines(){
   /* habit tracker */
   html += `<div class="sectionTitle">Habit tracker<span class="rNote">last 14 days</span></div>
     <div class="card">
-      ${historyRow('Vitamins', 'vitamins', vitStreak())}
-      ${historyRow('Workout', 'workout', null)}
-      ${historyRow('Cleaning', 'cleaning', null)}
+      ${historyRow('Vitamins', 'vitamins')}
+      ${historyRow('Workout', 'workout')}
+      ${historyRow('Cleaning', 'cleaning')}
       <div class="hLegend"><span class="hCell done"></span> done <span class="hCell miss"></span> missed <span class="hCell off"></span> not scheduled — tap a day to open it</div>
     </div>`;
 
