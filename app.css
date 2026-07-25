@@ -163,7 +163,6 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .hCell.done{background:var(--ink-soft);border-color:var(--ink-soft);}
 .hCell.miss{background:transparent;border-color:var(--iron);}
 .hCell.off{border-color:var(--rule);opacity:0.4;}
-.hCell.today{outline:2px solid var(--ink);outline-offset:1px;}
 /* per-habit colors */
 .habitRow.h-vitamins .hCell.done{background:var(--gold);border-color:var(--gold);}
 .habitRow.h-workout  .hCell.done{background:var(--protein);border-color:var(--protein);}

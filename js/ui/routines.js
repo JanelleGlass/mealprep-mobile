@@ -67,16 +67,17 @@ const CLEAN_TIPS = [
   'Floors last, backing out — vacuum then mop, working toward the door.',
 ];
 const CLEAN_STEPS = [
-  { id: 'c1',  t: 'Strip the beds & start laundry',  d: 'Sheets and towels in the first load. Keep loads moving all afternoon.' },
-  { id: 'c2',  t: 'Spray & let it soak',             d: 'Shower, tub, toilet bowl, and the kitchen stovetop/sink. Walk away 5–10 min.' },
-  { id: 'c3',  t: 'Kitchen',                          d: 'Top down: backsplash → counters, stovetop, sink → appliance fronts. Run the dishwasher. Leave the floor.' },
-  { id: 'c4',  t: 'Bathrooms & showers',             d: 'Top down: mirror → sink & counter → scrub the soaking shower/tub → toilet. Leave the floor.' },
-  { id: 'c5',  t: 'The window',                       d: 'Glass and sill now, before vacuuming — any drips land on the floor you clean next.' },
-  { id: 'c6',  t: 'Dust & tidy',                      d: 'Every room, high to low. Put clutter away. Rotate the laundry.' },
-  { id: 'c7',  t: 'Remake the bed',                   d: 'Fresh sheets from the wash or a clean set.' },
-  { id: 'c8',  t: 'Vacuum',                           d: 'Every room, working from the far room back toward the door.' },
-  { id: 'c9',  t: 'Mop',                              d: 'Hard floors last, backing out of each room so you never walk on wet floor.' },
-  { id: 'c10', t: 'Finish laundry',                   d: 'Fold and put away the last loads.' },
+  { id: 'c1',    t: 'Strip the beds & start laundry',  d: 'Sheets and towels in the first load. Keep loads moving all afternoon.' },
+  { id: 'cook',  t: '🍳 Cook for Sabbath',             d: 'Start the Sabbath meals early so they cook while you clean.' },
+  { id: 'c3',    t: 'Kitchen',                          d: 'Top down: backsplash → counters, stovetop, sink → appliance fronts. Run the dishwasher. Leave the floor.' },
+  { id: 'c4',    t: 'Bathrooms & showers',             d: 'Top down: mirror → sink & counter → scrub the shower/tub → toilet. Leave the floor.' },
+  { id: 'trash', t: 'Take out trash and compost',      d: 'Empty the kitchen and bathroom bins; take the trash and compost out.' },
+  { id: 'c5',    t: 'The window',                       d: 'Glass and sill now, before vacuuming — any drips land on the floor you clean next.' },
+  { id: 'c6',    t: 'Dust & tidy',                      d: 'Every room, high to low. Put clutter away. Rotate the laundry.' },
+  { id: 'c7',    t: 'Remake the bed',                   d: 'Fresh sheets from the wash or a clean set.' },
+  { id: 'c8',    t: 'Vacuum',                           d: 'Every room, working from the far room back toward the door.' },
+  { id: 'c9',    t: 'Mop',                              d: 'Hard floors last, backing out of each room so you never walk on wet floor.' },
+  { id: 'c10',   t: 'Finish laundry',                   d: 'Fold and put away the last loads.' },
 ];
 const WEEK_ORDER = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const dayName = d => d.toLocaleDateString('en-US', { weekday: 'long' });
@@ -166,7 +167,6 @@ function sectionsFor(date){
 
   const daily = [{ id: 'vit', t: 'Daily vitamins' }];
   if (dow === 4) daily.push({ id: 'gas', t: '⛽ Gas in the car' });
-  if (dow === 5) daily.push({ id: 'cook', t: '🍳 Cook for Sabbath' });
   secs.push({ title: 'Daily', hue: 'vitamins', groups: [{ tasks: daily }] });
 
   const w = WORKOUT[name];
