@@ -2,6 +2,7 @@
    cleaning), tracks completion per date as a habit history, and shows a weekly
    overview. All state is device-local under 'routines.log'. */
 import { esc, dateKey, isToday, startOfDay } from './common.js';
+import { cached, setPreference, refresh } from '../store.js';
 
 /* ---------- content ---------- */
 const WARMUP = [
@@ -80,18 +81,56 @@ const CLEAN_STEPS = [
 const WEEK_ORDER = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const dayName = d => d.toLocaleDateString('en-US', { weekday: 'long' });
 
-/* ---------- per-date completion log (device-local, no weekly reset) ---------- */
+/* ---------- per-date completion log ----------
+   Local storage is the offline-first mirror; the same object is synced to
+   Supabase as a JSON value in user_preferences (key 'RoutinesLog') so a check
+   made on the phone shows up on the computer and vice-versa. */
 const LOG_KEY = 'routines.log';
+const DIRTY_KEY = 'routines.dirty';
+const PREF_KEY = 'RoutinesLog';
 function loadLog(){ try { return JSON.parse(localStorage.getItem(LOG_KEY)) || {}; } catch { return {}; } }
 function saveLog(l){ try { localStorage.setItem(LOG_KEY, JSON.stringify(l)); } catch { /* private mode */ } }
 let log = loadLog();
+
+const dirty = () => localStorage.getItem(DIRTY_KEY) === '1';
+function setDirty(v){ try { v ? localStorage.setItem(DIRTY_KEY, '1') : localStorage.removeItem(DIRTY_KEY); } catch { /* ignore */ } }
+
+/* the synced copy, read from the cached user_preferences table */
+function remoteLog(){
+  const row = (cached('user_preferences') || []).find(p => p.key === PREF_KEY);
+  if (!row || !row.value) return null;
+  try { return JSON.parse(row.value); } catch { return null; }
+}
+/* adopt the synced copy locally — unless we hold unsynced local edits */
+function reconcile(){
+  if (dirty()) return;
+  const r = remoteLog();
+  if (r){ log = r; saveLog(log); }
+}
+/* push the whole log up; on failure (offline) mark dirty to retry later */
+async function pushRemote(){
+  try { await setPreference(PREF_KEY, JSON.stringify(log)); setDirty(false); }
+  catch { setDirty(true); }
+}
+/* on tab open: send anything pending, pull the latest, then re-render */
+async function syncOpen(){
+  try {
+    if (dirty()) await pushRemote();
+    await refresh('user_preferences');
+    reconcile();
+  } catch { /* offline — local copy stands */ }
+  renderRoutines();
+}
+window.addEventListener('online', () => { if (dirty()) pushRemote(); });
+
 const isChecked = (dk, id) => !!(log[dk] && log[dk][id]);
 function toggle(dk, id){
-  log = loadLog();
   if (!log[dk]) log[dk] = {};
   if (log[dk][id]) delete log[dk][id]; else log[dk][id] = true;
   if (!Object.keys(log[dk]).length) delete log[dk];
   saveLog(log);
+  setDirty(true);
+  pushRemote();
 }
 
 /* ---------- the list for a given day ---------- */
@@ -150,7 +189,7 @@ function lastDates(n){
 
 /* ---------- view ---------- */
 const view = { date: startOfDay(new Date()), tipsOpen: false };
-export function routinesFocusToday(){ view.date = startOfDay(new Date()); }
+export function routinesFocusToday(){ view.date = startOfDay(new Date()); syncOpen(); }
 
 function taskRow(dk, id, title, desc){
   return `<button type="button" class="taskRow${isChecked(dk, id) ? ' done' : ''}" data-check="${id}">
@@ -169,7 +208,7 @@ function historyRow(label, habit){
 }
 
 export function renderRoutines(){
-  log = loadLog();
+  reconcile();
   const root = document.getElementById('routinesRoot');
   const dk = dateKey(view.date);
   const sections = sectionsFor(view.date);
