@@ -120,8 +120,35 @@ async function syncOpen(){
     reconcile();
   } catch { /* offline — local copy stands */ }
   renderRoutines();
+  startPolling();
 }
 window.addEventListener('online', () => { if (dirty()) pushRemote(); });
+
+/* ---------- near-live pull: while the tab is showing, poll for changes made
+   on another device and repaint only when something actually changed ---------- */
+const POLL_MS = 5000;
+let pollTimer = null;
+const routinesActive = () => document.getElementById('tab-routines')?.classList.contains('active');
+
+async function pullAndApply(){
+  if (!navigator.onLine || dirty()) return;      // offline, or we hold unsynced local edits
+  try { await refresh('user_preferences'); } catch { return; }
+  const r = remoteLog();
+  if (!r || JSON.stringify(r) === JSON.stringify(log)) return;  // nothing new
+  const y = window.scrollY;
+  renderRoutines();                              // reconcile() inside adopts the synced copy
+  window.scrollTo(0, y);
+}
+function startPolling(){
+  if (pollTimer) return;
+  pollTimer = setInterval(() => {
+    if (!routinesActive()){ clearInterval(pollTimer); pollTimer = null; return; }
+    if (document.visibilityState === 'visible') pullAndApply();
+  }, POLL_MS);
+}
+/* repaint immediately when the window/tab regains focus */
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && routinesActive()) pullAndApply(); });
+window.addEventListener('focus', () => { if (routinesActive()) pullAndApply(); });
 
 const isChecked = (dk, id) => !!(log[dk] && log[dk][id]);
 function toggle(dk, id){
