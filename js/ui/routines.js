@@ -204,8 +204,12 @@ function habitStatus(dk, habit){
   else if (habit === 'workout'){ const w = WORKOUT[name]; if (!w) return 'off'; ids = w.primer.length ? ['warmup', 'jumps', 'lifts'] : ['warmup', 'lifts']; }
   else if (habit === 'cleaning'){ if (name !== 'Friday') return 'off'; ids = CLEAN_STEPS.map(s => s.id); }
   if (!ids.length) return 'off';
-  /* workout counts if you did any one piece; other habits need all items */
-  const complete = habit === 'workout' ? ids.some(id => isChecked(dk, id)) : ids.every(id => isChecked(dk, id));
+  /* per-habit bar: workout counts on any one piece, cleaning at 75% of steps,
+     everything else needs all items */
+  const checked = ids.filter(id => isChecked(dk, id)).length;
+  const complete = habit === 'workout' ? checked > 0
+    : habit === 'cleaning' ? checked >= Math.ceil(ids.length * 0.75)
+    : checked === ids.length;
   return complete ? 'done' : 'miss';
 }
 function lastDates(n){
