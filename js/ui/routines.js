@@ -169,6 +169,11 @@ function sectionsFor(date){
   if (dow === 4) daily.push({ id: 'gas', t: '⛽ Gas in the car' });
   secs.push({ title: 'Daily', hue: 'vitamins', groups: [{ tasks: daily }] });
 
+  secs.push({ title: 'Practice', hue: 'practice', groups: [{ tasks: [
+    { id: 'scales', t: 'Scales' },
+    { id: 'repertoire', t: 'Repertoire' },
+  ] }] });
+
   const w = WORKOUT[name];
   if (w){
     const tasks = [{ id: 'warmup', t: 'Warm-up', d: 'Raise → dynamic → activate → ramp to jumps (6–8 min).' }];
@@ -201,13 +206,14 @@ function habitStatus(dk, habit){
   const name = dayName(d);
   let ids = [];
   if (habit === 'vitamins') ids = ['vit'];
+  else if (habit === 'practice') ids = ['scales', 'repertoire'];
   else if (habit === 'workout'){ const w = WORKOUT[name]; if (!w) return 'off'; ids = w.primer.length ? ['warmup', 'jumps', 'lifts'] : ['warmup', 'lifts']; }
   else if (habit === 'cleaning'){ if (name !== 'Friday') return 'off'; ids = CLEAN_STEPS.map(s => s.id); }
   if (!ids.length) return 'off';
-  /* per-habit bar: workout counts on any one piece, cleaning at 75% of steps,
-     everything else needs all items */
+  /* per-habit bar: workout/practice count on any one piece, cleaning at 75%
+     of steps, everything else needs all items */
   const checked = ids.filter(id => isChecked(dk, id)).length;
-  const complete = habit === 'workout' ? checked > 0
+  const complete = (habit === 'workout' || habit === 'practice') ? checked > 0
     : habit === 'cleaning' ? checked >= Math.ceil(ids.length * 0.75)
     : checked === ids.length;
   return complete ? 'done' : 'miss';
@@ -277,6 +283,7 @@ export function renderRoutines(){
   html += `<div class="sectionTitle">Habit tracker<span class="rNote">last 14 days</span></div>
     <div class="card">
       ${historyRow('Vitamins', 'vitamins')}
+      ${historyRow('Practice', 'practice')}
       ${historyRow('Workout', 'workout')}
       ${historyRow('Cleaning', 'cleaning')}
       <div class="hLegend"><span class="hCell done"></span> done <span class="hCell miss"></span> missed <span class="hCell off"></span> not scheduled — tap a day to open it</div>

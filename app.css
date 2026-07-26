@@ -167,14 +167,18 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .habitRow.h-vitamins .hCell.done{background:var(--gold);border-color:var(--gold);}
 .habitRow.h-workout  .hCell.done{background:var(--protein);border-color:var(--protein);}
 .habitRow.h-cleaning .hCell.done{background:var(--fiber);border-color:var(--fiber);}
+.habitRow.h-practice .hCell.done{background:var(--iron);border-color:var(--iron);}
 .habitRow.h-vitamins .hLabel{color:var(--calorie);}
+.habitRow.h-practice .hLabel{color:var(--iron);}
 .habitRow.h-workout  .hLabel{color:var(--protein);}
 .habitRow.h-cleaning .hLabel{color:var(--fiber);}
 /* checklist sections tinted to match their habit-tracker color */
 .sectionTitle.sec-vitamins{color:var(--calorie);}
+.sectionTitle.sec-practice{color:var(--iron);}
 .sectionTitle.sec-workout{color:var(--protein);}
 .sectionTitle.sec-cleaning{color:var(--fiber);}
 .taskList.sec-vitamins .taskRow.done .box{background:var(--gold);border-color:var(--gold);}
+.taskList.sec-practice .taskRow.done .box{background:var(--iron);border-color:var(--iron);}
 .taskList.sec-workout  .taskRow.done .box{background:var(--protein);border-color:var(--protein);}
 .taskList.sec-cleaning .taskRow.done .box{background:var(--fiber);border-color:var(--fiber);}
 .hLegend{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:10px;font-size:10px;color:var(--ink-soft);}
