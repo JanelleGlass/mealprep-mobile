@@ -47,7 +47,8 @@ export function renderPantry(){
       const ing = await pickIngredient({ allowCreate: true });
       if (!ing) return;
       const existing = (cached('pantry_items') || []).find(p => p.ingredient_id === ing.id);
-      if (!existing){
+      if (existing) await addToPantry(ing.id, 1);         // already stocked: one more
+      else {
         const cat = await pickCategory(null);
         await upsertRow('pantry_items', { ingredient_id: ing.id, quantity: 1, category: cat ?? '' });
       }
@@ -67,6 +68,17 @@ export function renderPantry(){
     }));
     root.querySelector('#iAdd').addEventListener('click', () => openIngredientEditor(null));
   }
+}
+
+/* Add to what's on hand: bump an existing row, or create one. Online-only
+   (upsertRow throws when offline) — callers own the retry. New rows land
+   uncategorised, which renders under 'Other', rather than interrupting a
+   grocery run with a category picker. */
+export async function addToPantry(ingredientId, qty){
+  if (!(qty > 0)) return;
+  const existing = (cached('pantry_items') || []).find(p => p.ingredient_id === ingredientId);
+  if (existing) await upsertRow('pantry_items', { id: existing.id, quantity: (+existing.quantity || 0) + qty });
+  else await upsertRow('pantry_items', { ingredient_id: ingredientId, quantity: qty, category: '' });
 }
 
 /* Returns the saved ingredient row (or null). opts.nested: caller re-opens and

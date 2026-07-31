@@ -1,8 +1,13 @@
 /* Routines tab: opens on today's combined to-do list (daily items, workout,
    cleaning), tracks completion per date as a habit history, and shows a weekly
    overview. All state is device-local under 'routines.log'. */
-import { esc, dateKey, isToday, startOfDay } from './common.js';
-import { cached, setPreference, refresh } from '../store.js';
+import { esc, dateKey, isToday, startOfDay, recipeById } from './common.js';
+import { cached, refresh } from '../store.js';
+import { createSyncedBlob } from '../syncblob.js';
+import { confirmDialog } from './pickers.js';
+import { addToPantry } from './pantry.js';
+import { entriesFor, removeRecipe, shoppingFor, owedFor, markApplied, prunePlan,
+         planReconcile, planChangedRemotely, planPush, planIsDirty } from './cookplan.js';
 
 /* ---------- content ---------- */
 const WARMUP = [
@@ -86,44 +91,28 @@ const dayName = d => d.toLocaleDateString('en-US', { weekday: 'long' });
    Local storage is the offline-first mirror; the same object is synced to
    Supabase as a JSON value in user_preferences (key 'RoutinesLog') so a check
    made on the phone shows up on the computer and vice-versa. */
-const LOG_KEY = 'routines.log';
-const DIRTY_KEY = 'routines.dirty';
-const PREF_KEY = 'RoutinesLog';
-function loadLog(){ try { return JSON.parse(localStorage.getItem(LOG_KEY)) || {}; } catch { return {}; } }
-function saveLog(l){ try { localStorage.setItem(LOG_KEY, JSON.stringify(l)); } catch { /* private mode */ } }
-let log = loadLog();
+const routinesLog = createSyncedBlob({
+  prefKey: 'RoutinesLog', localKey: 'routines.log', dirtyKey: 'routines.dirty',
+});
+const log = () => routinesLog.get();
 
-const dirty = () => localStorage.getItem(DIRTY_KEY) === '1';
-function setDirty(v){ try { v ? localStorage.setItem(DIRTY_KEY, '1') : localStorage.removeItem(DIRTY_KEY); } catch { /* ignore */ } }
-
-/* the synced copy, read from the cached user_preferences table */
-function remoteLog(){
-  const row = (cached('user_preferences') || []).find(p => p.key === PREF_KEY);
-  if (!row || !row.value) return null;
-  try { return JSON.parse(row.value); } catch { return null; }
-}
-/* adopt the synced copy locally — unless we hold unsynced local edits */
-function reconcile(){
-  if (dirty()) return;
-  const r = remoteLog();
-  if (r){ log = r; saveLog(log); }
-}
-/* push the whole log up; on failure (offline) mark dirty to retry later */
-async function pushRemote(){
-  try { await setPreference(PREF_KEY, JSON.stringify(log)); setDirty(false); }
-  catch { setDirty(true); }
-}
 /* on tab open: send anything pending, pull the latest, then re-render */
 async function syncOpen(){
+  shopMsg = null;
   try {
-    if (dirty()) await pushRemote();
+    if (routinesLog.isDirty()) await routinesLog.push();
+    if (planIsDirty()) await planPush();
     await refresh('user_preferences');
-    reconcile();
+    routinesLog.reconcile();
+    planReconcile();
   } catch { /* offline — local copy stands */ }
+  prunePlan();
   renderRoutines();
   startPolling();
+  drainOwed(dateKey(view.date));
 }
-window.addEventListener('online', () => { if (dirty()) pushRemote(); });
+/* pantry writes owed from a shopping run done offline */
+window.addEventListener('online', () => { if (routinesActive()) drainOwed(dateKey(view.date)); });
 
 /* ---------- near-live pull: while the tab is showing, poll for changes made
    on another device and repaint only when something actually changed ---------- */
@@ -132,12 +121,12 @@ let pollTimer = null;
 const routinesActive = () => document.getElementById('tab-routines')?.classList.contains('active');
 
 async function pullAndApply(){
-  if (!navigator.onLine || dirty()) return;      // offline, or we hold unsynced local edits
+  /* offline, or we hold unsynced local edits in either blob */
+  if (!navigator.onLine || routinesLog.isDirty() || planIsDirty()) return;
   try { await refresh('user_preferences'); } catch { return; }
-  const r = remoteLog();
-  if (!r || JSON.stringify(r) === JSON.stringify(log)) return;  // nothing new
+  if (!routinesLog.changedRemotely() && !planChangedRemotely()) return;  // nothing new
   const y = window.scrollY;
-  renderRoutines();                              // reconcile() inside adopts the synced copy
+  renderRoutines();                              // reconcile() inside adopts the synced copies
   window.scrollTo(0, y);
 }
 function startPolling(){
@@ -151,14 +140,13 @@ function startPolling(){
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && routinesActive()) pullAndApply(); });
 window.addEventListener('focus', () => { if (routinesActive()) pullAndApply(); });
 
-const isChecked = (dk, id) => !!(log[dk] && log[dk][id]);
+const isChecked = (dk, id) => !!(log()[dk] && log()[dk][id]);
 function toggle(dk, id){
-  if (!log[dk]) log[dk] = {};
-  if (log[dk][id]) delete log[dk][id]; else log[dk][id] = true;
-  if (!Object.keys(log[dk]).length) delete log[dk];
-  saveLog(log);
-  setDirty(true);
-  pushRemote();
+  const l = log();
+  if (!l[dk]) l[dk] = {};
+  if (l[dk][id]) delete l[dk][id]; else l[dk][id] = true;
+  if (!Object.keys(l[dk]).length) delete l[dk];
+  routinesLog.save();
 }
 
 /* ---------- the list for a given day ---------- */
@@ -182,6 +170,8 @@ function sectionsFor(date){
     secs.push({ title: `Workout — ${w.focus}`, note: w.note, hue: 'workout', groups: [{ tasks }] });
   }
 
+  const dk = dateKey(date);
+
   if (dow === 1){
     secs.push({ title: 'Meal prep — cook, portion & freeze', groups: [{ tasks: [
       { id: 'mp-rice', t: 'Rice' },
@@ -189,14 +179,68 @@ function sectionsFor(date){
       { id: 'mp-chia', t: 'Chia pudding' },
       { id: 'mp-salad', t: 'Salad' },
       { id: 'mp-snacks', t: 'Snacks' },
-    ] }] });
+      ...recipeRows(dk, 'prep'),
+    ] }], foot: removeChips(dk, 'prep') });
   }
 
   if (dow === 5){
+    /* assigned recipes hang off the "Cook for Sabbath" step, wherever it sits */
+    const cookRows = recipeRows(dk, 'cook');
+    const tasks = CLEAN_STEPS.flatMap((s, i) => {
+      const row = { id: s.id, t: `${i + 1}. ${s.t}`, d: s.d };
+      return s.id === 'cook' ? [row, ...cookRows] : [row];
+    });
     secs.push({ title: 'Cleaning — in order', tips: CLEAN_TIPS, hue: 'cleaning',
-      groups: [{ tasks: CLEAN_STEPS.map((s, i) => ({ id: s.id, t: `${i + 1}. ${s.t}`, d: s.d })) }] });
+      groups: [{ tasks }], foot: removeChips(dk, 'cook') });
+  }
+
+  const shopping = shoppingFor(dk);
+  if (shopping.length){
+    const covered = shopping.filter(x => x.covered).length;
+    secs.push({
+      title: 'Shopping',
+      note: covered ? `${covered} of ${shopping.length} already in the pantry`
+            : shopping.length === 1 ? '1 item' : `${shopping.length} items`,
+      countInProgress: false,          // a 25-item grocery run shouldn't read "3 / 41 done"
+      groups: [{ tasks: shopping.map(x => {
+        const id = `sh:${x.ingredient_id}`;
+        const got = isChecked(dk, id);
+        return { id, t: `${x.name} — ${x.need} ${x.unit}`,
+          /* once it's in the cart, pantry commentary is just noise */
+          d: got ? undefined
+             : x.covered ? `✓ pantry has ${x.have} ${x.unit}`
+             : x.have > 0 ? `pantry has ${x.have} of ${x.need} ${x.unit}` : undefined,
+          flag: (!got && x.covered) ? 'haveIt' : '' };
+      }) }],
+      foot: shopMsg ? `<div class="cSub" style="color:var(--iron);">${esc(shopMsg)}</div>` : '',
+    });
   }
   return secs;
+}
+
+/* indented rows for the recipes assigned to a slot */
+function recipeRows(dk, slot){
+  const known = cached('recipes');    // null when the cache has never been filled
+  return entriesFor(dk, slot).map(e => {
+    const r = recipeById(+e.r);
+    if (!r) return known ? { id: `rc:${slot}:${+e.r}`, t: `⚠ removed recipe #${+e.r}`, child: true } : null;
+    const m = Number(e.m) || 1;
+    return { id: `rc:${slot}:${r.id}`, child: true, t: r.name,
+      d: `${m === 1 ? '1 batch' : m + ' batches'} · ${Math.round((r.servings || 1) * m)} servings` };
+  }).filter(Boolean);
+}
+
+/* a ✕ can't live inside a taskRow (it's already a <button>), so removal lives
+   in a chip row under the list */
+function removeChips(dk, slot){
+  const known = cached('recipes');
+  const chips = entriesFor(dk, slot).map(e => {
+    const r = recipeById(+e.r);
+    const label = r ? r.name : (known ? `removed recipe #${+e.r}` : null);
+    if (label === null) return '';
+    return `<button class="rmChip" data-rmrec="${slot}:${+e.r}" data-rname="${esc(label)}">✕ ${esc(label)}</button>`;
+  }).join('');
+  return chips ? `<div class="quickRow">${chips}</div>` : '';
 }
 
 /* ---------- habit history ---------- */
@@ -227,13 +271,40 @@ function lastDates(n){
 
 /* ---------- view ---------- */
 const view = { date: startOfDay(new Date()), tipsOpen: false };
+let shopMsg = null;                    // inline note under the shopping list
 export function routinesFocusToday(){ view.date = startOfDay(new Date()); syncOpen(); }
 
-function taskRow(dk, id, title, desc){
-  return `<button type="button" class="taskRow${isChecked(dk, id) ? ' done' : ''}" data-check="${id}">
+/* ids are always a literal prefix + a row id, so they're safe unescaped */
+function taskRow(dk, t){
+  const cls = 'taskRow' + (isChecked(dk, t.id) ? ' done' : '') + (t.child ? ' child' : '') + (t.flag ? ' ' + t.flag : '');
+  return `<button type="button" class="${cls}" data-check="${t.id}">
     <span class="box"></span>
-    <span class="tText"><span class="tTitle">${esc(title)}</span>${desc ? `<span class="tDesc">${esc(desc)}</span>` : ''}</span>
+    <span class="tText"><span class="tTitle">${esc(t.t)}</span>${t.d ? `<span class="tDesc">${esc(t.d)}</span>` : ''}</span>
   </button>`;
+}
+
+/* push everything checked-but-not-yet-applied into the pantry. Delta-based
+   against the 'applied' ledger, so re-checking an item adds nothing and an
+   offline run simply catches up later. */
+async function drainOwed(dk){
+  const owed = owedFor(dk, ing => isChecked(dk, `sh:${ing}`));
+  if (!owed.length) return;
+  let wrote = false;
+  for (const o of owed){
+    try {
+      await addToPantry(o.ingredient_id, o.delta);
+      markApplied(dk, o.ingredient_id, o.need);
+      wrote = true;
+      shopMsg = null;
+    } catch {
+      shopMsg = 'offline — pantry updates will apply when you reconnect';
+      break;
+    }
+  }
+  if (!wrote && !shopMsg) return;
+  const y = window.scrollY;            // addToPantry re-renders through S.onChange
+  renderRoutines();
+  window.scrollTo(0, y);
 }
 
 function historyRow(label, habit){
@@ -246,11 +317,13 @@ function historyRow(label, habit){
 }
 
 export function renderRoutines(){
-  reconcile();
+  routinesLog.reconcile();
+  planReconcile();
   const root = document.getElementById('routinesRoot');
   const dk = dateKey(view.date);
   const sections = sectionsFor(view.date);
-  const allIds = sections.flatMap(s => s.groups.flatMap(g => g.tasks.map(t => t.id)));
+  const allIds = sections.filter(s => s.countInProgress !== false)
+    .flatMap(s => s.groups.flatMap(g => g.tasks.map(t => t.id)));
   const done = allIds.filter(id => isChecked(dk, id)).length;
   const today = isToday(view.date);
 
@@ -276,8 +349,8 @@ export function renderRoutines(){
     }
     html += `<div class="card taskList${hue}">${sec.groups.map(g =>
       (g.sub ? `<div class="rSub">${esc(g.sub)}</div>` : '') +
-      g.tasks.map(t => taskRow(dk, t.id, t.t, t.d)).join('')
-    ).join('')}</div>`;
+      g.tasks.map(t => taskRow(dk, t)).join('')
+    ).join('')}${sec.foot ?? ''}</div>`;
   });
 
   /* habit tracker */
@@ -317,9 +390,18 @@ export function renderRoutines(){
   }));
   root.querySelectorAll('[data-check]').forEach(b => b.addEventListener('click', () => {
     const y = window.scrollY;
-    toggle(dk, b.getAttribute('data-check'));
+    const id = b.getAttribute('data-check'), wasChecked = isChecked(dk, id);
+    toggle(dk, id);
     renderRoutines();
     window.scrollTo(0, y);
+    /* just added to the cart → put it in the pantry (unchecking never removes) */
+    if (id.startsWith('sh:') && !wasChecked) drainOwed(dk);
+  }));
+  root.querySelectorAll('[data-rmrec]').forEach(b => b.addEventListener('click', async () => {
+    const [slot, rid] = b.getAttribute('data-rmrec').split(':');
+    if (!(await confirmDialog(`Remove "${b.getAttribute('data-rname')}" from this day?`))) return;
+    removeRecipe(dk, slot, +rid);
+    renderRoutines();
   }));
   const tips = root.querySelector('#cleanTips');
   if (tips) tips.addEventListener('toggle', () => { view.tipsOpen = tips.open; });
