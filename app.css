@@ -155,7 +155,7 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .rNote{font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:10px;color:var(--ink-soft);text-transform:none;letter-spacing:0;}
 
 /* habit tracker */
-.habitRow{display:grid;grid-template-columns:64px 1fr;align-items:center;column-gap:8px;padding:8px 0;border-bottom:1px solid var(--rule);}
+.habitRow{display:grid;grid-template-columns:78px 1fr;align-items:center;column-gap:8px;padding:8px 0;border-bottom:1px solid var(--rule);}
 .habitRow:last-of-type{border-bottom:none;}
 .hLabel{font-size:12px;font-weight:500;}
 .hDots{display:flex;justify-content:space-between;gap:2px;}
