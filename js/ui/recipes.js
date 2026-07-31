@@ -6,8 +6,24 @@ import { esc, ingredientById, buildRecipeCalc, openSheet, closeSheet, macroLine,
 import { pickIngredient, confirmDialog } from './pickers.js';
 import { openIngredientEditor } from './pantry.js';
 import { logState } from './log.js';
+import { assignRecipe, assignedSummary, nextCookDate, nextPrepDate, SLOTS } from './cookplan.js';
 
-const view = { mode: 'list', recipeId: null, logFlash: null };
+const view = { mode: 'list', recipeId: null, logFlash: null, planFlash: null };
+
+const fmtDay = d => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+const chipLabel = slot =>
+  `${fmtDay(slot === 'cook' ? nextCookDate() : nextPrepDate())} · ${SLOTS[slot].label}`;
+
+/* "already on: Fri, Aug 7 (2 batches)" — so a second tap isn't blind */
+function assignedLine(recipeId){
+  const on = assignedSummary(recipeId);
+  if (!on.length) return '';
+  const parts = on.map(a => {
+    const d = new Date(a.dk + 'T00:00:00');
+    return `${fmtDay(d)}${a.m === 1 ? '' : ` (${a.m} batches)`}`;
+  });
+  return `<div class="cSub" style="margin-top:6px;">already on: ${esc(parts.join(' · '))}</div>`;
+}
 
 export function renderRecipes(){
   const root = document.getElementById('recipesRoot');
@@ -42,8 +58,21 @@ export function renderRecipes(){
         <button class="addBtn" id="rLog" style="margin-top:8px;">+ log to ${isToday(logState.currentDate) ? 'today' : esc(dateKey(logState.currentDate))}</button>
         ${view.logFlash ? `<div class="cSub" style="color:var(--fiber);">${esc(view.logFlash)}</div>` : ''}
       </div>
+      <div class="card">
+        <div class="cSub">Plan a cooking day. The shopping list and pantry follow from it.</div>
+        <div class="row" style="align-items:flex-end;margin-top:8px;">
+          <div style="flex:0 0 90px;"><span class="miniLabel">batches</span><input type="number" id="rBatches" min="0.5" step="0.5" value="1"></div>
+          <div class="cSub" id="rBatchNote" style="flex:1;margin-bottom:6px;"></div>
+        </div>
+        <div class="quickRow">
+          <button class="quickChip" data-assign="cook">🍳 ${esc(chipLabel('cook'))}</button>
+          <button class="quickChip" data-assign="prep">🍱 ${esc(chipLabel('prep'))}</button>
+        </div>
+        ${assignedLine(r.id)}
+        ${view.planFlash ? `<div class="cSub" style="color:var(--fiber);">${esc(view.planFlash)}</div>` : ''}
+      </div>
       <button class="addBtn" id="rEdit">✎ edit recipe</button>`;
-    root.querySelector('#rBack').addEventListener('click', () => { view.logFlash = null; view.mode = 'list'; renderRecipes(); });
+    root.querySelector('#rBack').addEventListener('click', () => { view.logFlash = view.planFlash = null; view.mode = 'list'; renderRecipes(); });
     root.querySelector('#rEdit').addEventListener('click', () => openRecipeSheet(r));
 
     const servingsInput = root.querySelector('#rLogServings');
@@ -71,6 +100,22 @@ export function renderRecipes(){
       view.logFlash = `Logged ${label} to ${isToday(logState.currentDate) ? 'today' : dateKey(logState.currentDate)}.`;
       renderRecipes();
     });
+
+    /* --- cook plan --- */
+    const batchesInput = root.querySelector('#rBatches');
+    const batches = () => Math.max(0.5, parseFloat(batchesInput.value) || 1);
+    const drawBatchNote = () => {
+      root.querySelector('#rBatchNote').textContent = `≈ ${Math.round((r.servings || 1) * batches())} servings`;
+    };
+    drawBatchNote();
+    batchesInput.addEventListener('input', drawBatchNote);
+    root.querySelectorAll('[data-assign]').forEach(b => b.addEventListener('click', () => {
+      const slot = b.getAttribute('data-assign');
+      const d = slot === 'cook' ? nextCookDate() : nextPrepDate();
+      const total = assignRecipe(dateKey(d), slot, r.id, batches());
+      view.planFlash = `Added to ${fmtDay(d)} — ${total === 1 ? '1 batch' : total + ' batches'} total.`;
+      renderRecipes();
+    }));
     return;
   }
 
@@ -84,7 +129,7 @@ export function renderRecipes(){
       }).join('')
     + '<button class="addBtn" id="rNew" style="margin-top:8px;">＋ new recipe</button>';
   root.querySelectorAll('[data-r]').forEach(c => c.addEventListener('click', () => {
-    view.recipeId = +c.getAttribute('data-r'); view.mode = 'detail'; view.logFlash = null; renderRecipes();
+    view.recipeId = +c.getAttribute('data-r'); view.mode = 'detail'; view.logFlash = view.planFlash = null; renderRecipes();
   }));
   root.querySelector('#rNew').addEventListener('click', () => openRecipeSheet(null));
 }

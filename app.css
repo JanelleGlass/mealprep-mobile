@@ -206,6 +206,18 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .taskRow .tDesc{display:block;font-size:11px;color:var(--ink-soft);line-height:1.4;margin-top:2px;}
 .taskRow.done .tTitle{color:var(--ink-soft);text-decoration:line-through;}
 .taskRow.done .tDesc{opacity:0.6;}
+/* recipes nested under a parent step (cook for Sabbath / meal prep) */
+.taskRow.child{padding-left:26px;position:relative;}
+.taskRow.child::before{content:"";position:absolute;left:9px;top:0;bottom:0;width:1px;background:var(--rule);}
+.taskRow.child .tTitle{font-size:12px;}
+/* shopping rows the pantry already covers */
+.taskRow.haveIt .tTitle{color:var(--ink-soft);}
+.taskRow.haveIt .tDesc{color:var(--fiber);}
+.taskRow.haveIt .box{border-style:dashed;border-color:var(--fiber);}
+/* remove-from-day chips under a task list */
+.taskList .quickRow{margin:8px 0 10px;}
+.rmChip{font-family:'IBM Plex Sans',sans-serif;font-size:10px;background:#fff;border:1px solid var(--rule);border-radius:20px;padding:4px 9px;cursor:pointer;color:var(--ink-soft);}
+.rmChip:active{border-color:var(--iron);color:var(--iron);}
 
 .tabbar{
   position:fixed;left:0;right:0;bottom:0;display:flex;z-index:40;
