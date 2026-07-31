@@ -165,7 +165,7 @@ function toggle(dk, id){
 function sectionsFor(date){
   const name = dayName(date), dow = date.getDay(), secs = [];
 
-  const daily = [{ id: 'vit', t: 'Daily vitamins' }];
+  const daily = [{ id: 'dev', t: 'Devotions' }, { id: 'vit', t: 'Take Supplements' }];
   if (dow === 4) daily.push({ id: 'gas', t: '⛽ Gas in the car' });
   secs.push({ title: 'Daily', hue: 'vitamins', groups: [{ tasks: daily }] });
 
@@ -206,6 +206,7 @@ function habitStatus(dk, habit){
   const name = dayName(d);
   let ids = [];
   if (habit === 'vitamins') ids = ['vit'];
+  else if (habit === 'devotions') ids = ['dev'];
   else if (habit === 'practice') ids = ['scales', 'repertoire'];
   else if (habit === 'workout'){ const w = WORKOUT[name]; if (!w) return 'off'; ids = w.primer.length ? ['warmup', 'jumps', 'lifts'] : ['warmup', 'lifts']; }
   else if (habit === 'cleaning'){ if (name !== 'Friday') return 'off'; ids = CLEAN_STEPS.map(s => s.id); }
@@ -282,7 +283,8 @@ export function renderRoutines(){
   /* habit tracker */
   html += `<div class="sectionTitle">Habit tracker<span class="rNote">last 14 days</span></div>
     <div class="card">
-      ${historyRow('Vitamins', 'vitamins')}
+      ${historyRow('Devotions', 'devotions')}
+      ${historyRow('Supplements', 'vitamins')}
       ${historyRow('Practice', 'practice')}
       ${historyRow('Workout', 'workout')}
       ${historyRow('Cleaning', 'cleaning')}
