@@ -407,13 +407,13 @@ export function renderRoutines(){
   /* habit tracker */
   html += `<div class="sectionTitle">Habit tracker<span class="rNote">last 14 days</span></div>
     <div class="card">
-      ${historyRow('Devotions', 'devotions')}
       ${historyRow('Supplements', 'vitamins')}
+      ${historyRow('Devotions', 'devotions')}
       ${historyRow('Practice', 'practice')}
-      ${historyRow('Workout', 'workout')}
-      ${historyRow('Cleaning', 'cleaning')}
       ${historyRow('Calories', 'calories')}
       ${historyRow('Steps', 'steps')}
+      ${historyRow('Workout', 'workout')}
+      ${historyRow('Cleaning', 'cleaning')}
       <div class="hLegend"><span class="hCell done"></span> done <span class="hCell miss"></span> missed <span class="hCell off"></span> not scheduled / no data — tap a day to open it</div>
       <div class="cSub">Calories counts a day done when the Log total is at or under ${T.calMax.toLocaleString()} — in range or under. Steps counts a day done at ${T.stepsGoal.toLocaleString()} or more. Both goals live in Settings → Daily targets.</div>
     </div>`;
