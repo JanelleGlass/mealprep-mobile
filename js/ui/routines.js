@@ -6,6 +6,7 @@ import { cached, refresh } from '../store.js';
 import { createSyncedBlob } from '../syncblob.js';
 import { confirmDialog } from './pickers.js';
 import { addToPantry } from './pantry.js';
+import { skippedDates } from './log.js';
 import { entriesFor, removeRecipe, shoppingFor, owedFor, markApplied, prunePlan,
          planReconcile, planChangedRemotely, planPush, planIsDirty } from './cookplan.js';
 
@@ -165,14 +166,18 @@ function setSteps(dk, n){
 
 /* ---------- calories ----------
    Read-only view of the Log tab's entries: calories per date, rebuilt each
-   render so the habit row follows whatever has been logged. */
+   render so the habit row follows whatever has been logged. Days opted out of
+   the Log's averages come along, so a day marked unrepresentative there doesn't
+   count as a miss here either. */
 let calByDate = new Map();
+let calSkip = new Set();
 function buildCalByDate(){
   calByDate = new Map();
   for (const e of allFoodEntries()){
     const k = (e.date || '').slice(0, 10);
     if (k) calByDate.set(k, (calByDate.get(k) || 0) + (+e.calories || 0));
   }
+  calSkip = skippedDates();
 }
 
 /* ---------- the list for a given day ---------- */
@@ -277,6 +282,7 @@ function habitStatus(dk, habit){
 
   /* the two measured habits: 'off' means no data for that day, not "no plan" */
   if (habit === 'calories'){
+    if (calSkip.has(dk)) return 'off';                  // skipped in the Log's averages
     const cal = calByDate.get(dk) || 0;
     if (!cal) return 'off';
     return cal <= targets().calMax ? 'done' : 'miss';   // in range or under counts
@@ -415,7 +421,7 @@ export function renderRoutines(){
       ${historyRow('Workout', 'workout')}
       ${historyRow('Cleaning', 'cleaning')}
       <div class="hLegend"><span class="hCell done"></span> done <span class="hCell miss"></span> missed <span class="hCell off"></span> not scheduled / no data — tap a day to open it</div>
-      <div class="cSub">Calories counts a day done when the Log total is at or under ${T.calMax.toLocaleString()} — in range or under. Steps counts a day done at ${T.stepsGoal.toLocaleString()} or more. Both goals live in Settings → Daily targets.</div>
+      <div class="cSub">Calories counts a day done when the Log total is at or under ${T.calMax.toLocaleString()} — in range or under. Steps counts a day done at ${T.stepsGoal.toLocaleString()} or more. Days skipped in the Log's averages don't count either way. Both goals live in Settings → Daily targets.</div>
     </div>`;
 
   /* weekly overview */
