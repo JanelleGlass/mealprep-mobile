@@ -76,7 +76,8 @@ export function targets(){
   return { calMin: num('LogCalMin', 1700), calMax: num('LogCalMax', 1950),
            proteinMin: num('LogProteinMin', 130), proteinMax: num('LogProteinMax', 145),
            fiber: num('LogFiberTarget', 30), iron: num('LogIronTarget', 18),
-           lowFloor: num('LogLowIntakeFloor', 1600), heightIn: num('LogHeightIn', 71) };
+           lowFloor: num('LogLowIntakeFloor', 1600), heightIn: num('LogHeightIn', 71),
+           stepsGoal: num('LogStepsGoal', 8000) };
 }
 
 /* ---------- bottom sheet ---------- */

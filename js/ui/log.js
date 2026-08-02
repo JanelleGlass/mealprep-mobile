@@ -92,7 +92,7 @@ export function renderLog(){
     return v > 0 ? { text: dp ? v.toFixed(dp) : String(Math.round(v)), sub: 'left' } : { text: '✓', sub: '' };
   };
   document.getElementById('rings').innerHTML = `
-    <div class="ringCard">${ringSVG(t.cal / T.calMax, calColor, 58, 6, left(T.calMax, t.cal))}<div class="ringVal">${Math.round(t.cal)}</div><div class="ringTarget">${T.calMin}-${T.calMax}</div><div class="ringLabel">cal</div></div>
+    <div class="ringCard">${ringSVG(t.cal / T.calMax, calColor, 58, 6, left(T.calMin, t.cal))}<div class="ringVal">${Math.round(t.cal)}</div><div class="ringTarget">${T.calMin}-${T.calMax}</div><div class="ringLabel">cal</div></div>
     <div class="ringCard">${ringSVG(t.protein / T.proteinMax, proteinColor, 58, 6, left(T.proteinMin, t.protein))}<div class="ringVal">${Math.round(t.protein)}g</div><div class="ringTarget">${T.proteinMin}-${T.proteinMax}</div><div class="ringLabel">protein</div></div>
     <div class="ringCard">${ringSVG(t.fiber / T.fiber, 'var(--fiber)', 58, 6, left(T.fiber, t.fiber, 1))}<div class="ringVal">${t.fiber.toFixed(1)}g</div><div class="ringTarget">/ ${T.fiber}g</div><div class="ringLabel">fiber</div></div>
     <div class="ringCard">${ringSVG(t.iron / T.iron, 'var(--iron)', 58, 6, left(T.iron, t.iron, 1))}<div class="ringVal">${t.iron.toFixed(1)}mg</div><div class="ringTarget">/ ${T.iron}mg</div><div class="ringLabel">iron</div></div>`;
