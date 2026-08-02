@@ -29,8 +29,9 @@ export async function renderSettings(){
       ${[['LogCalMin', 'calories min', T.calMin], ['LogCalMax', 'calories max', T.calMax],
          ['LogProteinMin', 'protein min (g)', T.proteinMin], ['LogProteinMax', 'protein max (g)', T.proteinMax],
          ['LogFiberTarget', 'fiber target (g)', T.fiber], ['LogIronTarget', 'iron target (mg)', T.iron],
-         ['LogLowIntakeFloor', 'low-intake floor (cal)', T.lowFloor], ['LogHeightIn', 'height (in)', T.heightIn]]
-        .map(([k, label, v]) => `<div class="listRow"><span>${label}</span><span class="qty"><input type="number" class="tgtIn" data-k="${k}" step="0.5" value="${v}"></span></div>`).join('')}
+         ['LogLowIntakeFloor', 'low-intake floor (cal)', T.lowFloor], ['LogHeightIn', 'height (in)', T.heightIn],
+         ['LogStepsGoal', 'steps goal', T.stepsGoal, 100]]
+        .map(([k, label, v, step = 0.5]) => `<div class="listRow"><span>${label}</span><span class="qty"><input type="number" class="tgtIn" data-k="${k}" step="${step}" value="${v}"></span></div>`).join('')}
       <div class="cSub" id="stTgtMsg" style="margin-top:6px;">changes save automatically</div>
     </div>
 

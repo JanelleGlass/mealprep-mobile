@@ -1,7 +1,7 @@
 /* Routines tab: opens on today's combined to-do list (daily items, workout,
    cleaning), tracks completion per date as a habit history, and shows a weekly
    overview. All state is device-local under 'routines.log'. */
-import { esc, dateKey, isToday, startOfDay } from './common.js';
+import { esc, dateKey, isToday, startOfDay, targets, allFoodEntries } from './common.js';
 import { cached, setPreference, refresh } from '../store.js';
 
 /* ---------- content ---------- */
@@ -161,6 +161,33 @@ function toggle(dk, id){
   pushRemote();
 }
 
+/* ---------- steps ----------
+   A per-day number rather than a checkbox, stored in the same routines log under
+   a reserved key so it syncs with everything else. Task ids are all lowercase
+   words, so '__steps' can't collide with one. */
+const STEPS_KEY = '__steps';
+const stepsFor = dk => +(log[dk] && log[dk][STEPS_KEY]) || 0;
+function setSteps(dk, n){
+  if (!log[dk]) log[dk] = {};
+  if (n > 0) log[dk][STEPS_KEY] = n; else delete log[dk][STEPS_KEY];
+  if (!Object.keys(log[dk]).length) delete log[dk];
+  saveLog(log);
+  setDirty(true);
+  pushRemote();
+}
+
+/* ---------- calories ----------
+   Read-only view of the Log tab's entries: calories per date, rebuilt each
+   render so the habit row follows whatever has been logged. */
+let calByDate = new Map();
+function buildCalByDate(){
+  calByDate = new Map();
+  for (const e of allFoodEntries()){
+    const k = (e.date || '').slice(0, 10);
+    if (k) calByDate.set(k, (calByDate.get(k) || 0) + (+e.calories || 0));
+  }
+}
+
 /* ---------- the list for a given day ---------- */
 function sectionsFor(date){
   const name = dayName(date), dow = date.getDay(), secs = [];
@@ -204,6 +231,19 @@ function sectionsFor(date){
 function habitStatus(dk, habit){
   const d = startOfDay(new Date(dk + 'T00:00:00'));
   const name = dayName(d);
+
+  /* the two measured habits: 'off' means no data for that day, not "no plan" */
+  if (habit === 'calories'){
+    const cal = calByDate.get(dk) || 0;
+    if (!cal) return 'off';
+    return cal <= targets().calMax ? 'done' : 'miss';   // in range or under counts
+  }
+  if (habit === 'steps'){
+    const s = stepsFor(dk);
+    if (!s) return 'off';
+    return s >= targets().stepsGoal ? 'done' : 'miss';
+  }
+
   let ids = [];
   if (habit === 'vitamins') ids = ['vit'];
   else if (habit === 'practice') ids = ['scales', 'repertoire'];
@@ -246,6 +286,7 @@ function historyRow(label, habit){
 
 export function renderRoutines(){
   reconcile();
+  buildCalByDate();
   const root = document.getElementById('routinesRoot');
   const dk = dateKey(view.date);
   const sections = sectionsFor(view.date);
@@ -279,6 +320,17 @@ export function renderRoutines(){
     ).join('')}</div>`;
   });
 
+  /* steps for the day shown — typed in, since nothing counts them for us */
+  const T = targets();
+  const steps = stepsFor(dk);
+  html += `<div class="sectionTitle sec-steps">Steps<span class="rNote">goal ${T.stepsGoal.toLocaleString()}</span></div>
+    <div class="card stepsCard">
+      <input type="number" id="stepsIn" inputmode="numeric" min="0" step="100" placeholder="steps" value="${steps || ''}">
+      <span class="stepsNote">${steps
+        ? (steps >= T.stepsGoal ? '✓ goal met' : `${(T.stepsGoal - steps).toLocaleString()} to go`)
+        : 'not recorded'}</span>
+    </div>`;
+
   /* habit tracker */
   html += `<div class="sectionTitle">Habit tracker<span class="rNote">last 14 days</span></div>
     <div class="card">
@@ -286,7 +338,10 @@ export function renderRoutines(){
       ${historyRow('Practice', 'practice')}
       ${historyRow('Workout', 'workout')}
       ${historyRow('Cleaning', 'cleaning')}
-      <div class="hLegend"><span class="hCell done"></span> done <span class="hCell miss"></span> missed <span class="hCell off"></span> not scheduled — tap a day to open it</div>
+      ${historyRow('Calories', 'calories')}
+      ${historyRow('Steps', 'steps')}
+      <div class="hLegend"><span class="hCell done"></span> done <span class="hCell miss"></span> missed <span class="hCell off"></span> not scheduled / no data — tap a day to open it</div>
+      <div class="cSub">Calories counts a day done when the Log total is at or under ${T.calMax.toLocaleString()} — in range or under. Steps counts a day done at ${T.stepsGoal.toLocaleString()} or more. Both goals live in Settings → Daily targets.</div>
     </div>`;
 
   /* weekly overview */
@@ -319,6 +374,13 @@ export function renderRoutines(){
     renderRoutines();
     window.scrollTo(0, y);
   }));
+  const stepsIn = root.querySelector('#stepsIn');
+  stepsIn.addEventListener('change', () => {
+    const y = window.scrollY;
+    setSteps(dk, Math.max(0, Math.round(parseFloat(stepsIn.value) || 0)));
+    renderRoutines();
+    window.scrollTo(0, y);
+  });
   const tips = root.querySelector('#cleanTips');
   if (tips) tips.addEventListener('toggle', () => { view.tipsOpen = tips.open; });
   root.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => {
