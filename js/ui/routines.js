@@ -1,7 +1,9 @@
 /* Routines tab: opens on today's combined to-do list (daily items, workout,
    cleaning), tracks completion per date as a habit history, and shows a weekly
-   overview. All state is device-local under 'routines.log'. */
-import { esc, dateKey, isToday, startOfDay, recipeById, targets, allFoodEntries } from './common.js';
+   overview. What the list contains lives in routineplan.js and is editable;
+   what has been ticked off lives here, per date, under 'routines.log'. */
+import { esc, dateKey, isToday, startOfDay, recipeById, targets, allFoodEntries,
+         collapsibleSection, openSheet, closeSheet } from './common.js';
 import { cached, refresh } from '../store.js';
 import { createSyncedBlob } from '../syncblob.js';
 import { confirmDialog } from './pickers.js';
@@ -9,84 +11,15 @@ import { addToPantry } from './pantry.js';
 import { skippedDates } from './log.js';
 import { entriesFor, removeRecipe, shoppingFor, owedFor, markApplied, prunePlan,
          planReconcile, planChangedRemotely, planPush, planIsDirty } from './cookplan.js';
+import { HABIT_RULE, WEEK_ORDER, DAY_ABBR, allRoutines, routineById, routinesForDow,
+         stepsForDow, addRoutine, updateRoutine, deleteRoutine, addStep, updateStep,
+         deleteStep, moveStep, moveRoutine, routinePlanReconcile, routinePlanChangedRemotely,
+         routinePlanPush, routinePlanIsDirty } from './routineplan.js';
 
-/* ---------- content ---------- */
-const WARMUP = [
-  'Raise (2–3 min): brisk walk / bike / march into high knees — light sweat, not tired.',
-  'Dynamic (2–3 min): leg swings (front-back & side-side), walking lunge + reach, deep bodyweight squats, ankle circles + calf rocks.',
-  'Activate (1–2 min): 2–3 Bird Dogs or Dead Bugs (exhale, lift pelvic floor) + banded Clamshells or Lateral Walks.',
-  'Ramp to jumps (1 min): ankle pogo bounces, then 3–4 low submaximal jumps before working sets.',
-];
-const WORKOUT = {
-  Sunday: { focus: 'Upper + Core', note: 'no jumps — recovery day', primer: [], lifts: [
-    'Arnold Press – 3×10',
-    'Push-Ups (knee or full) – 3×10',
-    'Renegade Rows – 3×10',
-    'Plank Shoulder Taps – 3×20 (keep breathing)',
-    'Core: Farmer Carry – 3×40 steps',
-    'Core: Bird Dog or Bear Hold – 3×20–30 sec',
-    'Core: Russian Twists – light/bodyweight (or swap for extra Pallof Press)',
-  ]},
-  Monday: { focus: 'Lower — Glutes & Legs', note: '+ jumps', primer: [
-    'Box Jumps 4×3 (step down)',
-    'Skater Bounds 3×6 each side',
-  ], lifts: [
-    'Goblet Squats – 3×12',
-    'DB Romanian Deadlifts – 3×12 (or Kettlebell Swings 3×12)',
-    'Step-Ups or Reverse Lunges – 3×10 each leg',
-    'Glute Bridges or Hip Thrusts – 3×15',
-    'Standing Calf Raises – 3×20',
-    'Core: Bird Dog – 3×8 each side (slow, exhale on extend)',
-    'Core: Suitcase Carry – 3×30–40 steps each side',
-  ]},
-  Wednesday: { focus: 'Upper — Arms, Shoulders, Back', note: '+ jumps', primer: [
-    'Pogo Hops 3×10',
-    'Broad Jumps 4×3 (stick landing)',
-    'Squat Jumps 3×5',
-  ], lifts: [
-    'Bent-over Rows – 3×12',
-    'Overhead Press – 3×10',
-    'Chest Press – 3×12',
-    'Dumbbell Bicep Curls – 3×15',
-    'Tricep Kickbacks or Overhead Extensions – 3×12',
-    '(Optional) Lateral Raises – 2×15',
-    'Core: Pallof Press (band) – 3×10 each side',
-    'Core: Dead Bug – 3×8 each side (exhale on the reach)',
-  ]},
-  Friday: { focus: 'Lower — Legs & Core', note: '+ jumps', primer: [
-    'Box Jumps 4×3',
-    'Lateral Skater Bounds 3×6 each side',
-    'Tuck Jumps 3×4 (if landings solid)',
-  ], lifts: [
-    'Bulgarian Split Squats – 3×10 each leg',
-    'Dumbbell Sumo Squats – 3×12',
-    'Hip Thrusts or Glute Bridges – 3×15',
-    'Side-Lying Leg Raises – 3×12 each side',
-    'Core: Heel Slides or Dead Bug – 3×10 (breath-led)',
-    'Core: Side Plank – 3×20–30 sec each side (progress to feet-elevated once 30 sec is clean)',
-  ]},
-};
-const CLEAN_TIPS = [
-  'Laundry first — it’s the longest hands-off task, so it runs while you clean.',
-  'Spray, then walk away — give cleaners 5–10 min before you scrub.',
-  'Top to bottom — dust and wipe high before you touch the floors.',
-  'Floors last, backing out — vacuum then mop, working toward the door.',
-];
-const CLEAN_STEPS = [
-  { id: 'c1',    t: 'Strip the beds & start laundry',  d: 'Sheets and towels in the first load. Keep loads moving all afternoon.' },
-  { id: 'cook',  t: '🍳 Cook for Sabbath',             d: 'Start the Sabbath meals early so they cook while you clean.' },
-  { id: 'c3',    t: 'Kitchen',                          d: 'Top down: backsplash → counters, stovetop, sink → appliance fronts. Run the dishwasher. Leave the floor.' },
-  { id: 'c4',    t: 'Bathrooms & showers',             d: 'Top down: mirror → sink & counter → scrub the shower/tub → toilet. Leave the floor.' },
-  { id: 'trash', t: 'Take out trash and compost',      d: 'Empty the kitchen and bathroom bins; take the trash and compost out.' },
-  { id: 'c5',    t: 'The window',                       d: 'Glass and sill now, before vacuuming — any drips land on the floor you clean next.' },
-  { id: 'c6',    t: 'Dust & tidy',                      d: 'Every room, high to low. Put clutter away. Rotate the laundry.' },
-  { id: 'c7',    t: 'Remake the bed',                   d: 'Fresh sheets from the wash or a clean set.' },
-  { id: 'c8',    t: 'Vacuum',                           d: 'Every room, working from the far room back toward the door.' },
-  { id: 'c9',    t: 'Mop',                              d: 'Hard floors last, backing out of each room so you never walk on wet floor.' },
-  { id: 'c10',   t: 'Finish laundry',                   d: 'Fold and put away the last loads.' },
-];
-const WEEK_ORDER = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const dayName = d => d.toLocaleDateString('en-US', { weekday: 'long' });
+/* "every day" / "Mon · Wed · Fri" — the schedule in a section's note slot */
+const dayLabel = days => !days?.length ? 'no days'
+  : days.length === 7 ? 'every day' : days.map(i => DAY_ABBR[i]).join(' · ');
 
 /* ---------- per-date completion log ----------
    Local storage is the offline-first mirror; the same object is synced to
@@ -103,9 +36,11 @@ async function syncOpen(){
   try {
     if (routinesLog.isDirty()) await routinesLog.push();
     if (planIsDirty()) await planPush();
+    if (routinePlanIsDirty()) await routinePlanPush();
     await refresh('user_preferences');
     routinesLog.reconcile();
     planReconcile();
+    routinePlanReconcile();
   } catch { /* offline — local copy stands */ }
   prunePlan();
   renderRoutines();
@@ -122,10 +57,12 @@ let pollTimer = null;
 const routinesActive = () => document.getElementById('tab-routines')?.classList.contains('active');
 
 async function pullAndApply(){
-  /* offline, or we hold unsynced local edits in either blob */
-  if (!navigator.onLine || routinesLog.isDirty() || planIsDirty()) return;
+  /* offline, or we hold unsynced local edits in any of the blobs */
+  if (!navigator.onLine || routinesLog.isDirty() || planIsDirty() || routinePlanIsDirty()) return;
+  if (view.editing) return;                      // mid-edit: don't yank the list away
   try { await refresh('user_preferences'); } catch { return; }
-  if (!routinesLog.changedRemotely() && !planChangedRemotely()) return;  // nothing new
+  if (!routinesLog.changedRemotely() && !planChangedRemotely()
+      && !routinePlanChangedRemotely()) return;  // nothing new
   const y = window.scrollY;
   renderRoutines();                              // reconcile() inside adopts the synced copies
   window.scrollTo(0, y);
@@ -182,53 +119,32 @@ function buildCalByDate(){
 
 /* ---------- the list for a given day ---------- */
 function sectionsFor(date){
-  const name = dayName(date), dow = date.getDay(), secs = [];
+  const dow = date.getDay(), dk = dateKey(date), secs = [];
 
-  const daily = [{ id: 'dev', t: 'Devotions' }, { id: 'vit', t: 'Take Supplements' }];
-  if (dow === 4) daily.push({ id: 'gas', t: '⛽ Gas in the car' });
-  secs.push({ title: 'Daily', hue: 'vitamins', groups: [{ tasks: daily }] });
-
-  secs.push({ title: 'Practice', hue: 'practice', groups: [{ tasks: [
-    { id: 'scales', t: 'Scales' },
-    { id: 'repertoire', t: 'Repertoire' },
-  ] }] });
-
-  const w = WORKOUT[name];
-  if (w){
-    const tasks = [{ id: 'warmup', t: 'Warm-up', d: 'Raise → dynamic → activate → ramp to jumps (6–8 min).' }];
-    if (w.primer.length) tasks.push({ id: 'jumps', t: 'Jumps', d: w.primer.join(' · ') });
-    tasks.push({ id: 'lifts', t: 'Lifts', d: w.lifts.join(' · ') });
-    secs.push({ title: `Workout — ${w.focus}`, note: w.note, hue: 'workout', groups: [{ tasks }] });
-  }
-
-  const dk = dateKey(date);
-
-  if (dow === 1){
-    secs.push({ title: 'Meal prep — cook, portion & freeze', groups: [{ tasks: [
-      { id: 'mp-rice', t: 'Rice' },
-      { id: 'mp-soup', t: 'Soup or entrée' },
-      { id: 'mp-chia', t: 'Chia pudding' },
-      { id: 'mp-salad', t: 'Salad' },
-      { id: 'mp-snacks', t: 'Snacks' },
-      ...recipeRows(dk, 'prep'),
-    ] }], foot: removeChips(dk, 'prep') });
-  }
-
-  if (dow === 5){
-    /* assigned recipes hang off the "Cook for Sabbath" step, wherever it sits */
-    const cookRows = recipeRows(dk, 'cook');
-    const tasks = CLEAN_STEPS.flatMap((s, i) => {
-      const row = { id: s.id, t: `${i + 1}. ${s.t}`, d: s.d };
-      return s.id === 'cook' ? [row, ...cookRows] : [row];
+  for (const r of routinesForDow(dow)){
+    const steps = r.steps || [];
+    /* a routine holding a cook-plan slot shows the recipes assigned to that day.
+       They hang off the step the slot is anchored to ('cook'), or the end of the
+       list if that step has been deleted. */
+    const rows = r.slot ? recipeRows(dk, r.slot) : [];
+    const anchor = r.slot === 'cook' ? steps.findIndex(s => s.id === 'cook') : -1;
+    const tasks = [];
+    steps.forEach((s, i) => {
+      tasks.push({ id: s.id, t: r.numbered ? `${i + 1}. ${s.t}` : s.t, d: s.d || undefined });
+      if (i === anchor) tasks.push(...rows);
     });
-    secs.push({ title: 'Cleaning — in order', tips: CLEAN_TIPS, hue: 'cleaning',
-      groups: [{ tasks }], foot: removeChips(dk, 'cook') });
+    if (rows.length && anchor < 0) tasks.push(...rows);
+
+    secs.push({ key: r.id, routine: r, title: r.title, note: r.note, hue: r.hue,
+      tips: r.tips?.length ? r.tips : null, groups: [{ tasks }],
+      foot: r.slot ? removeChips(dk, r.slot) : '' });
   }
 
   const shopping = shoppingFor(dk);
   if (shopping.length){
     const covered = shopping.filter(x => x.covered).length;
     secs.push({
+      key: 'shopping',
       title: 'Shopping',
       note: covered ? `${covered} of ${shopping.length} already in the pantry`
             : shopping.length === 1 ? '1 item' : `${shopping.length} items`,
@@ -278,7 +194,6 @@ function removeChips(dk, slot){
 /* returns 'done' | 'miss' | 'off' for a habit on a date */
 function habitStatus(dk, habit){
   const d = startOfDay(new Date(dk + 'T00:00:00'));
-  const name = dayName(d);
 
   /* the two measured habits: 'off' means no data for that day, not "no plan" */
   if (habit === 'calories'){
@@ -293,18 +208,15 @@ function habitStatus(dk, habit){
     return s >= targets().stepsGoal ? 'done' : 'miss';
   }
 
-  let ids = [];
-  if (habit === 'vitamins') ids = ['vit'];
-  else if (habit === 'devotions') ids = ['dev'];
-  else if (habit === 'practice') ids = ['scales', 'repertoire'];
-  else if (habit === 'workout'){ const w = WORKOUT[name]; if (!w) return 'off'; ids = w.primer.length ? ['warmup', 'jumps', 'lifts'] : ['warmup', 'lifts']; }
-  else if (habit === 'cleaning'){ if (name !== 'Friday') return 'off'; ids = CLEAN_STEPS.map(s => s.id); }
+  /* the rest come from whatever steps carry that habit tag on that weekday, so
+     editing the routines moves the tracker with them. Nothing scheduled that
+     day (or the tag edited away entirely) reads as 'off', same as before. */
+  const ids = stepsForDow(d.getDay()).filter(s => s.habit === habit).map(s => s.id);
   if (!ids.length) return 'off';
-  /* per-habit bar: workout/practice count on any one piece, cleaning at 75%
-     of steps, everything else needs all items */
   const checked = ids.filter(id => isChecked(dk, id)).length;
-  const complete = (habit === 'workout' || habit === 'practice') ? checked > 0
-    : habit === 'cleaning' ? checked >= Math.ceil(ids.length * 0.75)
+  const rule = HABIT_RULE[habit] || 'all';
+  const complete = rule === 'any' ? checked > 0
+    : rule === 'most' ? checked >= Math.ceil(ids.length * 0.75)
     : checked === ids.length;
   return complete ? 'done' : 'miss';
 }
@@ -315,7 +227,9 @@ function lastDates(n){
 }
 
 /* ---------- view ---------- */
-const view = { date: startOfDay(new Date()), tipsOpen: false };
+/* secOpen holds only sections the user has explicitly opened or closed; anything
+   absent falls back to the default (open, unless every box in it is checked). */
+const view = { date: startOfDay(new Date()), tipsOpen: false, secOpen: {}, editing: false };
 let shopMsg = null;                    // inline note under the shopping list
 export function routinesFocusToday(){ view.date = startOfDay(new Date()); syncOpen(); }
 
@@ -326,6 +240,99 @@ function taskRow(dk, t){
     <span class="box"></span>
     <span class="tText"><span class="tTitle">${esc(t.t)}</span>${t.d ? `<span class="tDesc">${esc(t.d)}</span>` : ''}</span>
   </button>`;
+}
+
+/* the same row while editing: tap the text to rename it, arrows to move it, ✕ to
+   drop it. None of that can sit inside taskRow (already a button), so this is
+   its own layout. */
+function editStepRow(rid, s, num, i, n){
+  return `<div class="editRow">
+    <button type="button" class="eName" data-editstep="${rid}|${s.id}">
+      <span class="tTitle">${num ? num + '. ' : ''}${esc(s.t)}</span>
+      ${s.d ? `<span class="tDesc">${esc(s.d)}</span>` : ''}
+    </button>
+    <span class="mvCol">
+      <button type="button" class="mv" data-mvstep="${rid}|${s.id}|-1"${i === 0 ? ' disabled' : ''} aria-label="Move up">↑</button>
+      <button type="button" class="mv" data-mvstep="${rid}|${s.id}|1"${i === n - 1 ? ' disabled' : ''} aria-label="Move down">↓</button>
+    </span>
+    <button type="button" class="del" data-rmstep="${rid}|${s.id}" aria-label="Remove step">✕</button>
+  </div>`;
+}
+
+/* ---------- editors ---------- */
+/* routine === null creates one */
+function routineSheet(routine){
+  const draft = routine
+    ? { title: routine.title, days: [...(routine.days || [])], note: routine.note || '' }
+    : { title: '', days: [], note: '' };
+  const body = openSheet(routine ? 'Edit routine' : 'New routine', '');
+
+  function draw(msg){
+    body.innerHTML = `
+      <span class="miniLabel">title</span>
+      <input type="text" id="rtTitle" value="${esc(draft.title)}" placeholder="e.g. Evening reset">
+      <span class="miniLabel">note (optional)</span>
+      <input type="text" id="rtNote" value="${esc(draft.note)}" placeholder="e.g. + jumps">
+      <span class="miniLabel">days it shows up</span>
+      <div class="quickRow dayChips">${DAY_ABBR.map((d, i) =>
+        `<button type="button" class="quickChip dayChip${draft.days.includes(i) ? ' on' : ''}" data-day="${i}">${d}</button>`).join('')}</div>
+      <div class="macros" id="rtMsg">${esc(msg || '')}</div>
+      <div class="btnRow">
+        <button class="cancel" id="rtCancel">cancel</button>
+        <button class="save" id="rtSave">save</button>
+      </div>`;
+
+    body.querySelector('#rtTitle').addEventListener('input', e => draft.title = e.target.value);
+    body.querySelector('#rtNote').addEventListener('input', e => draft.note = e.target.value);
+    body.querySelectorAll('[data-day]').forEach(b => b.addEventListener('click', () => {
+      const i = +b.getAttribute('data-day');
+      draft.days = draft.days.includes(i) ? draft.days.filter(x => x !== i) : [...draft.days, i].sort();
+      draw();
+    }));
+    body.querySelector('#rtCancel').addEventListener('click', () => { closeSheet(); renderRoutines(); });
+    body.querySelector('#rtSave').addEventListener('click', () => {
+      if (!draft.title.trim()) return draw('give it a title');
+      if (!draft.days.length) return draw('pick at least one day');
+      const patch = { title: draft.title.trim(), days: draft.days, note: draft.note.trim() };
+      if (routine) updateRoutine(routine.id, patch);
+      else { const r = addRoutine(patch); view.secOpen[r.id] = true; }
+      closeSheet();
+      renderRoutines();
+    });
+  }
+  draw();
+}
+
+/* step === null adds one to the routine */
+function stepSheet(routineId, step){
+  const draft = step ? { t: step.t, d: step.d || '' } : { t: '', d: '' };
+  const body = openSheet(step ? 'Edit step' : 'New step', '');
+
+  function draw(msg){
+    body.innerHTML = `
+      <span class="miniLabel">step</span>
+      <input type="text" id="stTitle" value="${esc(draft.t)}" placeholder="e.g. Wipe the counters">
+      <span class="miniLabel">detail (optional)</span>
+      <input type="text" id="stDesc" value="${esc(draft.d)}" placeholder="shown under the step">
+      <div class="macros" id="stMsg">${esc(msg || '')}</div>
+      <div class="btnRow">
+        <button class="cancel" id="stCancel">cancel</button>
+        <button class="save" id="stSave">save</button>
+      </div>`;
+
+    body.querySelector('#stTitle').addEventListener('input', e => draft.t = e.target.value);
+    body.querySelector('#stDesc').addEventListener('input', e => draft.d = e.target.value);
+    body.querySelector('#stCancel').addEventListener('click', () => { closeSheet(); renderRoutines(); });
+    body.querySelector('#stSave').addEventListener('click', () => {
+      if (!draft.t.trim()) return draw('give the step a name');
+      const patch = { t: draft.t.trim(), d: draft.d.trim() };
+      if (step) updateStep(routineId, step.id, patch);
+      else addStep(routineId, patch);
+      closeSheet();
+      renderRoutines();
+    });
+  }
+  draw();
 }
 
 /* push everything checked-but-not-yet-applied into the pantry. Delta-based
@@ -364,6 +371,7 @@ function historyRow(label, habit){
 export function renderRoutines(){
   routinesLog.reconcile();
   planReconcile();
+  routinePlanReconcile();
   buildCalByDate();
   const root = document.getElementById('routinesRoot');
   const dk = dateKey(view.date);
@@ -382,37 +390,86 @@ export function renderRoutines(){
     <button data-nav="next" aria-label="Next day">→</button>
   </div>`;
 
-  html += `<div class="dayProg">${done} / ${allIds.length} done</div>`;
+  html += `<div class="dayProg">${done} / ${allIds.length} done</div>
+    <div class="quickRow rEditRow">
+      <button type="button" class="quickChip${view.editing ? ' on' : ''}" id="rEdit">${
+        view.editing ? '✓ done editing' : '✎ edit routines'}</button>
+    </div>`;
 
-  /* the single list, in sections */
+  /* the single list, in sections. A section collapses on its own once every box
+     in it is checked, and stays however the user last left it after that —
+     except while editing, where a hidden section is a section you can't fix. */
+  const openState = new Map();         // section key → open, for the click handler
+  const sectionOf = new Map();         // task id → section key
+  const routineSecs = sections.filter(s => s.routine);   // Shopping is generated, not a routine
   sections.forEach(sec => {
     const hue = sec.hue ? ` sec-${sec.hue}` : '';
-    html += `<div class="sectionTitle${hue}">${esc(sec.title)}${sec.note ? `<span class="rNote">${esc(sec.note)}</span>` : ''}</div>`;
+    const ids = sec.groups.flatMap(g => g.tasks.map(t => t.id));
+    ids.forEach(id => sectionOf.set(id, sec.key));
+    const secDone = ids.filter(id => isChecked(dk, id)).length;
+    const open = view.editing || (view.secOpen[sec.key] ?? !(ids.length && secDone === ids.length));
+    openState.set(sec.key, open);
+    const r = sec.routine;             // absent on Shopping, which is generated
+
+    let body = '';
     if (sec.tips){
-      html += `<details class="card rTips" id="cleanTips"${view.tipsOpen ? ' open' : ''}>
+      body += `<details class="card rTips" id="cleanTips"${view.tipsOpen ? ' open' : ''}>
         <summary class="rTipsHead">How this order saves steps</summary>${
         sec.tips.map(t => `<div class="rTip">${esc(t)}</div>`).join('')}</details>`;
     }
-    html += `<div class="card taskList${hue}">${sec.groups.map(g =>
-      (g.sub ? `<div class="rSub">${esc(g.sub)}</div>` : '') +
-      g.tasks.map(t => taskRow(dk, t)).join('')
-    ).join('')}${sec.foot ?? ''}</div>`;
+    if (view.editing && r){
+      const steps = r.steps || [];
+      const ri = routineSecs.indexOf(sec);
+      body += `<div class="card taskList${hue}">${
+        steps.map((s, i) => editStepRow(r.id, s, r.numbered ? i + 1 : 0, i, steps.length)).join('')
+        || '<div class="cSub">no steps yet</div>'}
+        <div class="quickRow">
+          <button class="quickChip" data-addstep="${r.id}">＋ step</button>
+          <button class="quickChip" data-editroutine="${r.id}">✎ title &amp; days</button>
+          <button class="quickChip" data-mvroutine="${r.id}|-1"${ri === 0 ? ' disabled' : ''}>↑ up</button>
+          <button class="quickChip" data-mvroutine="${r.id}|1"${ri === routineSecs.length - 1 ? ' disabled' : ''}>↓ down</button>
+          <button class="quickChip" data-rmroutine="${r.id}">✕ delete routine</button>
+        </div></div>`;
+    } else {
+      body += `<div class="card taskList${hue}">${sec.groups.map(g =>
+        (g.sub ? `<div class="rSub">${esc(g.sub)}</div>` : '') +
+        g.tasks.map(t => taskRow(dk, t)).join('')
+      ).join('')}${sec.foot ?? ''}</div>`;
+    }
+
+    html += collapsibleSection(sec.key, sec.title, open, body,
+      { hue: sec.hue, note: view.editing && r ? dayLabel(r.days) : sec.note,
+        count: open || !ids.length ? '' : `${secDone} / ${ids.length}` });
   });
+
+  /* routines that don't land on this day are invisible here, so editing needs a
+     way in to all of them */
+  if (view.editing){
+    const offToday = allRoutines().filter(r => !(r.days || []).includes(view.date.getDay()));
+    html += `<div class="card rEditCard">
+      <button class="addBtn" id="rNew">＋ new routine</button>
+      ${offToday.length ? `<div class="cSub" style="margin-top:10px;">not on ${esc(dayName(view.date))}s — tap to edit</div>
+      <div class="quickRow">${offToday.map(r =>
+        `<button class="quickChip" data-editroutine="${r.id}">${esc(r.title)}<span class="chipDays"> ${esc(dayLabel(r.days))}</span></button>`).join('')}</div>` : ''}
+    </div>`;
+  }
 
   /* steps for the day shown — typed in, since nothing counts them for us */
   const T = targets();
   const steps = stepsFor(dk);
-  html += `<div class="sectionTitle sec-steps">Steps<span class="rNote">goal ${T.stepsGoal.toLocaleString()}</span></div>
-    <div class="card stepsCard">
+  const stepsOpen = view.secOpen.steps ?? true;
+  openState.set('steps', stepsOpen);
+  html += collapsibleSection('steps', 'Steps', stepsOpen, `<div class="card stepsCard">
       <input type="number" id="stepsIn" inputmode="numeric" min="0" step="100" placeholder="steps" value="${steps || ''}">
       <span class="stepsNote">${steps
         ? (steps >= T.stepsGoal ? '✓ goal met' : `${(T.stepsGoal - steps).toLocaleString()} to go`)
         : 'not recorded'}</span>
-    </div>`;
+    </div>`, { hue: 'steps', note: `goal ${T.stepsGoal.toLocaleString()}` });
 
   /* habit tracker */
-  html += `<div class="sectionTitle">Habit tracker<span class="rNote">last 14 days</span></div>
-    <div class="card">
+  const habitsOpen = view.secOpen.habits ?? true;
+  openState.set('habits', habitsOpen);
+  html += collapsibleSection('habits', 'Habit tracker', habitsOpen, `<div class="card">
       ${historyRow('Supplements', 'vitamins')}
       ${historyRow('Devotions', 'devotions')}
       ${historyRow('Practice', 'practice')}
@@ -422,21 +479,20 @@ export function renderRoutines(){
       ${historyRow('Cleaning', 'cleaning')}
       <div class="hLegend"><span class="hCell done"></span> done <span class="hCell miss"></span> missed <span class="hCell off"></span> not scheduled / no data — tap a day to open it</div>
       <div class="cSub">Calories counts a day done when the Log total is at or under ${T.calMax.toLocaleString()} — in range or under. Steps counts a day done at ${T.stepsGoal.toLocaleString()} or more. Days skipped in the Log's averages don't count either way. Both goals live in Settings → Daily targets.</div>
-    </div>`;
+    </div>`, { note: 'last 14 days' });
 
   /* weekly overview */
-  html += `<div class="sectionTitle">This week</div>` + WEEK_ORDER.map(nm => {
-    const w = WORKOUT[nm], items = [];
-    if (nm === 'Monday') items.push('🍱 Meal prep — cook, portion & freeze');
-    if (nm === 'Thursday') items.push('⛽ Gas in the car');
-    if (nm === 'Friday') items.push('🍳 Cook for Sabbath', '🧹 Clean the house');
-    if (w) items.push(`Workout — ${w.focus} ${w.note.startsWith('+') ? w.note : '(' + w.note + ')'}`);
+  const weekOpen = view.secOpen.week ?? true;
+  openState.set('week', weekOpen);
+  html += collapsibleSection('week', 'This week', weekOpen, WEEK_ORDER.map((nm, dow) => {
+    const items = routinesForDow(dow).map(r =>
+      r.note ? `${r.title} ${r.note.startsWith('+') ? r.note : '(' + r.note + ')'}` : r.title);
     if (!items.length) items.push('Rest');
     const isCur = nm === dayName(view.date);
     return `<div class="card dayCard${isCur ? ' isToday' : ''}">
       <div class="dName">${esc(nm)}${isCur ? '<span class="todayTag">viewing</span>' : ''}</div>
       <div class="dItems">${items.map(i => `<div class="dItem">${esc(i)}</div>`).join('')}</div></div>`;
-  }).join('');
+  }).join(''));
 
   root.innerHTML = html;
 
@@ -445,12 +501,69 @@ export function renderRoutines(){
     const n = b.getAttribute('data-nav');
     if (n === 'today') view.date = startOfDay(new Date());
     else { const d = new Date(view.date); d.setDate(d.getDate() + (n === 'next' ? 1 : -1)); view.date = d; }
+    view.secOpen = {};                 // another day, its own defaults
     renderRoutines();
     window.scrollTo(0, 0);
+  }));
+  root.querySelectorAll('[data-sec]').forEach(b => b.addEventListener('click', () => {
+    const y = window.scrollY;
+    const k = b.getAttribute('data-sec');
+    view.secOpen[k] = !openState.get(k);
+    renderRoutines();
+    window.scrollTo(0, y);
+  }));
+
+  /* ---------- editing ---------- */
+  root.querySelector('#rEdit').addEventListener('click', () => {
+    const y = window.scrollY;
+    view.editing = !view.editing;
+    if (!view.editing) view.secOpen = {};    // let completed sections fold away again
+    renderRoutines();
+    window.scrollTo(0, y);
+  });
+  root.querySelector('#rNew')?.addEventListener('click', () => routineSheet(null));
+  root.querySelectorAll('[data-editroutine]').forEach(b => b.addEventListener('click', () =>
+    routineSheet(routineById(b.getAttribute('data-editroutine')))));
+  root.querySelectorAll('[data-rmroutine]').forEach(b => b.addEventListener('click', async () => {
+    const r = routineById(b.getAttribute('data-rmroutine'));
+    if (!r || !(await confirmDialog(`Delete the "${r.title}" routine and all of its steps?`))) return;
+    deleteRoutine(r.id);
+    renderRoutines();
+  }));
+  root.querySelectorAll('[data-mvroutine]').forEach(b => b.addEventListener('click', () => {
+    const y = window.scrollY;
+    const [id, dir] = b.getAttribute('data-mvroutine').split('|');
+    moveRoutine(id, +dir, view.date.getDay());
+    renderRoutines();
+    window.scrollTo(0, y);
+  }));
+  root.querySelectorAll('[data-mvstep]').forEach(b => b.addEventListener('click', () => {
+    const y = window.scrollY;
+    const [rid, sid, dir] = b.getAttribute('data-mvstep').split('|');
+    moveStep(rid, sid, +dir);
+    renderRoutines();
+    window.scrollTo(0, y);
+  }));
+  root.querySelectorAll('[data-addstep]').forEach(b => b.addEventListener('click', () =>
+    stepSheet(b.getAttribute('data-addstep'), null)));
+  root.querySelectorAll('[data-editstep]').forEach(b => b.addEventListener('click', () => {
+    const [rid, sid] = b.getAttribute('data-editstep').split('|');
+    const step = (routineById(rid)?.steps || []).find(s => s.id === sid);
+    if (step) stepSheet(rid, step);
+  }));
+  root.querySelectorAll('[data-rmstep]').forEach(b => b.addEventListener('click', async () => {
+    const [rid, sid] = b.getAttribute('data-rmstep').split('|');
+    const step = (routineById(rid)?.steps || []).find(s => s.id === sid);
+    if (!step || !(await confirmDialog(`Remove "${step.t}" from this routine?`))) return;
+    deleteStep(rid, sid);
+    renderRoutines();
   }));
   root.querySelectorAll('[data-check]').forEach(b => b.addEventListener('click', () => {
     const y = window.scrollY;
     const id = b.getAttribute('data-check'), wasChecked = isChecked(dk, id);
+    /* checking the last box in a section should collapse it, so drop whatever
+       the user had pinned open or closed and let the default take over again */
+    delete view.secOpen[sectionOf.get(id)];
     toggle(dk, id);
     renderRoutines();
     window.scrollTo(0, y);
@@ -474,6 +587,7 @@ export function renderRoutines(){
   if (tips) tips.addEventListener('toggle', () => { view.tipsOpen = tips.open; });
   root.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => {
     view.date = startOfDay(new Date(b.getAttribute('data-goto') + 'T00:00:00'));
+    view.secOpen = {};
     renderRoutines();
     window.scrollTo(0, 0);
   }));
