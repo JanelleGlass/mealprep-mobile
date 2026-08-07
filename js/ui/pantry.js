@@ -1,11 +1,14 @@
 /* Pantry tab (editable quantities + add) and the ingredient editor
    (name/unit/price + USDA nutrition linking with live conversion check). */
 import { cached, upsertRow, deleteRow } from '../store.js';
-import { esc, COOKING_UNITS, PANTRY_CATEGORIES, ingredientById, openSheet, closeSheet } from './common.js';
+import { esc, COOKING_UNITS, PANTRY_CATEGORIES, ingredientById, openSheet, closeSheet,
+         collapsibleSection } from './common.js';
 import { pickIngredient, pickNutrition, pickCategory, confirmDialog } from './pickers.js';
 import { tryConvertToGrams } from '../nutrition.js';
 
 const seg = { mode: 'pantry' };
+/* which category sections the user has collapsed — absent means open */
+const catOpen = {};
 
 export function renderPantry(){
   const root = document.getElementById('pantryRoot');
@@ -23,10 +26,18 @@ export function renderPantry(){
     items.forEach(x => groups.get(PANTRY_CATEGORIES.includes(x.p.category) ? x.p.category : 'Other').push(x));
     root.innerHTML = (items.length
       ? [...groups].filter(([, xs]) => xs.length).map(([cat, xs]) =>
-          `<div class="sectionTitle">${esc(cat)} <span class="qty">${xs.length}</span></div>
-           <div class="card">` + xs.map(rowHtml).join('') + '</div>').join('')
+          collapsibleSection(cat, cat, catOpen[cat] ?? true,
+            '<div class="card">' + xs.map(rowHtml).join('') + '</div>',
+            { count: String(xs.length) })).join('')
       : '<div class="card"><div class="empty">Pantry is empty</div></div>')
       + '<button class="addBtn floatAdd" id="pAdd">＋ add pantry item</button>';
+    root.querySelectorAll('[data-sec]').forEach(b => b.addEventListener('click', () => {
+      const cat = b.getAttribute('data-sec');
+      catOpen[cat] = !(catOpen[cat] ?? true);
+      const y = window.scrollY;
+      renderPantry();
+      window.scrollTo(0, y);
+    }));
     root.querySelectorAll('.qtyIn').forEach(inp => inp.addEventListener('change', async () => {
       try { await upsertRow('pantry_items', { id: +inp.getAttribute('data-p'), quantity: parseFloat(inp.value) || 0 }); }
       catch (err) { inp.style.outline = '2px solid var(--iron)'; }

@@ -11,6 +11,19 @@ export const COOKING_UNITS = ['tsp','tbsp','fl oz','cup','pt','qt','gal','ml','L
 /* Pantry sections, in display order. Items with an unknown/empty category render under 'Other'. */
 export const PANTRY_CATEGORIES = ['Fridge','Freezer','Produce','Dry Goods','Canned Goods','Baking','Spices & Seasonings','Sauces & Oils','Drinks','Other'];
 
+/* A collapsible section: tappable heading + a body that hides when closed.
+   Callers own the open/closed state and wire clicks on [data-sec]. */
+export function collapsibleSection(key, title, open, body, { hue = '', note = '', count = '' } = {}){
+  const cls = 'sectionTitle secHead' + (hue ? ` sec-${hue}` : '') + (open ? '' : ' closed');
+  return `<button type="button" class="${cls}" data-sec="${esc(key)}" aria-expanded="${open}">
+      <span class="secName">${esc(title)}</span>
+      ${note ? `<span class="rNote">${esc(note)}</span>` : ''}
+      ${count ? `<span class="secCount">${esc(count)}</span>` : ''}
+      <span class="secChev">${open ? '▾' : '▸'}</span>
+    </button>
+    <div class="secBody"${open ? '' : ' hidden'}>${body}</div>`;
+}
+
 /* center: {text, sub} rendered inside the donut (e.g. remaining amount + 'left') */
 export function ringSVG(pct, color, size = 58, stroke = 6, center = null){
   const r = (size - stroke) / 2, c = 2 * Math.PI * r, dash = Math.min(Math.max(pct, 0), 1) * c;
