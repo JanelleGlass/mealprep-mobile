@@ -1,8 +1,8 @@
 /* Overlay pickers: ingredient list picker and live USDA nutrition search.
    Promise-based: resolve with the chosen row, or null on cancel. */
-import { cached, searchNutrition } from '../store.js';
+import { cached, searchNutrition, saveNutrition } from '../store.js';
 import { esc, PANTRY_CATEGORIES } from './common.js';
-import { tryConvertToGrams } from '../nutrition.js';
+import { tryConvertToGrams, labelToNutritionRow } from '../nutrition.js';
 import { openIngredientEditor } from './pantry.js';
 
 function overlay(html){
@@ -48,14 +48,20 @@ export function pickIngredient(opts = {}){
   });
 }
 
-export function pickNutrition(unitForSanity){
+export function pickNutrition(unitForSanity, presetName){
   return new Promise(resolve => {
     const ov = overlay(`
       <h2>USDA nutrition search</h2>
       <p>Search the 8,790-food USDA database. Shorter terms work better ("applesauce", "broccoli frozen").</p>
       <input type="text" id="nuSearch" placeholder="search foods…" autocomplete="off">
       <div class="pickList" id="nuList"></div>
+      <div class="quickRow"><button class="quickChip" id="nuCustom">＋ not in the list — enter a label</button></div>
       <div class="btnRow"><button class="cancel" id="nuCancel">cancel</button></div>`);
+    ov.querySelector('#nuCustom').addEventListener('click', async () => {
+      const typed = ov.querySelector('#nuSearch').value.trim();
+      ov.remove();
+      resolve(await customFoodEditor(unitForSanity, typed || presetName));
+    });
     const list = ov.querySelector('#nuList');
     let timer = null;
     ov.querySelector('#nuSearch').addEventListener('input', e => {
@@ -88,6 +94,89 @@ export function pickNutrition(unitForSanity){
       }, 350);
     });
     ov.querySelector('#nuCancel').addEventListener('click', () => { ov.remove(); resolve(null); });
+  });
+}
+
+/* Hand-enter a food from its package label, for anything USDA doesn't carry
+   (a seasoning blend, a canned specialty, something you make yourself). Saves a
+   nutritions row with is_usda=false and resolves with it, so the caller links it
+   exactly as it would a USDA hit. */
+export function customFoodEditor(unitForSanity, presetName){
+  return new Promise(resolve => {
+    const draft = { description: presetName ?? '', servingDesc: '', servingGrams: '',
+                    calories: '', protein: '', fiber: '', iron: '' };
+    const ov = overlay('');
+
+    /* the same reassurance pickNutrition gives: does this convert to your unit? */
+    function sanity(){
+      if (!unitForSanity) return '';
+      let row;
+      try { row = labelToNutritionRow(draft); } catch { return 'enter the serving weight in grams'; }
+      const g = tryConvertToGrams(1, unitForSanity, row);
+      if (g === 0) return `negligible unit — 1 ${unitForSanity} counts as 0`;
+      if (g === null) return `⚠ can't convert "${unitForSanity}" yet — name the household measure below (e.g. "1 patty")`;
+      return `1 ${unitForSanity} ≈ ${Math.round(g)} g · ${Math.round(row.energy_kcal * g / 100)} cal`;
+    }
+
+    function draw(msg){
+      ov.querySelector('.panel').innerHTML = `
+        <h2>Enter a food from its label</h2>
+        <p>Type what the package says for <em>one serving</em>. The rest is worked out from there.</p>
+        <span class="miniLabel">name</span>
+        <input type="text" id="cfName" value="${esc(draft.description)}" placeholder="e.g. Moroccan Seasoning">
+        <div class="row">
+          <div style="flex:1;"><span class="miniLabel">serving size</span>
+            <input type="text" id="cfDesc" value="${esc(draft.servingDesc)}" placeholder="e.g. 1 patty, 2 tbsp"></div>
+          <div style="flex:0 0 96px;"><span class="miniLabel">weighs (g)</span>
+            <input type="number" id="cfGrams" min="0" step="0.1" value="${esc(draft.servingGrams)}"></div>
+        </div>
+        <div class="row">
+          <div style="flex:1;"><span class="miniLabel">calories</span>
+            <input type="number" id="cfCal" min="0" step="1" value="${esc(draft.calories)}"></div>
+          <div style="flex:1;"><span class="miniLabel">protein g</span>
+            <input type="number" id="cfPro" min="0" step="0.1" value="${esc(draft.protein)}"></div>
+        </div>
+        <div class="row">
+          <div style="flex:1;"><span class="miniLabel">fiber g</span>
+            <input type="number" id="cfFib" min="0" step="0.1" value="${esc(draft.fiber)}"></div>
+          <div style="flex:1;"><span class="miniLabel">iron mg</span>
+            <input type="number" id="cfIron" min="0" step="0.1" value="${esc(draft.iron)}"></div>
+        </div>
+        <div class="macros" id="cfMsg">${esc(msg || sanity())}</div>
+        <div class="btnRow">
+          <button class="cancel" id="cfCancel">cancel</button>
+          <button class="save" id="cfSave">save food</button>
+        </div>`;
+
+      const bind = (id, key, redraw) => ov.querySelector(id).addEventListener(redraw ? 'change' : 'input', e => {
+        draft[key] = e.target.value;
+        if (redraw) draw();
+      });
+      bind('#cfName', 'description');
+      bind('#cfDesc', 'servingDesc', true);
+      bind('#cfGrams', 'servingGrams', true);
+      bind('#cfCal', 'calories', true);
+      bind('#cfPro', 'protein');
+      bind('#cfFib', 'fiber');
+      bind('#cfIron', 'iron');
+
+      ov.querySelector('#cfCancel').addEventListener('click', () => { ov.remove(); resolve(null); });
+      ov.querySelector('#cfSave').addEventListener('click', async () => {
+        if (!draft.description.trim()) return draw('give the food a name');
+        if (!(Number(draft.servingGrams) > 0)) return draw('the serving weight in grams is required');
+        const btn = ov.querySelector('#cfSave');
+        btn.disabled = true;
+        try {
+          const saved = await saveNutrition(labelToNutritionRow(draft));
+          ov.remove();
+          resolve(saved ?? null);
+        } catch (err) {
+          btn.disabled = false;
+          draw('save failed: ' + err.message);
+        }
+      });
+    }
+    draw();
   });
 }
 

@@ -44,6 +44,16 @@ printed — they must match exactly.
 2. Open the MealPrep app → gear ⚙︎ → paste both → sign in with the email +
    password from step 3. Once per device (phone, PC browser) — it stays signed in.
 
+## Later schema changes
+
+`migration-out/` is regenerated from your data and is not in git. Schema-only
+migrations that add a feature live in **`tools/migrations/`** instead, so they
+survive a regenerate. Run them in the SQL Editor in number order, once each,
+after the numbered files above. They are safe to re-run.
+
+- `008_recipe_variations.sql` — adds `recipes.parent_recipe_id`, needed before
+  the Recipes tab can save a variation.
+
 ## Troubleshooting
 
 - **"project paused"** after a long break: supabase.com → your project → Restore

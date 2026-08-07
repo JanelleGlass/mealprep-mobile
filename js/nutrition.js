@@ -147,6 +147,39 @@ export function isApproxConversion(unit, n){
   return n.gm_wt_1 != null && n.gm_wt_1 > 0;
 }
 
+/* ---------- building a nutrition row from a package label ----------
+   Labels are per serving; every consumer here scales by grams/100, so the
+   serving has to be divided back out to per-100 g at entry time. The household
+   measure becomes gm_wt_1/gm_wt_desc1, which is what tryConvertToGrams needs to
+   handle a count unit ('whole', 'can') or to derive a density for a volume one —
+   without it a custom food carries nutrition that can never be converted. */
+export function labelToNutritionRow({ description, servingGrams, servingDesc,
+                                      calories, protein, fiber, iron }){
+  const grams = Number(servingGrams);
+  if (!(grams > 0)) throw new Error('serving weight in grams is required');
+  /* a nutrient the label doesn't state is 0 for our purposes — compute() reads a
+     null as 0 anyway, so storing zeros keeps the row honest about that */
+  const per100 = v => {
+    const n = Number(v);              // '' is 0 here, which is what a blank field means
+    return isFinite(n) ? (n * 100) / grams : 0;
+  };
+  const desc = (servingDesc ?? '').trim();
+  /* parseGmWtDesc reads a leading count and defaults to 1, so "patty" parses —
+     but "1 patty" is what USDA descriptions look like and what the ingredient
+     editor echoes back at you, so normalise to that */
+  const counted = !desc ? '1 serving' : /^[\d.]/.test(desc) ? desc : `1 ${desc}`;
+  return {
+    description: (description ?? '').trim(),
+    is_usda: false,
+    energy_kcal: per100(calories),
+    protein_g: per100(protein),
+    fiber_td_g: per100(fiber),
+    iron_mg: per100(iron),
+    gm_wt_1: grams,
+    gm_wt_desc1: counted,
+  };
+}
+
 /* Half-even rounding to 1 decimal (C# Math.Round(decimal, 1) banker's rounding). */
 export function round1(x){
   const scaled = x * 10;

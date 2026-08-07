@@ -229,6 +229,10 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .taskRow.haveIt .tDesc{color:var(--fiber);}
 .taskRow.haveIt .box{border-style:dashed;border-color:var(--fiber);}
 /* editing a routine: rows swap the checkbox for rename + remove */
+/* a recipe variation, filed under the recipe it was copied from */
+.card.varCard{margin-left:14px;border-left:2px solid var(--gold);border-radius:0 var(--radius) var(--radius) 0;}
+.linkChip{background:none;border:none;padding:0;font:inherit;color:var(--fiber);text-decoration:underline;cursor:pointer;}
+
 .rEditRow{justify-content:center;margin:-4px 0 10px;}
 .quickChip.on{background:var(--ink);border-color:var(--ink);color:var(--paper);}
 .editRow{display:flex;align-items:flex-start;gap:6px;border-bottom:1px solid var(--rule);}

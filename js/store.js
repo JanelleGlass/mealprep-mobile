@@ -112,6 +112,19 @@ export async function replaceChildren(table, fkCol, fkVal, rows){
   }
 }
 
+/* Nutrition rows are searched on demand, never cached as a table, so they get
+   their own writer — upsertRow's refresh(table) has no query for 'nutritions'
+   and would throw straight after a successful insert. */
+export async function saveNutrition(row){
+  if (demoMode()) return demoWrite('nutritions_demo', row);
+  if (!init()) throw new Error('not connected');
+  const { data, error } = row.id
+    ? await client.from('nutritions').update(row).eq('id', row.id).select()
+    : await client.from('nutritions').insert(row).select();
+  if (error) throw new Error(error.message);
+  return data?.[0];
+}
+
 export async function searchNutrition(term){
   if (demoMode()){
     const all = S.tables.nutritions_demo || [];
