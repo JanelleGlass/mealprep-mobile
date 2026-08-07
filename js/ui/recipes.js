@@ -10,6 +10,29 @@ import { assignRecipe, assignedSummary, nextCookDate, nextPrepDate, SLOTS } from
 
 const view = { mode: 'list', recipeId: null, logFlash: null, planFlash: null };
 
+/* ---------- variations ----------
+   A variation is a recipe carrying parent_recipe_id, so every consumer — the
+   cook plan, meals, the food log — keeps treating it as an ordinary recipe.
+   The tree is deliberately one level deep: a variation of a variation is filed
+   under the same base, which keeps the list readable and the grouping total. */
+const baseIdOf = (r, byId) => {
+  let cur = r, guard = 0;
+  while (cur.parent_recipe_id && byId.has(cur.parent_recipe_id) && guard++ < 10)
+    cur = byId.get(cur.parent_recipe_id);
+  return cur.id;
+};
+
+function groupRecipes(recipes){
+  const byId = new Map(recipes.map(r => [r.id, r]));
+  const bases = recipes.filter(r => baseIdOf(r, byId) === r.id);
+  return bases.map(b => ({
+    base: b,
+    /* a variation whose base was deleted has had its parent nulled by the FK,
+       so it simply shows up as a base of its own — nothing to clean up */
+    variations: recipes.filter(r => r.id !== b.id && baseIdOf(r, byId) === b.id),
+  }));
+}
+
 const fmtDay = d => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 const chipLabel = slot =>
   `${fmtDay(slot === 'cook' ? nextCookDate() : nextPrepDate())} · ${SLOTS[slot].label}`;
@@ -32,6 +55,9 @@ export function renderRecipes(){
   if (view.mode === 'detail'){
     const r = recipes.find(x => x.id === view.recipeId);
     if (!r){ view.mode = 'list'; return renderRecipes(); }
+    const group = groupRecipes(recipes).find(g => g.base.id === r.id || g.variations.some(v => v.id === r.id));
+    const kin = { base: group && group.base.id !== r.id ? group.base : null,
+                  variations: group && group.base.id === r.id ? group.variations : [] };
     const calc = buildRecipeCalc(r);
     const per = computeForRecipe({ ...calc, servings: r.servings }, 1);
     root.innerHTML = `
@@ -71,9 +97,29 @@ export function renderRecipes(){
         ${assignedLine(r.id)}
         ${view.planFlash ? `<div class="cSub" style="color:var(--fiber);">${esc(view.planFlash)}</div>` : ''}
       </div>
+      <div class="card">
+        <div class="cSub">${kin.base
+          ? `A variation of <button type="button" class="linkChip" data-open="${kin.base.id}">${esc(kin.base.name)}</button>.`
+          : kin.variations.length
+            ? `Variations: ${kin.variations.map(v => `<button type="button" class="linkChip" data-open="${v.id}">${esc(v.name)}</button>`).join(' ')}`
+            : 'Cooking it differently this time? Start a variation — a copy you can change without touching this one.'}</div>
+        <button class="addBtn" id="rVary" style="margin-top:8px;">＋ make a variation</button>
+      </div>
       <button class="addBtn" id="rEdit">✎ edit recipe</button>`;
     root.querySelector('#rBack').addEventListener('click', () => { view.logFlash = view.planFlash = null; view.mode = 'list'; renderRecipes(); });
     root.querySelector('#rEdit').addEventListener('click', () => openRecipeSheet(r));
+    root.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => {
+      view.recipeId = +b.getAttribute('data-open'); view.logFlash = view.planFlash = null; renderRecipes();
+    }));
+    root.querySelector('#rVary').addEventListener('click', () => openRecipeSheet(null, {
+      /* nothing is written until save, so backing out leaves no orphan copy */
+      parentId: kin.base ? kin.base.id : r.id,
+      prefill: {
+        name: `${kin.base ? kin.base.name : r.name} — variation`,
+        description: r.description || '', servings: r.servings,
+        rows: (r.ingredients || []).map(ri => ({ ingredient_id: ri.ingredient_id, quantity: +ri.quantity })),
+      },
+    }));
 
     const servingsInput = root.querySelector('#rLogServings');
     const plantInput = root.querySelector('#rLogPlant');
@@ -119,14 +165,16 @@ export function renderRecipes(){
     return;
   }
 
+  const card = (r, isVariation) => {
+    const per = computeForRecipe(buildRecipeCalc(r), 1);
+    return `<div class="card${isVariation ? ' varCard' : ''}" data-r="${r.id}" style="cursor:pointer;">
+      <div class="cName">${esc(r.name)}</div>
+      <div class="cSub">${r.servings || 1} servings · ${Math.round(per.calories)} cal/serving</div>
+    </div>`;
+  };
   root.innerHTML = '<div class="sectionTitle">Recipes</div>'
-    + recipes.map(r => {
-        const per = computeForRecipe(buildRecipeCalc(r), 1);
-        return `<div class="card" data-r="${r.id}" style="cursor:pointer;">
-          <div class="cName">${esc(r.name)}</div>
-          <div class="cSub">${r.servings || 1} servings · ${Math.round(per.calories)} cal/serving</div>
-        </div>`;
-      }).join('')
+    + groupRecipes(recipes).map(g =>
+        card(g.base, false) + g.variations.map(v => card(v, true)).join('')).join('')
     + '<button class="addBtn" id="rNew" style="margin-top:8px;">＋ new recipe</button>';
   root.querySelectorAll('[data-r]').forEach(c => c.addEventListener('click', () => {
     view.recipeId = +c.getAttribute('data-r'); view.mode = 'detail'; view.logFlash = view.planFlash = null; renderRecipes();
@@ -134,13 +182,16 @@ export function renderRecipes(){
   root.querySelector('#rNew').addEventListener('click', () => openRecipeSheet(null));
 }
 
-function openRecipeSheet(recipe){
+/* opts.parentId + opts.prefill: start a new recipe seeded from another one and
+   filed under it as a variation */
+function openRecipeSheet(recipe, opts = {}){
   const draft = recipe ? {
     id: recipe.id, name: recipe.name, description: recipe.description || '', servings: recipe.servings,
     rows: (recipe.ingredients || []).map(ri => ({ ingredient_id: ri.ingredient_id, quantity: +ri.quantity })),
-  } : { name: '', description: '', servings: 4, rows: [] };
+  } : { name: '', description: '', servings: 4, rows: [], ...(opts.prefill || {}) };
 
-  const body = openSheet(recipe ? 'Edit recipe' : 'New recipe', '');
+  const title = recipe ? 'Edit recipe' : opts.parentId ? 'New variation' : 'New recipe';
+  const body = openSheet(title, '');
 
   function draw(){
     body.innerHTML = `
@@ -187,7 +238,7 @@ function openRecipeSheet(recipe){
       draft.rows.splice(+b.getAttribute('data-rm'), 1); draw();
     }));
     /* the ingredient editor takes over the sheet, so re-open ours after */
-    const reopen = () => { openSheet(recipe ? 'Edit recipe' : 'New recipe', ''); draw(); };
+    const reopen = () => { openSheet(title, ''); draw(); };
     body.querySelector('#rcAddIng').addEventListener('click', async () => {
       const ing = await pickIngredient({ allowCreate: true });
       if (ing) draft.rows.push({ ingredient_id: ing.id, quantity: 1 });
@@ -211,6 +262,9 @@ function openRecipeSheet(recipe){
           ...(draft.id ? { id: draft.id } : {}),
           name: draft.name.trim(), description: draft.description.trim() || null,
           servings: Math.max(1, Math.round(draft.servings)),
+          /* only sent when creating a variation — an edit leaves the column
+             alone, so an existing recipe keeps whatever it was filed under */
+          ...(opts.parentId && !draft.id ? { parent_recipe_id: opts.parentId } : {}),
         });
         const recipeId = draft.id ?? saved.id;
         await replaceChildren('recipe_ingredients', 'recipe_id', recipeId,

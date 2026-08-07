@@ -3,7 +3,8 @@
 import { cached, upsertRow, deleteRow } from '../store.js';
 import { esc, COOKING_UNITS, PANTRY_CATEGORIES, ingredientById, openSheet, closeSheet,
          collapsibleSection } from './common.js';
-import { pickIngredient, pickNutrition, pickCategory, confirmDialog } from './pickers.js';
+import { pickIngredient, pickNutrition, pickCategory, confirmDialog,
+         customFoodEditor } from './pickers.js';
 import { tryConvertToGrams } from '../nutrition.js';
 
 const seg = { mode: 'pantry' };
@@ -70,7 +71,8 @@ export function renderPantry(){
     root.innerHTML = '<div class="card">' + ingredients.map(i =>
       `<div class="listRow" data-ing="${i.id}" style="cursor:pointer;">
         <span>${esc(i.name)}</span>
-        <span class="qty">${esc(i.unit)} · ${i.nutrition_id ? 'USDA ✓' : 'no USDA'}</span>
+        <span class="qty">${esc(i.unit)} · ${!i.nutrition_id ? 'not linked'
+          : i.nutrition && i.nutrition.is_usda === false ? 'label ✓' : 'USDA ✓'}</span>
       </div>`).join('') + '</div>'
       + '<button class="addBtn floatAdd" id="iAdd">＋ new ingredient</button>';
     root.querySelectorAll('[data-ing]').forEach(r => r.addEventListener('click', () => {
@@ -126,6 +128,7 @@ export function openIngredientEditor(ingredient, opts = {}){
           <div class="cSub">${conversionLine()}</div>
           <div class="quickRow" style="margin-top:8px;">
             <button class="quickChip" id="igLink">${draft.nutrition ? 'change link' : 'link USDA food'}</button>
+            <button class="quickChip" id="igCustom">＋ enter a label</button>
             ${draft.nutrition ? '<button class="quickChip" id="igUnlink">unlink</button>' : ''}
           </div>
         </div>
@@ -139,7 +142,12 @@ export function openIngredientEditor(ingredient, opts = {}){
       body.querySelector('#igUnit').addEventListener('change', e => { draft.unit = e.target.value; draw(); });
       body.querySelector('#igPrice').addEventListener('change', e => draft.price = e.target.value ? parseFloat(e.target.value) : null);
       body.querySelector('#igLink').addEventListener('click', async () => {
-        const n = await pickNutrition(draft.unit);
+        const n = await pickNutrition(draft.unit, draft.name);
+        if (n){ draft.nutrition = n; draft.nutrition_id = n.id; }
+        draw();
+      });
+      body.querySelector('#igCustom').addEventListener('click', async () => {
+        const n = await customFoodEditor(draft.unit, draft.name);
         if (n){ draft.nutrition = n; draft.nutrition_id = n.id; }
         draw();
       });
