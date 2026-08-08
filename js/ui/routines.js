@@ -88,15 +88,23 @@ function toggle(dk, id){
 }
 
 /* ---------- steps ----------
-   A per-day number rather than a checkbox, stored in the same routines log under
-   a reserved key so it syncs with everything else. Task ids are all lowercase
-   words, so '__steps' can't collide with one. */
+   Just "did you hit the goal", stored in the same routines log under a reserved
+   key so it syncs with everything else. Task ids are all lowercase words, so
+   '__steps' can't collide with one.
+
+   Days recorded before this was a checkbox hold a step count instead of `true`.
+   Those are still read as numbers rather than rewritten, so the history behind
+   you keeps saying what actually happened. */
 const STEPS_KEY = '__steps';
-const stepsFor = dk => +(log()[dk] && log()[dk][STEPS_KEY]) || 0;
-function setSteps(dk, n){
+const stepsRecord = dk => (log()[dk] || {})[STEPS_KEY];
+const stepsGoalMet = dk => {
+  const v = stepsRecord(dk);
+  return v === true || (typeof v === 'number' && v >= targets().stepsGoal);
+};
+function setStepsDone(dk, done){
   const l = log();
   if (!l[dk]) l[dk] = {};
-  if (n > 0) l[dk][STEPS_KEY] = n; else delete l[dk][STEPS_KEY];
+  if (done) l[dk][STEPS_KEY] = true; else delete l[dk][STEPS_KEY];
   if (!Object.keys(l[dk]).length) delete l[dk];
   routinesLog.save();
 }
@@ -203,9 +211,10 @@ function habitStatus(dk, habit){
     return cal <= targets().calMax ? 'done' : 'miss';   // in range or under counts
   }
   if (habit === 'steps'){
-    const s = stepsFor(dk);
-    if (!s) return 'off';
-    return s >= targets().stepsGoal ? 'done' : 'miss';
+    const v = stepsRecord(dk);
+    if (v === undefined) return 'off';               // nothing said either way
+    if (v === true) return 'done';
+    return v >= targets().stepsGoal ? 'done' : 'miss';   // a count from before the checkbox
   }
 
   /* the rest come from whatever steps carry that habit tag on that weekday, so
@@ -425,7 +434,6 @@ export function renderRoutines(){
         || '<div class="cSub">no steps yet</div>'}
         <div class="quickRow">
           <button class="quickChip" data-addstep="${r.id}">＋ step</button>
-          <button class="quickChip" data-editroutine="${r.id}">✎ title &amp; days</button>
           <button class="quickChip" data-mvroutine="${r.id}|-1"${ri === 0 ? ' disabled' : ''}>↑ up</button>
           <button class="quickChip" data-mvroutine="${r.id}|1"${ri === routineSecs.length - 1 ? ' disabled' : ''}>↓ down</button>
           <button class="quickChip" data-rmroutine="${r.id}">✕ delete routine</button>
@@ -437,9 +445,19 @@ export function renderRoutines(){
       ).join('')}${sec.foot ?? ''}</div>`;
     }
 
-    html += collapsibleSection(sec.key, sec.title, open, body,
-      { hue: sec.hue, note: view.editing && r ? dayLabel(r.days) : sec.note,
-        count: open || !ids.length ? '' : `${secDone} / ${ids.length}` });
+    /* While editing, the heading IS the way to rename a routine — collapsing is
+       pointless here (everything is forced open), and a chip at the foot of an
+       eleven-step list is a long way from the title it renames. */
+    html += view.editing && r
+      ? `<button type="button" class="sectionTitle secHead secTitleEdit${hue}" data-editroutine="${r.id}">
+           <span class="secName">${esc(sec.title)}</span>
+           <span class="rNote">${esc(dayLabel(r.days))}</span>
+           <span class="secChev">✎</span>
+         </button>
+         <div class="secBody">${body}</div>`
+      : collapsibleSection(sec.key, sec.title, open, body,
+          { hue: sec.hue, note: sec.note,
+            count: open || !ids.length ? '' : `${secDone} / ${ids.length}` });
   });
 
   /* routines that don't land on this day are invisible here, so editing needs a
@@ -454,16 +472,19 @@ export function renderRoutines(){
     </div>`;
   }
 
-  /* steps for the day shown — typed in, since nothing counts them for us */
+  /* steps for the day shown — one box, since nothing counts them for us */
   const T = targets();
-  const steps = stepsFor(dk);
+  const stepsRec = stepsRecord(dk);
+  const stepsMet = stepsGoalMet(dk);
   const stepsOpen = view.secOpen.steps ?? true;
   openState.set('steps', stepsOpen);
-  html += collapsibleSection('steps', 'Steps', stepsOpen, `<div class="card stepsCard">
-      <input type="number" id="stepsIn" inputmode="numeric" min="0" step="100" placeholder="steps" value="${steps || ''}">
-      <span class="stepsNote">${steps
-        ? (steps >= T.stepsGoal ? '✓ goal met' : `${(T.stepsGoal - steps).toLocaleString()} to go`)
-        : 'not recorded'}</span>
+  html += collapsibleSection('steps', 'Steps', stepsOpen, `<div class="card taskList sec-steps">
+      <button type="button" class="taskRow${stepsMet ? ' done' : ''}" id="stepsChk">
+        <span class="box"></span>
+        <span class="tText"><span class="tTitle">Hit ${T.stepsGoal.toLocaleString()} steps</span>${
+          typeof stepsRec === 'number'
+            ? `<span class="tDesc">recorded earlier as ${stepsRec.toLocaleString()} steps</span>` : ''}</span>
+      </button>
     </div>`, { hue: 'steps', note: `goal ${T.stepsGoal.toLocaleString()}` });
 
   /* habit tracker */
@@ -478,7 +499,7 @@ export function renderRoutines(){
       ${historyRow('Workout', 'workout')}
       ${historyRow('Cleaning', 'cleaning')}
       <div class="hLegend"><span class="hCell done"></span> done <span class="hCell miss"></span> missed <span class="hCell off"></span> not scheduled / no data — tap a day to open it</div>
-      <div class="cSub">Calories counts a day done when the Log total is at or under ${T.calMax.toLocaleString()} — in range or under. Steps counts a day done at ${T.stepsGoal.toLocaleString()} or more. Days skipped in the Log's averages don't count either way. Both goals live in Settings → Daily targets.</div>
+      <div class="cSub">Calories counts a day done when the Log total is at or under ${T.calMax.toLocaleString()} — in range or under. Steps counts a day done when you tick the box; days you leave alone stay blank rather than counting as a miss. Days skipped in the Log's averages don't count either way. Both goals live in Settings → Daily targets.</div>
     </div>`, { note: 'last 14 days' });
 
   /* weekly overview */
@@ -576,10 +597,9 @@ export function renderRoutines(){
     removeRecipe(dk, slot, +rid);
     renderRoutines();
   }));
-  const stepsIn = root.querySelector('#stepsIn');
-  stepsIn.addEventListener('change', () => {
+  root.querySelector('#stepsChk').addEventListener('click', () => {
     const y = window.scrollY;
-    setSteps(dk, Math.max(0, Math.round(parseFloat(stepsIn.value) || 0)));
+    setStepsDone(dk, !stepsGoalMet(dk));
     renderRoutines();
     window.scrollTo(0, y);
   });
