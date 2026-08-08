@@ -233,16 +233,20 @@ async function demoLoad(){
     energy_kcal: n.energy_Kcal, protein_g: n.protein_g, fiber_td_g: n.fiber_TD_g, iron_mg: n.iron_mg,
     gm_wt_1: n.gmWt_1, gm_wt_desc1: n.gmWt_Desc1, gm_wt_2: n.gmWt_2, gm_wt_desc2: n.gmWt_Desc2,
   }]));
+  /* sections live on the ingredient; the first few get one so the demo shows
+     more than a single 'Other' pile */
+  const demoCategory = ['Fridge', 'Freezer', 'Produce', 'Dry Goods', 'Spices & Seasonings'];
   demoData = {
     nutritions_demo: [...nById.values()],
-    ingredients: fx.ingredients.map(i => ({ id: i.id, name: i.name, unit: i.unit, nutrition_id: i.nutritionId, nutrition: i.nutritionId ? nById.get(i.nutritionId) : null })),
+    ingredients: fx.ingredients.map((i, n) => ({ id: i.id, name: i.name, unit: i.unit,
+      category: demoCategory[n] ?? '', nutrition_id: i.nutritionId,
+      nutrition: i.nutritionId ? nById.get(i.nutritionId) : null })),
     recipes: fx.recipes.map(r => ({ id: r.id, name: r.name, servings: r.servings, description: null,
       ingredients: fx.recipeIngredients.filter(ri => ri.recipeId === r.id).map(ri => ({ recipe_id: r.id, ingredient_id: ri.ingredientId, quantity: ri.quantity })) })),
     meals: fx.meals.map(m => ({ id: m.id, date: '2026-07-06', meal_type: 0, title: m.title, servings: m.servings, recipe_id: m.recipeId,
       ingredients: fx.mealIngredients.filter(mi => mi.mealId === m.id).map(mi => ({ meal_id: m.id, ingredient_id: mi.ingredientId, quantity: mi.quantity })) })).slice(0, 3),
     pantry_items: fx.ingredients.slice(0, 6).map((ing, i) => ({
       id: i + 1, ingredient_id: ing.id, quantity: i + 1,
-      category: ['Fridge', 'Freezer', 'Produce', 'Dry Goods', 'Spices & Seasonings', ''][i],
     })), quick_add_items: [{ id: 1, name: 'Soft boiled egg', calories: 70, protein_g: 6, fiber_g: 0, iron_mg: 0.6, is_plant: false, sort_order: 0 }],
     user_preferences: [], food_log_entries: [], body_measurements: [],
   };

@@ -56,6 +56,9 @@ after the numbered files above. They are safe to re-run.
 - `009_ingredient_categories.sql` — adds `ingredients.category` and copies the
   sections over from the pantry rows, so an ingredient is filed whether or not
   you currently stock it.
+- `010_drop_pantry_category.sql` — drops the old `pantry_items.category`, which
+  009 left behind as its backup. Refuses to run until 009 has carried every
+  section across, so run it only once the lists look right.
 
 ## Troubleshooting
 
