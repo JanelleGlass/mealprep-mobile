@@ -192,9 +192,7 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .taskList.sec-workout  .taskRow.done .box{background:var(--protein);border-color:var(--protein);}
 .taskList.sec-cleaning .taskRow.done .box{background:var(--fiber);border-color:var(--fiber);}
 .sectionTitle.sec-steps{color:var(--protein);}
-.stepsCard{display:flex;align-items:center;gap:10px;}
-.stepsCard input{width:110px;}
-.stepsNote{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);}
+.taskList.sec-steps .taskRow.done .box{background:var(--protein);border-color:var(--protein);}
 .hLegend{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:10px;font-size:10px;color:var(--ink-soft);}
 .hLegend .hCell{width:11px;height:11px;cursor:default;}
 
@@ -234,6 +232,9 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .linkChip{background:none;border:none;padding:0;font:inherit;color:var(--fiber);text-decoration:underline;cursor:pointer;}
 
 .rEditRow{justify-content:center;margin:-4px 0 10px;}
+/* the heading doubles as the rename control while editing */
+.secTitleEdit .secChev{color:var(--iron);font-size:12px;}
+.secTitleEdit .secName{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;}
 .quickChip.on{background:var(--ink);border-color:var(--ink);color:var(--paper);}
 .editRow{display:flex;align-items:flex-start;gap:6px;border-bottom:1px solid var(--rule);}
 .taskList .editRow:last-of-type{border-bottom:none;}
