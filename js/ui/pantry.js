@@ -8,8 +8,32 @@ import { pickIngredient, pickNutrition, pickCategory, confirmDialog,
 import { tryConvertToGrams } from '../nutrition.js';
 
 const seg = { mode: 'pantry' };
-/* which category sections the user has collapsed — absent means open */
+/* which category sections the user has opened — absent means closed. Keys carry
+   the segment, so opening Produce here doesn't open it on the other list. */
 const catOpen = {};
+const isOpen = key => catOpen[key] ?? false;
+
+/* Both lists file into the same sections, in PANTRY_CATEGORIES order. The
+   category lives on the pantry row, so an ingredient you don't stock has none
+   and lands under 'Other' — the same place the pantry puts a blank one. */
+function byCategory(rows, catOf){
+  const groups = new Map(PANTRY_CATEGORIES.map(c => [c, []]));
+  rows.forEach(r => {
+    const c = catOf(r);
+    groups.get(PANTRY_CATEGORIES.includes(c) ? c : 'Other').push(r);
+  });
+  return [...groups].filter(([, xs]) => xs.length);
+}
+
+function wireSections(root){
+  root.querySelectorAll('[data-sec]').forEach(b => b.addEventListener('click', () => {
+    const key = b.getAttribute('data-sec');
+    catOpen[key] = !isOpen(key);
+    const y = window.scrollY;
+    renderPantry();
+    window.scrollTo(0, y);
+  }));
+}
 
 export function renderPantry(){
   const root = document.getElementById('pantryRoot');
@@ -23,22 +47,14 @@ export function renderPantry(){
       `<div class="listRow"><span data-cat="${p.id}" style="cursor:pointer;">${esc(ing.name)}</span>
         <span class="qty"><input type="number" class="qtyIn" data-p="${p.id}" step="0.5" value="${p.quantity}"> ${esc(ing.unit)}
         <button class="del" data-rmp="${p.id}">✕</button></span></div>`;
-    const groups = new Map(PANTRY_CATEGORIES.map(c => [c, []]));
-    items.forEach(x => groups.get(PANTRY_CATEGORIES.includes(x.p.category) ? x.p.category : 'Other').push(x));
     root.innerHTML = (items.length
-      ? [...groups].filter(([, xs]) => xs.length).map(([cat, xs]) =>
-          collapsibleSection(cat, cat, catOpen[cat] ?? true,
+      ? byCategory(items, x => x.p.category).map(([cat, xs]) =>
+          collapsibleSection(`pantry|${cat}`, cat, isOpen(`pantry|${cat}`),
             '<div class="card">' + xs.map(rowHtml).join('') + '</div>',
             { count: String(xs.length) })).join('')
       : '<div class="card"><div class="empty">Pantry is empty</div></div>')
       + '<button class="addBtn floatAdd" id="pAdd">＋ add pantry item</button>';
-    root.querySelectorAll('[data-sec]').forEach(b => b.addEventListener('click', () => {
-      const cat = b.getAttribute('data-sec');
-      catOpen[cat] = !(catOpen[cat] ?? true);
-      const y = window.scrollY;
-      renderPantry();
-      window.scrollTo(0, y);
-    }));
+    wireSections(root);
     root.querySelectorAll('.qtyIn').forEach(inp => inp.addEventListener('change', async () => {
       try { await upsertRow('pantry_items', { id: +inp.getAttribute('data-p'), quantity: parseFloat(inp.value) || 0 }); }
       catch (err) { inp.style.outline = '2px solid var(--iron)'; }
@@ -68,13 +84,22 @@ export function renderPantry(){
     });
   } else {
     const ingredients = (cached('ingredients') || []).slice().sort((a, b) => a.name.localeCompare(b.name));
-    root.innerHTML = '<div class="card">' + ingredients.map(i =>
+    const pantry = cached('pantry_items') || [];
+    const catOfIngredient = i => pantry.find(p => p.ingredient_id === i.id)?.category;
+    const rowHtml = i =>
       `<div class="listRow" data-ing="${i.id}" style="cursor:pointer;">
         <span>${esc(i.name)}</span>
         <span class="qty">${esc(i.unit)} · ${!i.nutrition_id ? 'not linked'
           : i.nutrition && i.nutrition.is_usda === false ? 'label ✓' : 'USDA ✓'}</span>
-      </div>`).join('') + '</div>'
+      </div>`;
+    root.innerHTML = (ingredients.length
+      ? byCategory(ingredients, catOfIngredient).map(([cat, xs]) =>
+          collapsibleSection(`ing|${cat}`, cat, isOpen(`ing|${cat}`),
+            '<div class="card">' + xs.map(rowHtml).join('') + '</div>',
+            { count: String(xs.length) })).join('')
+      : '<div class="card"><div class="empty">No ingredients yet</div></div>')
       + '<button class="addBtn floatAdd" id="iAdd">＋ new ingredient</button>';
+    wireSections(root);
     root.querySelectorAll('[data-ing]').forEach(r => r.addEventListener('click', () => {
       const ing = ingredientById(+r.getAttribute('data-ing'));
       if (ing) openIngredientEditor(ing);

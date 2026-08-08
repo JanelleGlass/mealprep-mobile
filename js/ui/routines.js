@@ -413,18 +413,21 @@ export function renderRoutines(){
         view.editing ? '✓ done editing' : '✎ edit routines'}</button>
     </div>`;
 
-  /* the single list, in sections. A section collapses on its own once every box
-     in it is checked, and stays however the user last left it after that —
-     except while editing, where a hidden section is a section you can't fix. */
+  /* the single list, in sections. Sections start closed and stay however you
+     last left them; ticking the last box in one drops that memory, so a section
+     you finish folds itself away again. Editing forces them all open, since a
+     hidden section is a section you can't fix. */
   const openState = new Map();         // section key → open, for the click handler
   const sectionOf = new Map();         // task id → section key
+  const sectionIds = new Map();        // section key → its task ids
   const routineSecs = sections.filter(s => s.routine);   // Shopping is generated, not a routine
   sections.forEach(sec => {
     const hue = sec.hue ? ` sec-${sec.hue}` : '';
     const ids = sec.groups.flatMap(g => g.tasks.map(t => t.id));
     ids.forEach(id => sectionOf.set(id, sec.key));
+    sectionIds.set(sec.key, ids);
     const secDone = ids.filter(id => isChecked(dk, id)).length;
-    const open = view.editing || (view.secOpen[sec.key] ?? !(ids.length && secDone === ids.length));
+    const open = view.editing || (view.secOpen[sec.key] ?? false);
     openState.set(sec.key, open);
     const r = sec.routine;             // absent on Shopping, which is generated
 
@@ -484,7 +487,7 @@ export function renderRoutines(){
   const T = targets();
   const stepsRec = stepsRecord(dk);
   const stepsMet = stepsGoalMet(dk);
-  const stepsOpen = view.secOpen.steps ?? true;
+  const stepsOpen = view.secOpen.steps ?? false;
   openState.set('steps', stepsOpen);
   html += collapsibleSection('steps', 'Steps', stepsOpen, `<div class="card taskList sec-steps">
       <button type="button" class="taskRow${stepsMet ? ' done' : ''}" id="stepsChk">
@@ -493,7 +496,9 @@ export function renderRoutines(){
           typeof stepsRec === 'number'
             ? `<span class="tDesc">recorded earlier as ${stepsRec.toLocaleString()} steps</span>` : ''}</span>
       </button>
-    </div>`, { hue: 'steps', note: `goal ${T.stepsGoal.toLocaleString()}` });
+    </div>`, { hue: 'steps', note: `goal ${T.stepsGoal.toLocaleString()}`,
+      /* closed by default, so say on the heading whether the box is ticked */
+      count: !stepsOpen && stepsMet ? '✓' : '' });
 
   /* habit tracker — always open: it's the reason to come back to this tab */
   html += `<div class="sectionTitle">Habit tracker<span class="rNote">last 14 days</span></div>
@@ -511,7 +516,7 @@ export function renderRoutines(){
     </div>`;
 
   /* weekly overview */
-  const weekOpen = view.secOpen.week ?? true;
+  const weekOpen = view.secOpen.week ?? false;
   openState.set('week', weekOpen);
   html += collapsibleSection('week', 'This week', weekOpen, WEEK_ORDER.map((nm, dow) => {
     const items = routinesForDow(dow).map(r =>
@@ -590,10 +595,13 @@ export function renderRoutines(){
   root.querySelectorAll('[data-check]').forEach(b => b.addEventListener('click', () => {
     const y = window.scrollY;
     const id = b.getAttribute('data-check'), wasChecked = isChecked(dk, id);
-    /* checking the last box in a section should collapse it, so drop whatever
-       the user had pinned open or closed and let the default take over again */
-    delete view.secOpen[sectionOf.get(id)];
     toggle(dk, id);
+    /* Sections open closed, so ticking a box has to hold the one you're working
+       in open — otherwise the first tick hides the rest of the list. Only when
+       every box in it is ticked does it drop back to the closed default. */
+    const key = sectionOf.get(id), kin = sectionIds.get(key) || [];
+    if (kin.length && kin.every(x => isChecked(dk, x))) delete view.secOpen[key];
+    else view.secOpen[key] = true;
     renderRoutines();
     window.scrollTo(0, y);
     /* just added to the cart → put it in the pantry (unchecking never removes) */
