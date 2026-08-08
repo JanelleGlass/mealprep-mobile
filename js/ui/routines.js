@@ -368,6 +368,14 @@ async function drainOwed(dk){
   window.scrollTo(0, y);
 }
 
+/* One letter per column, sharing the habit rows' grid so it lines up with the
+   cells below without knowing their width. */
+function dayLetterRow(){
+  const cells = lastDates(14).map(d =>
+    `<span class="hDay${isToday(d) ? ' today' : ''}">${'SMTWTFS'[d.getDay()]}</span>`).join('');
+  return `<div class="habitRow hHead"><span class="hLabel"></span><div class="hDots">${cells}</div></div>`;
+}
+
 function historyRow(label, habit){
   const cells = lastDates(14).map(d => {
     const dk = dateKey(d), st = habitStatus(dk, habit);
@@ -487,10 +495,10 @@ export function renderRoutines(){
       </button>
     </div>`, { hue: 'steps', note: `goal ${T.stepsGoal.toLocaleString()}` });
 
-  /* habit tracker */
-  const habitsOpen = view.secOpen.habits ?? true;
-  openState.set('habits', habitsOpen);
-  html += collapsibleSection('habits', 'Habit tracker', habitsOpen, `<div class="card">
+  /* habit tracker — always open: it's the reason to come back to this tab */
+  html += `<div class="sectionTitle">Habit tracker<span class="rNote">last 14 days</span></div>
+    <div class="card">
+      ${dayLetterRow()}
       ${historyRow('Supplements', 'vitamins')}
       ${historyRow('Devotions', 'devotions')}
       ${historyRow('Practice', 'practice')}
@@ -500,7 +508,7 @@ export function renderRoutines(){
       ${historyRow('Cleaning', 'cleaning')}
       <div class="hLegend"><span class="hCell done"></span> done <span class="hCell miss"></span> missed <span class="hCell off"></span> not scheduled / no data — tap a day to open it</div>
       <div class="cSub">Calories counts a day done when the Log total is at or under ${T.calMax.toLocaleString()} — in range or under. Steps counts a day done when you tick the box; days you leave alone stay blank rather than counting as a miss. Days skipped in the Log's averages don't count either way. Both goals live in Settings → Daily targets.</div>
-    </div>`, { note: 'last 14 days' });
+    </div>`;
 
   /* weekly overview */
   const weekOpen = view.secOpen.week ?? true;

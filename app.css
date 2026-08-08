@@ -164,6 +164,10 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .habitRow{display:grid;grid-template-columns:78px 1fr;align-items:center;column-gap:8px;padding:8px 0;border-bottom:1px solid var(--rule);}
 .habitRow:last-of-type{border-bottom:none;}
 .hLabel{font-size:12px;font-weight:500;}
+/* day-of-week letters over the columns; same 15px as .hCell so they line up */
+.habitRow.hHead{padding:2px 0 3px;border-bottom:none;}
+.hDay{width:15px;flex-shrink:0;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink-soft);opacity:0.75;}
+.hDay.today{color:var(--ink);opacity:1;font-weight:600;}
 .hDots{display:flex;justify-content:space-between;gap:2px;}
 .hCell{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--rule);background:transparent;padding:0;cursor:pointer;flex-shrink:0;}
 .hCell.done{background:var(--ink-soft);border-color:var(--ink-soft);}
