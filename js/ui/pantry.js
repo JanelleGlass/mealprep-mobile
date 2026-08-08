@@ -8,6 +8,8 @@ import { pickIngredient, pickNutrition, pickCategory, confirmDialog,
 import { tryConvertToGrams } from '../nutrition.js';
 
 const seg = { mode: 'pantry' };
+/* Ingredients list: show only the ones with no nutrition link */
+const ingView = { unlinkedOnly: false };
 /* which category sections the user has opened — absent means closed. Keys carry
    the segment, so opening Produce here doesn't open it on the other list. */
 const catOpen = {};
@@ -94,14 +96,33 @@ export function renderPantry(){
         <span class="qty">${esc(i.unit)} · ${!i.nutrition_id ? 'not linked'
           : i.nutrition && i.nutrition.is_usda === false ? 'label ✓' : 'USDA ✓'}</span>
       </div>`;
-    root.innerHTML = (ingredients.length
-      ? byCategory(ingredients, i => i.category).map(([cat, xs]) =>
-          collapsibleSection(`ing|${cat}`, cat, isOpen(`ing|${cat}`),
-            '<div class="card">' + xs.map(rowHtml).join('') + '</div>',
-            { count: String(xs.length) })).join('')
-      : '<div class="card"><div class="empty">No ingredients yet</div></div>')
+    /* An ingredient with no nutrition link silently drops out of every
+       calculation — a recipe just quietly reads low. The count is the standing
+       answer to "how much of this is unaccounted for"; tapping it drops the
+       sections and lists the offenders flat, which is the shape you want when
+       working through them. */
+    const unlinked = ingredients.filter(i => !i.nutrition_id);
+    if (!unlinked.length) ingView.unlinkedOnly = false;
+    const filterRow = ingredients.length ? `<div class="quickRow" style="margin-bottom:10px;">
+      <button class="quickChip${ingView.unlinkedOnly ? ' on' : ''}" id="iFilter"${unlinked.length ? '' : ' disabled'}>${
+        unlinked.length ? `⚠ ${unlinked.length} not linked` : '✓ all linked'}</button>
+    </div>` : '';
+
+    root.innerHTML = filterRow + (!ingredients.length
+      ? '<div class="card"><div class="empty">No ingredients yet</div></div>'
+      : ingView.unlinkedOnly
+        ? '<div class="card">' + unlinked.map(rowHtml).join('') + '</div>'
+        : byCategory(ingredients, i => i.category).map(([cat, xs]) =>
+            collapsibleSection(`ing|${cat}`, cat, isOpen(`ing|${cat}`),
+              '<div class="card">' + xs.map(rowHtml).join('') + '</div>',
+              { count: String(xs.length) })).join(''))
       + '<button class="addBtn floatAdd" id="iAdd">＋ new ingredient</button>';
     wireSections(root);
+    root.querySelector('#iFilter')?.addEventListener('click', () => {
+      ingView.unlinkedOnly = !ingView.unlinkedOnly;
+      renderPantry();
+      window.scrollTo(0, 0);
+    });
     root.querySelectorAll('[data-ing]').forEach(r => r.addEventListener('click', () => {
       const ing = ingredientById(+r.getAttribute('data-ing'));
       if (ing) openIngredientEditor(ing);
