@@ -53,6 +53,9 @@ after the numbered files above. They are safe to re-run.
 
 - `008_recipe_variations.sql` — adds `recipes.parent_recipe_id`, needed before
   the Recipes tab can save a variation.
+- `009_ingredient_categories.sql` — adds `ingredients.category` and copies the
+  sections over from the pantry rows, so an ingredient is filed whether or not
+  you currently stock it.
 
 ## Troubleshooting
 

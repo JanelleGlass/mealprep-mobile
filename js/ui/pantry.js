@@ -14,8 +14,8 @@ const catOpen = {};
 const isOpen = key => catOpen[key] ?? false;
 
 /* Both lists file into the same sections, in PANTRY_CATEGORIES order. The
-   category lives on the pantry row, so an ingredient you don't stock has none
-   and lands under 'Other' — the same place the pantry puts a blank one. */
+   section lives on the ingredient, so it holds whether or not any is in stock,
+   and either list can change it. A blank one lands under 'Other'. */
 function byCategory(rows, catOf){
   const groups = new Map(PANTRY_CATEGORIES.map(c => [c, []]));
   rows.forEach(r => {
@@ -44,11 +44,11 @@ export function renderPantry(){
     const items = (cached('pantry_items') || []).map(p => ({ p, ing: ingredientById(p.ingredient_id) }))
       .filter(x => x.ing).sort((a, b) => a.ing.name.localeCompare(b.ing.name));
     const rowHtml = ({ p, ing }) =>
-      `<div class="listRow"><span data-cat="${p.id}" style="cursor:pointer;">${esc(ing.name)}</span>
+      `<div class="listRow"><span data-cat="${ing.id}" style="cursor:pointer;">${esc(ing.name)}</span>
         <span class="qty"><input type="number" class="qtyIn" data-p="${p.id}" step="0.5" value="${p.quantity}"> ${esc(ing.unit)}
         <button class="del" data-rmp="${p.id}">✕</button></span></div>`;
     root.innerHTML = (items.length
-      ? byCategory(items, x => x.p.category).map(([cat, xs]) =>
+      ? byCategory(items, x => x.ing.category).map(([cat, xs]) =>
           collapsibleSection(`pantry|${cat}`, cat, isOpen(`pantry|${cat}`),
             '<div class="card">' + xs.map(rowHtml).join('') + '</div>',
             { count: String(xs.length) })).join('')
@@ -64,11 +64,11 @@ export function renderPantry(){
       renderPantry();
     }));
     root.querySelectorAll('[data-cat]').forEach(el => el.addEventListener('click', async () => {
-      const p = (cached('pantry_items') || []).find(x => x.id === +el.getAttribute('data-cat'));
-      if (!p) return;
-      const cat = await pickCategory(PANTRY_CATEGORIES.includes(p.category) ? p.category : 'Other');
-      if (cat === null || cat === p.category) return;
-      await upsertRow('pantry_items', { id: p.id, category: cat });
+      const ing = ingredientById(+el.getAttribute('data-cat'));
+      if (!ing) return;
+      const cat = await pickCategory(PANTRY_CATEGORIES.includes(ing.category) ? ing.category : 'Other');
+      if (cat === null || cat === ing.category) return;
+      await upsertRow('ingredients', { id: ing.id, category: cat });
       renderPantry();
     }));
     root.querySelector('#pAdd').addEventListener('click', async () => {
@@ -77,15 +77,17 @@ export function renderPantry(){
       const existing = (cached('pantry_items') || []).find(p => p.ingredient_id === ing.id);
       if (existing) await addToPantry(ing.id, 1);         // already stocked: one more
       else {
-        const cat = await pickCategory(null);
-        await upsertRow('pantry_items', { ingredient_id: ing.id, quantity: 1, category: cat ?? '' });
+        /* only ask where it goes if the ingredient isn't filed yet */
+        if (!ing.category){
+          const cat = await pickCategory(null);
+          if (cat) await upsertRow('ingredients', { id: ing.id, category: cat });
+        }
+        await upsertRow('pantry_items', { ingredient_id: ing.id, quantity: 1 });
       }
       renderPantry();
     });
   } else {
     const ingredients = (cached('ingredients') || []).slice().sort((a, b) => a.name.localeCompare(b.name));
-    const pantry = cached('pantry_items') || [];
-    const catOfIngredient = i => pantry.find(p => p.ingredient_id === i.id)?.category;
     const rowHtml = i =>
       `<div class="listRow" data-ing="${i.id}" style="cursor:pointer;">
         <span>${esc(i.name)}</span>
@@ -93,7 +95,7 @@ export function renderPantry(){
           : i.nutrition && i.nutrition.is_usda === false ? 'label ✓' : 'USDA ✓'}</span>
       </div>`;
     root.innerHTML = (ingredients.length
-      ? byCategory(ingredients, catOfIngredient).map(([cat, xs]) =>
+      ? byCategory(ingredients, i => i.category).map(([cat, xs]) =>
           collapsibleSection(`ing|${cat}`, cat, isOpen(`ing|${cat}`),
             '<div class="card">' + xs.map(rowHtml).join('') + '</div>',
             { count: String(xs.length) })).join('')
@@ -109,14 +111,13 @@ export function renderPantry(){
 }
 
 /* Add to what's on hand: bump an existing row, or create one. Online-only
-   (upsertRow throws when offline) — callers own the retry. New rows land
-   uncategorised, which renders under 'Other', rather than interrupting a
-   grocery run with a category picker. */
+   (upsertRow throws when offline) — callers own the retry. The section comes
+   from the ingredient, so a row created here is already filed. */
 export async function addToPantry(ingredientId, qty){
   if (!(qty > 0)) return;
   const existing = (cached('pantry_items') || []).find(p => p.ingredient_id === ingredientId);
   if (existing) await upsertRow('pantry_items', { id: existing.id, quantity: (+existing.quantity || 0) + qty });
-  else await upsertRow('pantry_items', { ingredient_id: ingredientId, quantity: qty, category: '' });
+  else await upsertRow('pantry_items', { ingredient_id: ingredientId, quantity: qty });
 }
 
 /* Returns the saved ingredient row (or null). opts.nested: caller re-opens and
@@ -126,8 +127,9 @@ export function openIngredientEditor(ingredient, opts = {}){
     const draft = ingredient ? {
       id: ingredient.id, name: ingredient.name, unit: ingredient.unit,
       price: ingredient.price_per_unit, nutrition_id: ingredient.nutrition_id,
-      nutrition: ingredient.nutrition ?? null,
-    } : { name: opts.name ?? '', unit: 'whole', price: null, nutrition_id: null, nutrition: null };
+      nutrition: ingredient.nutrition ?? null, category: ingredient.category || '',
+    } : { name: opts.name ?? '', unit: 'whole', price: null, nutrition_id: null,
+          nutrition: null, category: '' };
 
     const body = openSheet(ingredient ? 'Edit ingredient' : 'New ingredient', '');
 
@@ -147,6 +149,10 @@ export function openIngredientEditor(ingredient, opts = {}){
         <select id="igUnit">${COOKING_UNITS.map(u => `<option ${u === draft.unit ? 'selected' : ''}>${u}</option>`).join('')}</select>
         <span class="miniLabel">price per unit (optional)</span>
         <input type="number" id="igPrice" step="0.01" value="${draft.price ?? ''}">
+        <span class="miniLabel">pantry section</span>
+        <div class="quickRow" style="margin-bottom:8px;">
+          <button class="quickChip" id="igCat">${draft.category ? esc(draft.category) : 'Other — tap to file'}</button>
+        </div>
         <span class="miniLabel">usda nutrition</span>
         <div class="card" style="margin-bottom:8px;">
           <div class="cSub">${draft.nutrition ? esc(draft.nutrition.description ?? 'linked') : 'not linked'}</div>
@@ -166,6 +172,11 @@ export function openIngredientEditor(ingredient, opts = {}){
       body.querySelector('#igName').addEventListener('input', e => draft.name = e.target.value);
       body.querySelector('#igUnit').addEventListener('change', e => { draft.unit = e.target.value; draw(); });
       body.querySelector('#igPrice').addEventListener('change', e => draft.price = e.target.value ? parseFloat(e.target.value) : null);
+      body.querySelector('#igCat').addEventListener('click', async () => {
+        const cat = await pickCategory(draft.category || null);
+        if (cat !== null) draft.category = cat;
+        draw();
+      });
       body.querySelector('#igLink').addEventListener('click', async () => {
         const n = await pickNutrition(draft.unit, draft.name);
         if (n){ draft.nutrition = n; draft.nutrition_id = n.id; }
@@ -183,7 +194,7 @@ export function openIngredientEditor(ingredient, opts = {}){
           if (!draft.name.trim()){ document.getElementById('igMsg').textContent = 'name required'; return; }
           const saved = await upsertRow('ingredients', {
             ...(draft.id ? { id: draft.id } : {}),
-            name: draft.name.trim(), unit: draft.unit,
+            name: draft.name.trim(), unit: draft.unit, category: draft.category,
             price_per_unit: draft.price, nutrition_id: draft.nutrition_id,
           });
           closeSheet();
