@@ -57,7 +57,9 @@ create table ingredients (
   name text not null,
   unit text not null default '',
   price_per_unit numeric,
-  nutrition_id int references nutritions(id) on delete set null
+  nutrition_id int references nutritions(id) on delete set null,
+  -- which pantry section it files under, stocked or not
+  category text not null default ''
 );
 
 create table recipes (
