@@ -180,11 +180,14 @@ export function customFoodEditor(unitForSanity, presetName){
   });
 }
 
-export function pickCategory(current){
+/* opts.title / opts.options: the same picker files recipes as well as pantry
+   items, so the caller says which set of sections it means. */
+export function pickCategory(current, opts = {}){
+  const { title = 'Pantry section', options = PANTRY_CATEGORIES } = opts;
   return new Promise(resolve => {
     const ov = overlay(`
-      <h2>Pantry section</h2>
-      <div class="pickList">${PANTRY_CATEGORIES.map(c =>
+      <h2>${esc(title)}</h2>
+      <div class="pickList">${options.map(c =>
         `<button class="pickRow" data-cat="${esc(c)}">${esc(c)}${c === current ? ' <span class="qty">✓</span>' : ''}</button>`).join('')}</div>
       <div class="btnRow"><button class="cancel" id="pcCancel">cancel</button></div>`);
     ov.querySelectorAll('.pickRow').forEach(b => b.addEventListener('click', () => {
