@@ -2,13 +2,29 @@
 import { cached, upsertRow, deleteRow, replaceChildren, refresh, S, queueFoodEntry } from '../store.js';
 import { computeForRecipe } from '../nutrition.js';
 import { esc, ingredientById, buildRecipeCalc, openSheet, closeSheet, macroLine,
-         dateKey, isToday, entryNameWithNote } from './common.js';
-import { pickIngredient, confirmDialog } from './pickers.js';
+         dateKey, isToday, entryNameWithNote, collapsibleSection, RECIPE_CATEGORIES } from './common.js';
+import { pickIngredient, pickCategory, confirmDialog } from './pickers.js';
 import { openIngredientEditor } from './pantry.js';
 import { logState } from './log.js';
 import { assignRecipe, assignedSummary, nextCookDate, nextPrepDate, SLOTS } from './cookplan.js';
 
-const view = { mode: 'list', recipeId: null, logFlash: null, planFlash: null };
+const view = { mode: 'list', recipeId: null, logFlash: null, planFlash: null, catOpen: {} };
+const catIsOpen = cat => view.catOpen[cat] ?? false;
+
+/* ---------- sections ----------
+   A variation files under its base's section, so a pair never splits across two
+   headings; only the base's category is ever consulted. An unfiled recipe (or
+   one carrying a category since removed from the list) lands under 'Other'. */
+const categoryOf = r => {
+  const c = (r.category || '').trim();
+  return RECIPE_CATEGORIES.includes(c) ? c : 'Other';
+};
+function byCategory(groups){
+  const buckets = new Map(RECIPE_CATEGORIES.map(c => [c, []]));
+  groups.forEach(g => buckets.get(categoryOf(g.base)).push(g));
+  return [...buckets].filter(([, gs]) => gs.length);
+}
+const groupSize = g => 1 + g.variations.length;
 
 /* ---------- variations ----------
    A variation is a recipe carrying parent_recipe_id, so every consumer — the
@@ -64,7 +80,7 @@ export function renderRecipes(){
       <button class="backLink" id="rBack">← recipes</button>
       <div class="card">
         <div class="cName" style="font-size:16px;font-family:'Fraunces',serif;">${esc(r.name)}</div>
-        <div class="cSub">${r.servings || 1} servings${r.description ? ' · ' + esc(r.description) : ''}</div>
+        <div class="cSub">${esc(categoryOf(kin.base || r))} · ${r.servings || 1} servings${r.description ? ' · ' + esc(r.description) : ''}</div>
         <div class="cSub" style="margin-top:6px;">per serving: ${macroLine(per)}</div>
         ${per.uncountedNote ? `<div class="cSub" style="color:#7A4A26;">⚠ ${esc(per.uncountedNote)}</div>` : ''}
       </div>
@@ -106,7 +122,12 @@ export function renderRecipes(){
         <button class="addBtn" id="rVary" style="margin-top:8px;">＋ make a variation</button>
       </div>
       <button class="addBtn" id="rEdit">✎ edit recipe</button>`;
-    root.querySelector('#rBack').addEventListener('click', () => { view.logFlash = view.planFlash = null; view.mode = 'list'; renderRecipes(); });
+    /* come back to a list with this recipe's section open, so you land looking
+       at where you just were rather than at a wall of closed headings */
+    root.querySelector('#rBack').addEventListener('click', () => {
+      view.catOpen[categoryOf(kin.base || r)] = true;
+      view.logFlash = view.planFlash = null; view.mode = 'list'; renderRecipes();
+    });
     root.querySelector('#rEdit').addEventListener('click', () => openRecipeSheet(r));
     root.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => {
       view.recipeId = +b.getAttribute('data-open'); view.logFlash = view.planFlash = null; renderRecipes();
@@ -117,6 +138,8 @@ export function renderRecipes(){
       prefill: {
         name: `${kin.base ? kin.base.name : r.name} — variation`,
         description: r.description || '', servings: r.servings,
+        /* filed with its base, which is where the list will show it anyway */
+        category: (kin.base || r).category || '',
         rows: (r.ingredients || []).map(ri => ({ ingredient_id: ri.ingredient_id, quantity: +ri.quantity })),
       },
     }));
@@ -172,10 +195,20 @@ export function renderRecipes(){
       <div class="cSub">${r.servings || 1} servings · ${Math.round(per.calories)} cal/serving</div>
     </div>`;
   };
-  root.innerHTML = '<div class="sectionTitle">Recipes</div>'
-    + groupRecipes(recipes).map(g =>
-        card(g.base, false) + g.variations.map(v => card(v, true)).join('')).join('')
+  const sections = byCategory(groupRecipes(recipes));
+  root.innerHTML = (sections.length
+    ? sections.map(([cat, gs]) => collapsibleSection(`rec|${cat}`, cat, catIsOpen(cat),
+        gs.map(g => card(g.base, false) + g.variations.map(v => card(v, true)).join('')).join(''),
+        { count: String(gs.reduce((n, g) => n + groupSize(g), 0)) })).join('')
+    : '<div class="card"><div class="empty">No recipes yet</div></div>')
     + '<button class="addBtn" id="rNew" style="margin-top:8px;">＋ new recipe</button>';
+  root.querySelectorAll('[data-sec]').forEach(b => b.addEventListener('click', () => {
+    const y = window.scrollY;
+    const cat = b.getAttribute('data-sec').slice(4);   // strip the 'rec|' prefix
+    view.catOpen[cat] = !catIsOpen(cat);
+    renderRecipes();
+    window.scrollTo(0, y);
+  }));
   root.querySelectorAll('[data-r]').forEach(c => c.addEventListener('click', () => {
     view.recipeId = +c.getAttribute('data-r'); view.mode = 'detail'; view.logFlash = view.planFlash = null; renderRecipes();
   }));
@@ -187,8 +220,9 @@ export function renderRecipes(){
 function openRecipeSheet(recipe, opts = {}){
   const draft = recipe ? {
     id: recipe.id, name: recipe.name, description: recipe.description || '', servings: recipe.servings,
+    category: recipe.category || '',
     rows: (recipe.ingredients || []).map(ri => ({ ingredient_id: ri.ingredient_id, quantity: +ri.quantity })),
-  } : { name: '', description: '', servings: 4, rows: [], ...(opts.prefill || {}) };
+  } : { name: '', description: '', servings: 4, category: '', rows: [], ...(opts.prefill || {}) };
 
   const title = recipe ? 'Edit recipe' : opts.parentId ? 'New variation' : 'New recipe';
   const body = openSheet(title, '');
@@ -201,6 +235,10 @@ function openRecipeSheet(recipe, opts = {}){
       <input type="text" id="rcDesc" value="${esc(draft.description)}">
       <span class="miniLabel">servings the recipe makes</span>
       <input type="number" id="rcServings" min="1" step="1" value="${draft.servings}">
+      <span class="miniLabel">section</span>
+      <div class="quickRow" style="margin-bottom:8px;">
+        <button class="quickChip" id="rcCat">${draft.category ? esc(draft.category) : 'Other — tap to file'}</button>
+      </div>
       <span class="miniLabel">ingredients</span>
       <div id="rcRows">${draft.rows.map((r, i) => {
         const ing = ingredientById(r.ingredient_id);
@@ -231,6 +269,12 @@ function openRecipeSheet(recipe, opts = {}){
     body.querySelector('#rcName').addEventListener('input', e => draft.name = e.target.value);
     body.querySelector('#rcDesc').addEventListener('input', e => draft.description = e.target.value);
     body.querySelector('#rcServings').addEventListener('change', e => { draft.servings = parseInt(e.target.value) || 1; preview(); });
+    body.querySelector('#rcCat').addEventListener('click', async () => {
+      const cat = await pickCategory(draft.category || null,
+        { title: 'Recipe section', options: RECIPE_CATEGORIES });
+      if (cat !== null) draft.category = cat;
+      draw();
+    });
     body.querySelectorAll('.qtyIn').forEach(inp => inp.addEventListener('change', () => {
       draft.rows[+inp.getAttribute('data-i')].quantity = parseFloat(inp.value) || 0; preview();
     }));
@@ -262,6 +306,9 @@ function openRecipeSheet(recipe, opts = {}){
           ...(draft.id ? { id: draft.id } : {}),
           name: draft.name.trim(), description: draft.description.trim() || null,
           servings: Math.max(1, Math.round(draft.servings)),
+          /* left out entirely while both the draft and the saved row are unfiled,
+             so the app still saves against a database where 011 hasn't been run */
+          ...(draft.category || recipe?.category ? { category: draft.category } : {}),
           /* only sent when creating a variation — an edit leaves the column
              alone, so an existing recipe keeps whatever it was filed under */
           ...(opts.parentId && !draft.id ? { parent_recipe_id: opts.parentId } : {}),
@@ -271,6 +318,7 @@ function openRecipeSheet(recipe, opts = {}){
           draft.rows.filter(r => r.quantity > 0).map(r => ({ ingredient_id: r.ingredient_id, quantity: r.quantity })));
         await refresh('recipes');
         S.onChange();
+        view.catOpen[categoryOf(draft)] = true;      // so backing out shows it
         closeSheet(); view.recipeId = recipeId; view.mode = 'detail'; renderRecipes();
       } catch (err) {
         document.getElementById('rcPreview').textContent = 'save failed: ' + err.message;

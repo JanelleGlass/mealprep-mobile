@@ -235,10 +235,38 @@ function lastDates(n){
   return out;
 }
 
+/* ---------- per-day section state ----------
+   Sections are open by default — the list is the point of the tab. Folding one
+   away is a decision about that day's list, so it is remembered per date and
+   survives a reload; a new day starts open again. Deliberately local rather
+   than part of the synced blob: this is how the list is arranged on this
+   device, not something the other one should inherit. */
+const SEC_KEY = 'routines.sections';
+const SEC_KEEP_DAYS = 14;
+const loadSecState = () => { try { return JSON.parse(localStorage.getItem(SEC_KEY)) || {}; } catch { return {}; } };
+function saveSecState(all){
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - SEC_KEEP_DAYS);
+  for (const k of Object.keys(all)) if (k < dateKey(cutoff)) delete all[k];
+  try { localStorage.setItem(SEC_KEY, JSON.stringify(all)); } catch { /* private mode */ }
+}
+/* undefined means "never touched today" — the caller applies the default */
+const secOpen = (dk, key) => (loadSecState()[dk] || {})[key];
+function setSecOpen(dk, key, open){
+  const all = loadSecState();
+  (all[dk] ??= {})[key] = open;
+  saveSecState(all);
+}
+/* back to the default, rather than pinning it open at today's default value */
+function clearSecOpen(dk, key){
+  const all = loadSecState();
+  if (!all[dk]) return;
+  delete all[dk][key];
+  if (!Object.keys(all[dk]).length) delete all[dk];
+  saveSecState(all);
+}
+
 /* ---------- view ---------- */
-/* secOpen holds only sections the user has explicitly opened or closed; anything
-   absent falls back to the default (open, unless every box in it is checked). */
-const view = { date: startOfDay(new Date()), tipsOpen: false, secOpen: {}, editing: false };
+const view = { date: startOfDay(new Date()), tipsOpen: false, editing: false };
 let shopMsg = null;                    // inline note under the shopping list
 export function routinesFocusToday(){ view.date = startOfDay(new Date()); syncOpen(); }
 
@@ -304,7 +332,7 @@ function routineSheet(routine){
       if (!draft.days.length) return draw('pick at least one day');
       const patch = { title: draft.title.trim(), days: draft.days, note: draft.note.trim() };
       if (routine) updateRoutine(routine.id, patch);
-      else { const r = addRoutine(patch); view.secOpen[r.id] = true; }
+      else addRoutine(patch);          // new sections are open by default
       closeSheet();
       renderRoutines();
     });
@@ -413,10 +441,10 @@ export function renderRoutines(){
         view.editing ? '✓ done editing' : '✎ edit routines'}</button>
     </div>`;
 
-  /* the single list, in sections. Sections start closed and stay however you
-     last left them; ticking the last box in one drops that memory, so a section
-     you finish folds itself away again. Editing forces them all open, since a
-     hidden section is a section you can't fix. */
+  /* the single list, in sections. Sections start open and stay however you last
+     left them for this date; ticking the last box in one folds it away, and
+     unticking gives it back. Editing forces them all open, since a hidden
+     section is a section you can't fix. */
   const openState = new Map();         // section key → open, for the click handler
   const sectionOf = new Map();         // task id → section key
   const sectionIds = new Map();        // section key → its task ids
@@ -427,7 +455,7 @@ export function renderRoutines(){
     ids.forEach(id => sectionOf.set(id, sec.key));
     sectionIds.set(sec.key, ids);
     const secDone = ids.filter(id => isChecked(dk, id)).length;
-    const open = view.editing || (view.secOpen[sec.key] ?? false);
+    const open = view.editing || (secOpen(dk, sec.key) ?? true);
     openState.set(sec.key, open);
     const r = sec.routine;             // absent on Shopping, which is generated
 
@@ -487,7 +515,7 @@ export function renderRoutines(){
   const T = targets();
   const stepsRec = stepsRecord(dk);
   const stepsMet = stepsGoalMet(dk);
-  const stepsOpen = view.secOpen.steps ?? false;
+  const stepsOpen = secOpen(dk, 'steps') ?? true;
   openState.set('steps', stepsOpen);
   html += collapsibleSection('steps', 'Steps', stepsOpen, `<div class="card taskList sec-steps">
       <button type="button" class="taskRow${stepsMet ? ' done' : ''}" id="stepsChk">
@@ -515,8 +543,9 @@ export function renderRoutines(){
       <div class="cSub">Calories counts a day done when the Log total is at or under ${T.calMax.toLocaleString()} — in range or under. Steps counts a day done when you tick the box; days you leave alone stay blank rather than counting as a miss. Days skipped in the Log's averages don't count either way. Both goals live in Settings → Daily targets.</div>
     </div>`;
 
-  /* weekly overview */
-  const weekOpen = view.secOpen.week ?? false;
+  /* weekly overview — the one section that stays closed by default: it's the
+     same reference every day, not part of today's list */
+  const weekOpen = secOpen(dk, 'week') ?? false;
   openState.set('week', weekOpen);
   html += collapsibleSection('week', 'This week', weekOpen, WEEK_ORDER.map((nm, dow) => {
     const items = routinesForDow(dow).map(r =>
@@ -535,14 +564,13 @@ export function renderRoutines(){
     const n = b.getAttribute('data-nav');
     if (n === 'today') view.date = startOfDay(new Date());
     else { const d = new Date(view.date); d.setDate(d.getDate() + (n === 'next' ? 1 : -1)); view.date = d; }
-    view.secOpen = {};                 // another day, its own defaults
-    renderRoutines();
+    renderRoutines();                  // another day, its own remembered state
     window.scrollTo(0, 0);
   }));
   root.querySelectorAll('[data-sec]').forEach(b => b.addEventListener('click', () => {
     const y = window.scrollY;
     const k = b.getAttribute('data-sec');
-    view.secOpen[k] = !openState.get(k);
+    setSecOpen(dk, k, !openState.get(k));
     renderRoutines();
     window.scrollTo(0, y);
   }));
@@ -551,8 +579,7 @@ export function renderRoutines(){
   root.querySelector('#rEdit').addEventListener('click', () => {
     const y = window.scrollY;
     view.editing = !view.editing;
-    if (!view.editing) view.secOpen = {};    // let completed sections fold away again
-    renderRoutines();
+    renderRoutines();                        // back to however the day was left
     window.scrollTo(0, y);
   });
   root.querySelector('#rNew')?.addEventListener('click', () => routineSheet(null));
@@ -596,12 +623,12 @@ export function renderRoutines(){
     const y = window.scrollY;
     const id = b.getAttribute('data-check'), wasChecked = isChecked(dk, id);
     toggle(dk, id);
-    /* Sections open closed, so ticking a box has to hold the one you're working
-       in open — otherwise the first tick hides the rest of the list. Only when
-       every box in it is ticked does it drop back to the closed default. */
+    /* Finishing a section folds it away; unticking anything in it hands it back
+       by dropping to the open default, rather than pinning it open — so a
+       section you deliberately collapsed earlier isn't reopened behind you. */
     const key = sectionOf.get(id), kin = sectionIds.get(key) || [];
-    if (kin.length && kin.every(x => isChecked(dk, x))) delete view.secOpen[key];
-    else view.secOpen[key] = true;
+    if (kin.length && kin.every(x => isChecked(dk, x))) setSecOpen(dk, key, false);
+    else clearSecOpen(dk, key);
     renderRoutines();
     window.scrollTo(0, y);
     /* just added to the cart → put it in the pantry (unchecking never removes) */
@@ -623,7 +650,6 @@ export function renderRoutines(){
   if (tips) tips.addEventListener('toggle', () => { view.tipsOpen = tips.open; });
   root.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => {
     view.date = startOfDay(new Date(b.getAttribute('data-goto') + 'T00:00:00'));
-    view.secOpen = {};
     renderRoutines();
     window.scrollTo(0, 0);
   }));

@@ -10,6 +10,8 @@ export const MEAL_TYPES = ['breakfast', 'lunch', 'dinner'];
 export const COOKING_UNITS = ['tsp','tbsp','fl oz','cup','pt','qt','gal','ml','L','oz','lb','g','kg','pinch','dash','clove','slice','piece','whole','can','bunch','sprig','head','stalk','to taste'];
 /* Pantry sections, in display order. Items with an unknown/empty category render under 'Other'. */
 export const PANTRY_CATEGORIES = ['Fridge','Freezer','Produce','Dry Goods','Canned Goods','Baking','Spices & Seasonings','Sauces & Oils','Drinks','Other'];
+/* Recipe sections, in display order — same 'unknown lands in Other' rule. */
+export const RECIPE_CATEGORIES = ['Breakfast','Soup','Salad','Main','Side','Bread','Dessert','Sauce & Dressing','Drink','Snack','Other'];
 
 /* A collapsible section: tappable heading + a body that hides when closed.
    Callers own the open/closed state and wire clicks on [data-sec]. */
