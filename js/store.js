@@ -86,7 +86,10 @@ export async function upsertRow(table, row){
     ? await client.from(table).update(row).eq('id', row.id).select()
     : await client.from(table).insert(row).select();
   if (error) throw new Error(error.message);
-  await refresh(table);
+  /* the write landed — a failed read-back must not surface as a failed save,
+     because callers respond to "save failed" by retrying, and a retried
+     insert duplicates the row; a stale cache just fixes itself next refresh */
+  try { await refresh(table); } catch { /* keep the pre-write cache */ }
   S.onChange();
   return data?.[0];
 }
@@ -102,7 +105,14 @@ export async function deleteRow(table, id){
 
 /* child-row replacement for recipe_ingredients / meal_ingredients */
 export async function replaceChildren(table, fkCol, fkVal, rows){
-  if (demoMode()) return;
+  if (demoMode()){
+    /* demo rows keep children embedded on the parent (recipes[].ingredients),
+       so mirror the write there — otherwise a demo save silently drops them */
+    const parentTable = { recipe_ingredients: 'recipes', meal_ingredients: 'meals' }[table];
+    if (parentTable && (S.tables[parentTable] || []).some(r => r.id === fkVal))
+      demoWrite(parentTable, { id: fkVal, ingredients: rows.map(r => ({ ...r, [fkCol]: fkVal })) });
+    return;
+  }
   if (!init()) throw new Error('not connected');
   const del = await client.from(table).delete().eq(fkCol, fkVal);
   if (del.error) throw new Error(del.error.message);
@@ -261,6 +271,10 @@ async function demoRefresh(name){
 }
 let demoNextId = 100000;
 function demoWrite(table, row){
+  /* mirror the ingredients query's nutrition join, so a demo row saved with a
+     nutrition_id computes in recipes instead of showing 'not counted' */
+  if (table === 'ingredients' && row.nutrition_id != null && !row.nutrition)
+    row = { ...row, nutrition: (S.tables.nutritions_demo || []).find(n => n.id === row.nutrition_id) ?? null };
   const rows = S.tables[table] || [];
   let saved = row;
   if (row.id){

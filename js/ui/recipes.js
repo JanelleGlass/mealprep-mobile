@@ -1,8 +1,10 @@
 /* Recipes tab: flat list, detail, editor sheet. */
-import { cached, upsertRow, deleteRow, replaceChildren, refresh, S, queueFoodEntry } from '../store.js';
+import { cached, upsertRow, deleteRow, replaceChildren, refresh, S, queueFoodEntry, searchNutrition } from '../store.js';
 import { computeForRecipe } from '../nutrition.js';
+import { parseRecipeJson, resolveIngredients, buildDescription } from '../recipeimport.js';
 import { esc, ingredientById, buildRecipeCalc, openSheet, closeSheet, macroLine,
-         dateKey, isToday, entryNameWithNote, collapsibleSection, RECIPE_CATEGORIES } from './common.js';
+         dateKey, isToday, entryNameWithNote, collapsibleSection, RECIPE_CATEGORIES,
+         PANTRY_CATEGORIES, COOKING_UNITS } from './common.js';
 import { pickIngredient, pickCategory, confirmDialog } from './pickers.js';
 import { openIngredientEditor } from './pantry.js';
 import { logState } from './log.js';
@@ -201,7 +203,8 @@ export function renderRecipes(){
         gs.map(g => card(g.base, false) + g.variations.map(v => card(v, true)).join('')).join(''),
         { count: String(gs.reduce((n, g) => n + groupSize(g), 0)) })).join('')
     : '<div class="card"><div class="empty">No recipes yet</div></div>')
-    + '<button class="addBtn" id="rNew" style="margin-top:8px;">＋ new recipe</button>';
+    + '<button class="addBtn" id="rNew" style="margin-top:8px;">＋ new recipe</button>'
+    + '<div class="quickRow" style="justify-content:center;margin-top:8px;"><button class="quickChip" id="rImportJson">⇪ import from JSON</button></div>';
   root.querySelectorAll('[data-sec]').forEach(b => b.addEventListener('click', () => {
     const y = window.scrollY;
     const cat = b.getAttribute('data-sec').slice(4);   // strip the 'rec|' prefix
@@ -213,6 +216,174 @@ export function renderRecipes(){
     view.recipeId = +c.getAttribute('data-r'); view.mode = 'detail'; view.logFlash = view.planFlash = null; renderRecipes();
   }));
   root.querySelector('#rNew').addEventListener('click', () => openRecipeSheet(null));
+  root.querySelector('#rImportJson').addEventListener('click', openImportSheet);
+}
+
+/* ---------- JSON import ----------
+   Paste a recipe as JSON (format: RECIPE-JSON.md), preview how every ingredient
+   resolves against the existing list, then save. Nothing is written until the
+   import button on the preview step. */
+let importGen = 0;
+function openImportSheet(){
+  const st = { text: '', prep: null, busy: false };
+  const body = openSheet('Import recipe from JSON', '');
+  /* #sheetBody is shared by every sheet, so an async step that resumes after
+     the ✕ close (or after another sheet took over) must not draw into it */
+  const gen = ++importGen;
+  const live = () => gen === importGen
+    && document.getElementById('sheet').classList.contains('show')
+    && document.getElementById('sheetTitle').textContent === 'Import recipe from JSON';
+
+  function drawPaste(msgs = []){
+    body.innerHTML = `
+      <div class="cSub" style="margin-bottom:8px;">Paste a recipe in the RECIPE-JSON.md format —
+        ask Claude for “MealPrep recipe JSON” and paste the result here.</div>
+      <textarea id="imText" placeholder='{ "name": "…", "servings": 4, "ingredients": [ … ] }'></textarea>
+      ${msgs.map(m => `<div class="warn">✕ ${esc(m)}</div>`).join('')}
+      <div class="btnRow">
+        <button class="cancel" id="imCancel">cancel</button>
+        <button class="save" id="imPreview">preview</button>
+      </div>`;
+    const ta = body.querySelector('#imText');
+    ta.value = st.text;
+    ta.addEventListener('input', () => st.text = ta.value);
+    body.querySelector('#imCancel').addEventListener('click', closeSheet);
+    body.querySelector('#imPreview').addEventListener('click', preview);
+  }
+
+  async function preview(){
+    const { draft, errors, warnings } = parseRecipeJson(st.text,
+      { units: COOKING_UNITS, categories: RECIPE_CATEGORIES, pantryCategories: PANTRY_CATEGORIES });
+    if (errors.length) return drawPaste(errors);
+
+    const recipes = cached('recipes') || [];
+    const blocking = [];
+    if (recipes.some(r => (r.name || '').trim().toLowerCase() === draft.name.toLowerCase()))
+      blocking.push(`a recipe named "${draft.name}" already exists — rename one of them`);
+    let parent = null;
+    if (draft.variationOf){
+      parent = recipes.find(r => (r.name || '').trim().toLowerCase() === draft.variationOf.toLowerCase()) || null;
+      if (!parent) blocking.push(`no recipe named "${draft.variationOf}" to file this under — check the spelling`);
+      /* naming a variation as the parent files under its base instead, the same
+         one-level-deep rule the in-app "make a variation" flow keeps */
+      for (let hop = 0; parent && parent.parent_recipe_id && hop < 10; hop++){
+        const up = recipes.find(r => r.id === parent.parent_recipe_id);
+        if (!up) break;
+        parent = up;
+      }
+    }
+
+    const rows = resolveIngredients(draft.ingredients, cached('ingredients') || []);
+    rows.filter(r => r.status === 'new-no-unit').forEach(r => blocking.push(r.unit
+      ? `new ingredient "${r.name}": "${r.unit}" isn't a unit the app knows (${COOKING_UNITS.join(', ')})`
+      : `new ingredient "${r.name}" needs a "unit" (${COOKING_UNITS.join(', ')})`));
+
+    /* exact-description USDA lookups for the ingredients we'd create */
+    body.innerHTML = '<div class="empty">checking USDA links…</div>';
+    for (const r of rows){
+      if (r.status !== 'new' || !r.nutrition) continue;
+      try {
+        const hits = await searchNutrition(r.nutrition);
+        r.nutritionRow = hits.find(n => (n.description || '').toLowerCase() === r.nutrition.toLowerCase()) ?? null;
+      } catch { r.nutritionRow = null; r.lookupFailed = true; }
+    }
+    if (!live()) return;
+
+    st.prep = { draft, rows, parent, blocking, warnings, description: buildDescription(draft) };
+    drawPreview();
+  }
+
+  function drawPreview(){
+    const { draft, rows, parent, blocking, warnings } = st.prep;
+    const per = computeForRecipe({
+      servings: draft.servings,
+      ingredients: rows.map(r => ({
+        ingredient: r.match ?? { id: 0, name: r.name, unit: r.unitCanonical ?? '', nutrition: r.nutritionRow ?? null },
+        quantity: r.quantity,
+      })),
+    }, 1);
+    const rowHtml = r => {
+      if (r.match) return `<div class="listRow"><span>${esc(r.name)}</span>
+          <span class="qty">${r.quantity} ${esc(r.match.unit)} · existing</span></div>`
+        + (r.status === 'unit-mismatch'
+          ? `<div class="warn">⚠ "${esc(r.match.name)}" is stored in ${esc(r.match.unit)}, not ${esc(r.unit)} —
+             so ${r.quantity} here means ${r.quantity} ${esc(r.match.unit)}. If that's wrong, convert the quantity in the JSON.</div>` : '');
+      return `<div class="listRow"><span>${esc(r.name)}</span>
+          <span class="qty">${r.quantity} ${esc(r.unitCanonical ?? r.unit ?? '')} · new${r.nutritionRow ? ' · USDA linked' : ''}</span></div>`
+        + (r.nutritionRow ? '' : r.lookupFailed
+          ? `<div class="warn">⚠ couldn't reach the USDA table to check “${esc(r.nutrition)}” — created unlinked; link it later under Pantry → Ingredients</div>`
+          : r.nutrition
+          ? `<div class="warn">⚠ no USDA food called “${esc(r.nutrition)}” — created unlinked, not counted until you link it under Pantry → Ingredients</div>`
+          : '<div class="warn">⚠ no "nutrition" description given — created unlinked, not counted until you link it</div>');
+    };
+    body.innerHTML = `
+      <div class="card">
+        <div class="cName">${esc(draft.name)}</div>
+        <div class="cSub">${esc(draft.category || 'Other')} · ${draft.servings} servings${parent ? ` · variation of ${esc(parent.name)}` : ''}</div>
+        <div class="cSub" style="margin-top:6px;">per serving: ${macroLine(per)}</div>
+        ${per.uncountedNote ? `<div class="warn">⚠ ${esc(per.uncountedNote)}</div>` : ''}
+      </div>
+      <div class="card">${rows.map(rowHtml).join('')}</div>
+      ${warnings.length ? `<div class="card">${warnings.map(w => `<div class="warn">⚠ ${esc(w)}</div>`).join('')}</div>` : ''}
+      ${blocking.length ? `<div class="card">${blocking.map(b => `<div class="warn" style="color:var(--iron);">✕ ${esc(b)}</div>`).join('')}</div>` : ''}
+      <div class="macros" id="imMsg"></div>
+      <div class="btnRow">
+        <button class="cancel" id="imBack">back</button>
+        <button class="save" id="imGo" ${blocking.length ? 'disabled' : ''}>import recipe</button>
+      </div>`;
+    /* back stays dead while a save is in flight — a second import racing the
+       first would double-write; a failed save re-enables it via the catch */
+    body.querySelector('#imBack').addEventListener('click', () => { if (!st.busy) drawPaste(); });
+    body.querySelector('#imGo').addEventListener('click', doImport);
+  }
+
+  async function doImport(){
+    if (st.busy) return;
+    st.busy = true;
+    const btn = body.querySelector('#imGo');
+    const back = body.querySelector('#imBack');
+    btn.disabled = back.disabled = true;
+    const msg = t => { const el = body.querySelector('#imMsg'); if (el) el.textContent = t; };
+    const { draft, rows, parent, description } = st.prep;
+    try {
+      for (const r of rows){
+        if (r.match) continue;
+        msg(`creating ${r.name}…`);
+        r.match = await upsertRow('ingredients', {
+          name: r.name, unit: r.unitCanonical, category: r.section || '',
+          price_per_unit: null, nutrition_id: r.nutritionRow ? r.nutritionRow.id : null,
+        });
+      }
+      /* recipe row is kept on st.prep so a retry after a mid-save failure
+         (e.g. the ingredient rows below) doesn't create it twice */
+      if (!st.prep.savedRecipe){
+        msg('saving recipe…');
+        st.prep.savedRecipe = await upsertRow('recipes', {
+          name: draft.name, description, servings: draft.servings,
+          ...(draft.category ? { category: draft.category } : {}),
+          ...(parent ? { parent_recipe_id: parent.id } : {}),
+        });
+      }
+      msg('adding ingredients…');
+      await replaceChildren('recipe_ingredients', 'recipe_id', st.prep.savedRecipe.id,
+        rows.map(r => ({ ingredient_id: r.match.id, quantity: r.quantity })));
+      await refresh('recipes');
+      S.onChange();
+      /* if the sheet was closed (or replaced) mid-save, the recipe is in the
+         list via onChange — just don't yank whatever the user is doing now */
+      if (live()){
+        view.catOpen[categoryOf(parent ?? draft)] = true;
+        closeSheet();
+        view.recipeId = st.prep.savedRecipe.id; view.mode = 'detail'; renderRecipes();
+      }
+    } catch (err) {
+      st.busy = false;
+      btn.disabled = back.disabled = false;
+      msg('import failed: ' + err.message + ' — fix and tap import again');
+    }
+  }
+
+  drawPaste();
 }
 
 /* opts.parentId + opts.prefill: start a new recipe seeded from another one and
