@@ -278,6 +278,8 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .sheetHead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 6px;font-family:'Fraunces',serif;font-weight:600;font-size:16px;}
 .sheetBody{padding:6px 16px calc(env(safe-area-inset-bottom) + 16px);overflow-y:auto;}
 .sheetBody input[type=text],.sheetBody input[type=number],.sheetBody select{margin-bottom:8px;}
+.sheetBody textarea{font-family:'IBM Plex Mono',monospace;font-size:12px;background:#fff;border:1px solid var(--rule);border-radius:8px;padding:8px 9px;color:var(--ink);width:100%;resize:vertical;min-height:170px;margin-bottom:8px;}
+.sheetBody button[disabled]{opacity:0.45;cursor:default;}
 .sheetBody select{font-family:'IBM Plex Sans',sans-serif;background:#fff;border:1px solid var(--rule);border-radius:8px;padding:8px 9px;font-size:16px;color:var(--ink);width:100%;}
 .sheetBody .btnRow{display:flex;gap:8px;margin-top:14px;}
 .sheetBody .btnRow button{flex:1;border:none;border-radius:8px;padding:10px;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:12px;cursor:pointer;}
