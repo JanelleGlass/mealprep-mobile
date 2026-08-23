@@ -106,6 +106,7 @@ export function renderPantry(){
     const filterRow = ingredients.length ? `<div class="quickRow" style="margin-bottom:10px;">
       <button class="quickChip${ingView.unlinkedOnly ? ' on' : ''}" id="iFilter"${unlinked.length ? '' : ' disabled'}>${
         unlinked.length ? `⚠ ${unlinked.length} not linked` : '✓ all linked'}</button>
+      <button class="quickChip" id="iCopy">⧉ copy list</button>
     </div>` : '';
 
     root.innerHTML = filterRow + (!ingredients.length
@@ -122,6 +123,32 @@ export function renderPantry(){
       ingView.unlinkedOnly = !ingView.unlinkedOnly;
       renderPantry();
       window.scrollTo(0, 0);
+    });
+    /* "Name (unit)" for the whole list, to paste into a chat alongside
+       RECIPE-JSON.md — a recipe written against real names and stored units
+       imports without a pile of unit-mismatch warnings. Copies what's on
+       screen, so the not-linked filter narrows this too. */
+    root.querySelector('#iCopy')?.addEventListener('click', async () => {
+      const rows = ingView.unlinkedOnly ? unlinked : ingredients;
+      const text = rows.map(i => `${i.name} (${i.unit})`).join(', ');
+      const btn = root.querySelector('#iCopy');
+      try {
+        /* undefined outside a secure context, so this throws rather than
+           returning a rejected promise — the catch covers both */
+        await navigator.clipboard.writeText(text);
+        btn.textContent = `✓ copied ${rows.length}${ingView.unlinkedOnly ? ' not linked' : ''}`;
+        setTimeout(() => { btn.textContent = '⧉ copy list'; }, 2000);
+      } catch {
+        /* hand the text over to be selected by hand rather than failing quietly */
+        const body = openSheet('Ingredient list', '');
+        body.innerHTML = `<div class="cSub">Couldn't reach the clipboard — select all and copy.</div>
+          <textarea id="icText" readonly>${esc(text)}</textarea>
+          <div class="btnRow"><button class="cancel" id="icClose">close</button></div>`;
+        const ta = body.querySelector('#icText');
+        ta.focus();
+        ta.select();
+        body.querySelector('#icClose').addEventListener('click', closeSheet);
+      }
     });
     root.querySelectorAll('[data-ing]').forEach(r => r.addEventListener('click', () => {
       const ing = ingredientById(+r.getAttribute('data-ing'));
