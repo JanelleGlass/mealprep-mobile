@@ -37,6 +37,80 @@ function wireSections(root){
   }));
 }
 
+/* Clipboard with a visible confirmation, falling back to a sheet holding the
+   text when the clipboard is unreachable — navigator.clipboard is undefined
+   outside a secure context, so the call throws rather than rejecting, and iOS
+   can refuse it outright. Either way the text is never silently lost. */
+async function copyOut(btn, restoreLabel, text, okLabel, sheetTitle){
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.textContent = okLabel;
+    setTimeout(() => { btn.textContent = restoreLabel; }, 2000);
+  } catch {
+    btn.textContent = restoreLabel;
+    /* The sheet overlay covers the page, so no sheet can have been open when
+       the chip was tapped — one showing now belongs to somebody else, opened
+       while writeText was settling. #sheetBody is shared, so drawing into it
+       would destroy that sheet and strand the promise its caller is waiting
+       on. Leave it alone; the tap is cheap to repeat. */
+    if (document.getElementById('sheet').classList.contains('show')){
+      btn.textContent = '⚠ tap again to copy';
+      setTimeout(() => { btn.textContent = restoreLabel; }, 2500);
+      return;
+    }
+    const body = openSheet(sheetTitle, '');
+    body.innerHTML = `<div class="cSub">Couldn't reach the clipboard — select all and copy.</div>
+      <textarea id="icText" readonly>${esc(text)}</textarea>
+      <div class="btnRow"><button class="cancel" id="icClose">close</button></div>`;
+    const ta = body.querySelector('#icText');
+    ta.focus();
+    ta.select();
+    body.querySelector('#icClose').addEventListener('click', closeSheet);
+  }
+}
+
+/* Served at the app's own origin by GitHub Pages as text/markdown, so the app
+   can read it back; this link is only the standby for a failed fetch. */
+const SPEC_URL = 'https://janelleglass.github.io/mealprep-mobile/RECIPE-JSON.md';
+
+/* The spec is loaded ahead of the tap, never during it. A clipboard write has
+   to happen inside the gesture that asked for it — WebKit drops user
+   activation across a network round trip, so awaiting a fetch first would make
+   the copy fail on the iPhone every time, which is the one place this is used.
+   Prefetching also keeps the handler synchronous, so nothing can open a sheet
+   between the tap and the fallback. An empty body counts as no spec, so the
+   link standby and its label agree. */
+let spec = null;
+let specLoading = false;
+function primeSpec(){
+  if (spec !== null || specLoading) return;
+  specLoading = true;
+  fetch('RECIPE-JSON.md')
+    .then(res => res.ok ? res.text() : null)
+    .then(text => { spec = (text || '').trim() || null; })
+    .catch(() => { /* offline and not cached yet — the link standby covers it */ })
+    .finally(() => { specLoading = false; });
+}
+
+function buildPrompt(list, spec){
+  return `Convert the recipe at the end of this message into MealPrep import JSON.
+
+My existing ingredients, with the unit each one is stored in. Reuse these exact
+names wherever they fit, and convert every quantity into the unit shown. Read
+the LAST parenthetical as the unit — the names contain their own parentheses.
+
+${list}
+
+=== FORMAT AND RULES ===
+
+${spec ?? 'Read ' + SPEC_URL + ' and follow it exactly.'}
+
+=== RECIPE ===
+
+(paste the recipe here)
+`;
+}
+
 export function renderPantry(){
   const root = document.getElementById('pantryRoot');
   document.querySelectorAll('#tab-pantry .segBtn').forEach(b =>
@@ -101,12 +175,14 @@ export function renderPantry(){
        answer to "how much of this is unaccounted for"; tapping it drops the
        sections and lists the offenders flat, which is the shape you want when
        working through them. */
+    primeSpec();   // so the prompt chip has the rules ready before it is tapped
     const unlinked = ingredients.filter(i => !i.nutrition_id);
     if (!unlinked.length) ingView.unlinkedOnly = false;
     const filterRow = ingredients.length ? `<div class="quickRow" style="margin-bottom:10px;">
       <button class="quickChip${ingView.unlinkedOnly ? ' on' : ''}" id="iFilter"${unlinked.length ? '' : ' disabled'}>${
         unlinked.length ? `⚠ ${unlinked.length} not linked` : '✓ all linked'}</button>
       <button class="quickChip" id="iCopy">⧉ copy list</button>
+      <button class="quickChip" id="iPrompt">⧉ copy prompt</button>
     </div>` : '';
 
     root.innerHTML = filterRow + (!ingredients.length
@@ -124,31 +200,31 @@ export function renderPantry(){
       renderPantry();
       window.scrollTo(0, 0);
     });
+    const listText = rows => rows.map(i => `${i.name} (${i.unit})`).join(', ');
+
     /* "Name (unit)" for the whole list, to paste into a chat alongside
        RECIPE-JSON.md — a recipe written against real names and stored units
        imports without a pile of unit-mismatch warnings. Copies what's on
        screen, so the not-linked filter narrows this too. */
-    root.querySelector('#iCopy')?.addEventListener('click', async () => {
+    root.querySelector('#iCopy')?.addEventListener('click', () => {
       const rows = ingView.unlinkedOnly ? unlinked : ingredients;
-      const text = rows.map(i => `${i.name} (${i.unit})`).join(', ');
-      const btn = root.querySelector('#iCopy');
-      try {
-        /* undefined outside a secure context, so this throws rather than
-           returning a rejected promise — the catch covers both */
-        await navigator.clipboard.writeText(text);
-        btn.textContent = `✓ copied ${rows.length}${ingView.unlinkedOnly ? ' not linked' : ''}`;
-        setTimeout(() => { btn.textContent = '⧉ copy list'; }, 2000);
-      } catch {
-        /* hand the text over to be selected by hand rather than failing quietly */
-        const body = openSheet('Ingredient list', '');
-        body.innerHTML = `<div class="cSub">Couldn't reach the clipboard — select all and copy.</div>
-          <textarea id="icText" readonly>${esc(text)}</textarea>
-          <div class="btnRow"><button class="cancel" id="icClose">close</button></div>`;
-        const ta = body.querySelector('#icText');
-        ta.focus();
-        ta.select();
-        body.querySelector('#icClose').addEventListener('click', closeSheet);
-      }
+      copyOut(root.querySelector('#iCopy'), '⧉ copy list', listText(rows),
+        `✓ copied ${rows.length}${ingView.unlinkedOnly ? ' not linked' : ''}`, 'Ingredient list');
+    });
+
+    /* The whole prompt in one tap: the rules, the list, and where the recipe
+       goes. The spec is fetched rather than kept as a second copy in here, so
+       it cannot drift from RECIPE-JSON.md the way duplicated vocabularies have
+       — but it is read from the prefetch above, never fetched here, so the
+       clipboard write stays inside the tap that asked for it.
+       Deliberately always the FULL list, filter or no filter — a subset would
+       have the model inventing ingredients that already exist. */
+    root.querySelector('#iPrompt')?.addEventListener('click', () => {
+      const btn = root.querySelector('#iPrompt');
+      const text = buildPrompt(listText(ingredients), spec);
+      copyOut(btn, '⧉ copy prompt', text,
+        spec ? '✓ copied prompt' : '✓ copied (spec linked)', 'Prompt for Claude');
+      primeSpec();   // a retap gets the full text once it lands
     });
     root.querySelectorAll('[data-ing]').forEach(r => r.addEventListener('click', () => {
       const ing = ingredientById(+r.getAttribute('data-ing'));
