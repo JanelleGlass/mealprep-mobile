@@ -5,7 +5,7 @@ import { esc, COOKING_UNITS, PANTRY_CATEGORIES, ingredientById, openSheet, close
          collapsibleSection } from './common.js';
 import { pickIngredient, pickNutrition, pickCategory, confirmDialog,
          customFoodEditor } from './pickers.js';
-import { tryConvertToGrams } from '../nutrition.js';
+import { tryConvertToGrams, conversionBasis } from '../nutrition.js';
 
 const seg = { mode: 'pantry' };
 /* Ingredients list: show only the ones with no nutrition link */
@@ -259,10 +259,17 @@ export function openIngredientEditor(ingredient, opts = {}){
 
     function conversionLine(){
       if (!draft.nutrition) return 'no USDA link — recipes using this ingredient show "not counted"';
-      const g = tryConvertToGrams(1, draft.unit, draft.nutrition);
-      if (g === 0) return 'negligible unit — counts as 0';
-      if (g === null) return `⚠ can't convert "${draft.unit}" for this food — pick a USDA entry with a matching serving weight, or use a weight unit (g/oz)`;
-      return `1 ${draft.unit} ≈ ${Math.round(g)} g${draft.nutrition.gm_wt_desc1 ? ` (via "${draft.nutrition.gm_wt_desc1}")` : ''}`;
+      const { kind, desc } = conversionBasis(draft.unit, draft.nutrition);
+      if (kind === 'negligible') return 'negligible unit — counts as 0';
+      if (kind === 'none') return `⚠ can't convert "${esc(draft.unit)}" for this food — pick a USDA entry with a matching serving weight, or use a weight unit (g/oz)`;
+      const base = `1 ${esc(draft.unit)} ≈ ${Math.round(tryConvertToGrams(1, draft.unit, draft.nutrition))} g`;
+      /* Only name a household measure when the conversion actually read it. A
+         weight unit comes straight from the unit table, and the fallback below
+         reads gm_wt_1's number while ignoring what it describes — crediting
+         either to "1 cup" would be a claim the arithmetic never made. */
+      if (kind === 'assumed')
+        return `${base} — approximate: this food lists no "${esc(draft.unit)}" measure, so one is taken as its ${desc ? `"${esc(desc)}"` : 'listed'} weight`;
+      return desc ? `${base} (via "${esc(desc)}")` : base;
     }
 
     function draw(){
