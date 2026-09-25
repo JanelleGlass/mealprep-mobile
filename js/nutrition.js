@@ -94,28 +94,35 @@ function gmWtPairs(n){
   return pairs;
 }
 
-function deriveDensityGPerMl(n){
-  for (const { gmWt, desc } of gmWtPairs(n)){
-    const parsed = parseGmWtDesc(desc);
-    if (!parsed) continue;
-    const ml = VOLUME_KEYWORDS_ML[parsed.keyword];
-    if (ml > 0) return gmWt / (parsed.count * ml);
-  }
-  return null;
-}
+/* One conversion, reported with the route it took and the gm_wt descriptor it
+   actually consulted — tryConvertToGrams, isApproxConversion and
+   conversionBasis are all views of this, so they cannot disagree about how a
+   number was reached. Branch order is load-bearing and unchanged.
+     negligible  pinch/dash/to taste — counts as 0
+     mass        g/kg/oz/lb, straight from the unit table; no descriptor read
+     volume      a household measure supplied a density
+     count       a household measure matched the unit
+     assumed     nothing matched, so 1 unit is taken to be gm_wt_1 grams
+     none        no conversion available */
+function convert(quantity, unit, n){
+  const unitLc = (unit ?? '').trim().toLowerCase();
 
-export function tryConvertToGrams(quantity, unit, n){
-  unit = (unit ?? '').trim();
-  const unitLc = unit.toLowerCase();
-
-  if (NEGLIGIBLE_UNITS.has(unitLc)) return 0;
+  if (NEGLIGIBLE_UNITS.has(unitLc)) return { grams: 0, kind: 'negligible', desc: null };
 
   if (Object.prototype.hasOwnProperty.call(MASS_UNITS, unitLc))
-    return quantity * MASS_UNITS[unitLc];
+    return { grams: quantity * MASS_UNITS[unitLc], kind: 'mass', desc: null };
 
   if (Object.prototype.hasOwnProperty.call(VOLUME_UNITS_ML, unitLc)){
-    const density = deriveDensityGPerMl(n);
-    return density !== null ? quantity * VOLUME_UNITS_ML[unitLc] * density : null;
+    for (const { gmWt, desc } of gmWtPairs(n)){
+      const parsed = parseGmWtDesc(desc);
+      if (!parsed) continue;
+      const ml = VOLUME_KEYWORDS_ML[parsed.keyword];
+      /* the density can come from either pair, so the descriptor reported here
+         is the one that supplied it — not always gm_wt_desc1 */
+      if (ml > 0) return { grams: quantity * VOLUME_UNITS_ML[unitLc] * (gmWt / (parsed.count * ml)),
+                           kind: 'volume', desc };
+    }
+    return { grams: null, kind: 'none', desc: null };
   }
 
   const keywords = COUNT_UNIT_KEYWORDS[unitLc] || null;
@@ -123,28 +130,28 @@ export function tryConvertToGrams(quantity, unit, n){
     const parsed = parseGmWtDesc(desc);
     if (!parsed) continue;
     if (keywords && keywords.includes(parsed.keyword))
-      return quantity * (gmWt / parsed.count);
+      return { grams: quantity * (gmWt / parsed.count), kind: 'count', desc };
   }
 
   if (n.gm_wt_1 != null && n.gm_wt_1 > 0)
-    return quantity * n.gm_wt_1;
+    return { grams: quantity * n.gm_wt_1, kind: 'assumed', desc: n.gm_wt_desc1 || null };
 
-  return null;
+  return { grams: null, kind: 'none', desc: null };
+}
+
+export function tryConvertToGrams(quantity, unit, n){
+  return convert(quantity, unit, n).grams;
+}
+
+/* { kind, desc } for one unit, so the UI can say what a figure rests on
+   instead of naming a household measure the conversion never read. */
+export function conversionBasis(unit, n){
+  const { kind, desc } = convert(1, unit, n);
+  return { kind, desc };
 }
 
 export function isApproxConversion(unit, n){
-  unit = (unit ?? '').trim();
-  const unitLc = unit.toLowerCase();
-  if (NEGLIGIBLE_UNITS.has(unitLc)
-    || Object.prototype.hasOwnProperty.call(MASS_UNITS, unitLc)
-    || Object.prototype.hasOwnProperty.call(VOLUME_UNITS_ML, unitLc)) return false;
-  const keywords = COUNT_UNIT_KEYWORDS[unitLc] || null;
-  for (const { desc } of gmWtPairs(n)){
-    const parsed = parseGmWtDesc(desc);
-    if (!parsed) continue;
-    if (keywords && keywords.includes(parsed.keyword)) return false;
-  }
-  return n.gm_wt_1 != null && n.gm_wt_1 > 0;
+  return convert(1, unit, n).kind === 'assumed';
 }
 
 /* ---------- building a nutrition row from a package label ----------
