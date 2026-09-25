@@ -1,6 +1,6 @@
-/* Routines tab: opens on today's combined to-do list (daily items, workout,
-   cleaning), tracks completion per date as a habit history, and shows a weekly
-   overview. What the list contains lives in routineplan.js and is editable;
+/* Routines tab: opens on today's combined to-do list (one-off to-dos, daily
+   items, workout, cleaning), tracks completion per date as a habit history,
+   and shows a weekly overview. What the list contains lives in routineplan.js and is editable;
    what has been ticked off lives here, per date, under 'routines.log'. */
 import { esc, dateKey, isToday, startOfDay, recipeById, targets, allFoodEntries,
          collapsibleSection, openSheet, closeSheet } from './common.js';
@@ -60,6 +60,8 @@ async function pullAndApply(){
   /* offline, or we hold unsynced local edits in any of the blobs */
   if (!navigator.onLine || routinesLog.isDirty() || planIsDirty() || routinePlanIsDirty()) return;
   if (view.editing) return;                      // mid-edit: don't yank the list away
+  const todoIn = document.getElementById('todoIn');
+  if (todoIn && (todoIn.value || document.activeElement === todoIn)) return;  // typing a to-do
   try { await refresh('user_preferences'); } catch { return; }
   if (!routinesLog.changedRemotely() && !planChangedRemotely()
       && !routinePlanChangedRemotely()) return;  // nothing new
@@ -107,6 +109,51 @@ function setStepsDone(dk, done){
   if (done) l[dk][STEPS_KEY] = true; else delete l[dk][STEPS_KEY];
   if (!Object.keys(l[dk]).length) delete l[dk];
   routinesLog.save();
+}
+
+/* ---------- to-dos ----------
+   One-off items for a single date, kept in the same routines log so they sync
+   with everything else. The list itself sits under the reserved '__todo' key as
+   [{ id, t }]; ticking one is an ordinary check under its 'td…' id, so the
+   progress count and toggle() treat it like any other row. */
+const TODO_KEY = '__todo';
+const todosFor = dk => (log()[dk] || {})[TODO_KEY] || [];
+function addTodo(dk, t){
+  const l = log();
+  const day = l[dk] || (l[dk] = {});
+  const list = day[TODO_KEY] || (day[TODO_KEY] = []);
+  let id;
+  do { id = 'td' + Math.random().toString(36).slice(2, 7); } while (list.some(x => x.id === id));
+  list.push({ id, t });
+  routinesLog.save();
+}
+function removeTodo(dk, id){
+  const day = log()[dk];
+  if (!day) return;
+  day[TODO_KEY] = (day[TODO_KEY] || []).filter(x => x.id !== id);
+  if (!day[TODO_KEY].length) delete day[TODO_KEY];
+  delete day[id];
+  if (!Object.keys(day).length) delete log()[dk];
+  routinesLog.save();
+}
+/* carry whatever is still unticked onto the next day's list; ticked ones stay
+   put as the record of that day */
+function moveUnfinished(dk, nextDk){
+  const l = log(), day = l[dk];
+  const moving = (day?.[TODO_KEY] || []).filter(x => !day[x.id]);
+  if (!moving.length) return 0;
+  day[TODO_KEY] = day[TODO_KEY].filter(x => day[x.id]);
+  if (!day[TODO_KEY].length) delete day[TODO_KEY];
+  if (!Object.keys(day).length) delete l[dk];
+  const next = l[nextDk] || (l[nextDk] = {});
+  const list = next[TODO_KEY] || (next[TODO_KEY] = []);
+  for (const x of moving){
+    /* ids are only unique within a day; a clash would inherit that day's tick */
+    while (list.some(y => y.id === x.id) || next[x.id]) x.id = 'td' + Math.random().toString(36).slice(2, 7);
+    list.push(x);
+  }
+  routinesLog.save();
+  return moving.length;
 }
 
 /* ---------- calories ----------
@@ -421,8 +468,10 @@ export function renderRoutines(){
   const root = document.getElementById('routinesRoot');
   const dk = dateKey(view.date);
   const sections = sectionsFor(view.date);
+  const todos = todosFor(dk);
   const allIds = sections.filter(s => s.countInProgress !== false)
-    .flatMap(s => s.groups.flatMap(g => g.tasks.map(t => t.id)));
+    .flatMap(s => s.groups.flatMap(g => g.tasks.map(t => t.id)))
+    .concat(todos.map(t => t.id));
   const done = allIds.filter(id => isChecked(dk, id)).length;
   const today = isToday(view.date);
 
@@ -449,6 +498,28 @@ export function renderRoutines(){
   const sectionOf = new Map();         // task id → section key
   const sectionIds = new Map();        // section key → its task ids
   const routineSecs = sections.filter(s => s.routine);   // Shopping is generated, not a routine
+
+  /* to-dos first: always there (even empty) so there's somewhere to add one.
+     Deliberately left out of sectionOf — finishing them shouldn't fold away the
+     box you'd type the next one into. The ✕ can't live inside taskRow (already
+     a button), so each row wraps it. */
+  const todoDone = todos.filter(t => isChecked(dk, t.id)).length;
+  const nextDate = new Date(view.date); nextDate.setDate(nextDate.getDate() + 1);
+  const todoOpen = secOpen(dk, 'todo') ?? true;
+  openState.set('todo', todoOpen);
+  html += collapsibleSection('todo', 'To-Do', todoOpen, `<div class="card taskList sec-todo">${
+      todos.map(t => `<div class="todoRow">${taskRow(dk, t)}
+        <button type="button" class="del" data-rmtodo="${t.id}" aria-label="Remove to-do">✕</button></div>`).join('')}
+      <form class="todoAdd" id="todoForm" autocomplete="off">
+        <input type="text" id="todoIn" placeholder="add a to-do for ${esc(today ? 'today' : dayName(view.date))}" enterkeyhint="done">
+        <button type="submit" class="quickChip">＋ add</button>
+      </form>${todos.length > todoDone ? `
+      <div class="quickRow"><button type="button" class="quickChip" id="todoMove">↪ move ${
+        todos.length - todoDone === 1 ? 'unfinished to-do' : `${todos.length - todoDone} unfinished`} to ${
+        today ? 'tomorrow' : dayName(nextDate)}</button></div>` : ''}
+    </div>`, { note: todos.length ? '' : 'nothing yet',
+      count: todoOpen || !todos.length ? '' : `${todoDone} / ${todos.length}` });
+
   sections.forEach(sec => {
     const hue = sec.hue ? ` sec-${sec.hue}` : '';
     const ids = sec.groups.flatMap(g => g.tasks.map(t => t.id));
@@ -627,12 +698,35 @@ export function renderRoutines(){
        by dropping to the open default, rather than pinning it open — so a
        section you deliberately collapsed earlier isn't reopened behind you. */
     const key = sectionOf.get(id), kin = sectionIds.get(key) || [];
-    if (kin.length && kin.every(x => isChecked(dk, x))) setSecOpen(dk, key, false);
+    if (!key) { /* a to-do: its section never folds itself */ }
+    else if (kin.length && kin.every(x => isChecked(dk, x))) setSecOpen(dk, key, false);
     else clearSecOpen(dk, key);
     renderRoutines();
     window.scrollTo(0, y);
     /* just added to the cart → put it in the pantry (unchecking never removes) */
     if (id.startsWith('sh:') && !wasChecked) drainOwed(dk);
+  }));
+  root.querySelector('#todoForm')?.addEventListener('submit', e => {
+    e.preventDefault();
+    const t = root.querySelector('#todoIn').value.trim();
+    if (!t) return;
+    const y = window.scrollY;
+    addTodo(dk, t);
+    renderRoutines();
+    window.scrollTo(0, y);
+    document.getElementById('todoIn')?.focus();   // keep the keyboard up for the next one
+  });
+  root.querySelector('#todoMove')?.addEventListener('click', () => {
+    const y = window.scrollY;
+    moveUnfinished(dk, dateKey(nextDate));
+    renderRoutines();
+    window.scrollTo(0, y);
+  });
+  root.querySelectorAll('[data-rmtodo]').forEach(b => b.addEventListener('click', () => {
+    const y = window.scrollY;
+    removeTodo(dk, b.getAttribute('data-rmtodo'));
+    renderRoutines();
+    window.scrollTo(0, y);
   }));
   root.querySelectorAll('[data-rmrec]').forEach(b => b.addEventListener('click', async () => {
     const [slot, rid] = b.getAttribute('data-rmrec').split(':');
