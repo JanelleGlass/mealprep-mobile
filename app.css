@@ -230,6 +230,13 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .taskRow.haveIt .tTitle{color:var(--ink-soft);}
 .taskRow.haveIt .tDesc{color:var(--fiber);}
 .taskRow.haveIt .box{border-style:dashed;border-color:var(--fiber);}
+/* to-dos: a taskRow with a ✕ beside it, and the add box under the list */
+.todoRow{display:flex;align-items:flex-start;gap:6px;border-bottom:1px solid var(--rule);}
+.todoRow .taskRow{border-bottom:none;}
+.todoRow .del{align-self:center;background:none;border:none;color:var(--iron);font-size:15px;cursor:pointer;padding:4px 6px;line-height:1;}
+.todoAdd{display:flex;gap:6px;align-items:center;margin:10px 0;}
+.todoAdd input[type=text]{flex:1;min-width:0;}
+.todoAdd .quickChip{flex-shrink:0;}
 /* editing a routine: rows swap the checkbox for rename + remove */
 /* a recipe variation, filed under the recipe it was copied from */
 .card.varCard{margin-left:14px;border-left:2px solid var(--gold);border-radius:0 var(--radius) var(--radius) 0;}
