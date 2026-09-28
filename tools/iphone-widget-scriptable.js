@@ -108,6 +108,7 @@ const SEED_ROUTINES = [
 
 function habitTracker(log, routines, calByDate, skip, T){
   const isChecked = (dk, id) => !!(log[dk] && log[dk][id]);
+  const firstKey = Object.keys(log).sort()[0];
   const stepsForDow = dow => routines.filter(r => (r.days || []).includes(dow)).flatMap(r => r.steps || []);
 
   function status(dk, dow, habit){
@@ -125,6 +126,7 @@ function habitTracker(log, routines, calByDate, skip, T){
     }
     const ids = stepsForDow(dow).filter(s => s.habit === habit).map(s => s.id);
     if (!ids.length) return 'off';
+    if (!firstKey || dk < firstKey) return 'off';      // before tracking began
     const checked = ids.filter(id => isChecked(dk, id)).length;
     const rule = HABIT_RULE[habit] || 'all';
     const complete = rule === 'any' ? checked > 0
