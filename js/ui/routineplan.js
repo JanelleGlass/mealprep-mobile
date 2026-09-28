@@ -172,6 +172,15 @@ export function updateRoutine(id, patch){
   Object.assign(r, patch);
   blob.save();
 }
+/* Point a whole routine at one habit ('' for none): the routine's tag, which
+   new steps inherit, and every step it already holds. */
+export function setRoutineHabit(id, habit){
+  const r = routineById(id);
+  if (!r) return;
+  r.habit = habit;
+  for (const s of r.steps || []) s.habit = habit;
+  blob.save();
+}
 export function deleteRoutine(id){
   const rs = allRoutines();
   const i = rs.findIndex(r => r.id === id);

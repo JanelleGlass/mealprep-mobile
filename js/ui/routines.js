@@ -12,7 +12,7 @@ import { skippedDates } from './log.js';
 import { entriesFor, removeRecipe, shoppingFor, owedFor, markApplied, prunePlan,
          planReconcile, planChangedRemotely, planPush, planIsDirty } from './cookplan.js';
 import { HABIT_RULE, WEEK_ORDER, DAY_ABBR, allRoutines, routineById, routinesForDow,
-         stepsForDow, addRoutine, updateRoutine, deleteRoutine, addStep, updateStep,
+         stepsForDow, addRoutine, updateRoutine, setRoutineHabit, deleteRoutine, addStep, updateStep,
          deleteStep, moveStep, moveRoutine, routinePlanReconcile, routinePlanChangedRemotely,
          routinePlanPush, routinePlanIsDirty } from './routineplan.js';
 
@@ -354,10 +354,21 @@ function editStepRow(rid, s, num, i, n){
 
 /* ---------- editors ---------- */
 /* routine === null creates one */
+/* what a routine currently counts toward: one tag shared by every step, ''
+   for none, or null when its steps disagree (Daily: devotions + supplements) */
+function routineHabit(r){
+  const tags = new Set((r.steps || []).map(s => s.habit || ''));
+  if (!tags.size) return r.habit || '';
+  return tags.size === 1 ? [...tags][0] : null;
+}
+
 function routineSheet(routine){
   const draft = routine
-    ? { title: routine.title, days: [...(routine.days || [])], note: routine.note || '' }
-    : { title: '', days: [], note: '' };
+    ? { title: routine.title, days: [...(routine.days || [])], note: routine.note || '', habit: routineHabit(routine) }
+    : { title: '', days: [], note: '', habit: '' };
+  const startHabit = draft.habit;
+  /* measured habits (calories, steps) aren't fed by checkboxes, so they aren't offered */
+  const taggable = HABITS.filter(([, h]) => h in HABIT_RULE);
   const body = openSheet(routine ? 'Edit routine' : 'New routine', '');
 
   function draw(msg){
@@ -369,6 +380,10 @@ function routineSheet(routine){
       <span class="miniLabel">days it shows up</span>
       <div class="quickRow dayChips">${DAY_ABBR.map((d, i) =>
         `<button type="button" class="quickChip dayChip${draft.days.includes(i) ? ' on' : ''}" data-day="${i}">${d}</button>`).join('')}</div>
+      <span class="miniLabel">counts toward habit</span>
+      <div class="quickRow dayChips">${[['None', ''], ...taggable].map(([label, h]) =>
+        `<button type="button" class="quickChip${draft.habit === h ? ' on' : ''}" data-habit="${h}">${esc(label)}</button>`).join('')}</div>
+      ${draft.habit === null ? '<div class="cSub">its steps count toward different habits — picking one applies it to every step</div>' : ''}
       <div class="macros" id="rtMsg">${esc(msg || '')}</div>
       <div class="btnRow">
         <button class="cancel" id="rtCancel">cancel</button>
@@ -382,13 +397,20 @@ function routineSheet(routine){
       draft.days = draft.days.includes(i) ? draft.days.filter(x => x !== i) : [...draft.days, i].sort();
       draw();
     }));
+    body.querySelectorAll('[data-habit]').forEach(b => b.addEventListener('click', () => {
+      draft.habit = b.getAttribute('data-habit');
+      draw();
+    }));
     body.querySelector('#rtCancel').addEventListener('click', () => { closeSheet(); renderRoutines(); });
     body.querySelector('#rtSave').addEventListener('click', () => {
       if (!draft.title.trim()) return draw('give it a title');
       if (!draft.days.length) return draw('pick at least one day');
       const patch = { title: draft.title.trim(), days: draft.days, note: draft.note.trim() };
-      if (routine) updateRoutine(routine.id, patch);
-      else addRoutine(patch);          // new sections are open by default
+      const r = routine ? (updateRoutine(routine.id, patch), routine)
+        : addRoutine(patch);           // new sections are open by default
+      /* only when it was actually changed — saving Daily untouched must not
+         flatten its mixed tags */
+      if (draft.habit !== startHabit && draft.habit !== null) setRoutineHabit(r.id, draft.habit);
       closeSheet();
       renderRoutines();
     });
