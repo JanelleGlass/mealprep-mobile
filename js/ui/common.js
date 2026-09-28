@@ -5,6 +5,9 @@ export const esc = s => { const d = document.createElement('div'); d.textContent
 export const dateKey = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 export const isToday = d => dateKey(d) === dateKey(new Date());
 export const startOfDay = d => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+/* calendar days, not 24-hour steps: across a daylight-saving change a day is
+   23 or 25 hours long, and adding milliseconds lands on the wrong date */
+export const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
 export const startOfWeek = d => { const x = startOfDay(d); x.setDate(x.getDate() - x.getDay()); return x; };
 export const MEAL_TYPES = ['breakfast', 'lunch', 'dinner'];
 export const COOKING_UNITS = ['tsp','tbsp','fl oz','cup','pt','qt','gal','ml','L','oz','lb','g','kg','pinch','dash','clove','slice','piece','whole','can','bunch','sprig','head','stalk','to taste'];
