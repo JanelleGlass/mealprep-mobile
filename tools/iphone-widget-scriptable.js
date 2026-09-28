@@ -87,7 +87,7 @@ async function rest(token, pathAndQuery){
 // Mirrors js/ui/routines.js habitStatus() and js/ui/routineplan.js. Keep the
 // two in step if the rules there change.
 const HABIT_RULE = { vitamins: 'all', devotions: 'all', practice: 'any',
-                     workout: 'any', cleaning: 'most' };
+                     workout: 'any', cleaning: 'any' };
 const HABITS = [
   ['Supplements', 'vitamins'], ['Devotions', 'devotions'], ['Practice', 'practice'],
   ['Calories', 'calories'], ['Steps', 'steps'], ['Workout', 'workout'], ['Cleaning', 'cleaning'],

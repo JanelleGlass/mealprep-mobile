@@ -24,9 +24,10 @@ const blob = createSyncedBlob({
 
 /* The habit tracker's meaning shouldn't drift when content is edited, so the
    bar each habit clears stays in code: 'all' every tagged step, 'any' at least
-   one, 'most' three quarters of them. */
+   one, 'most' three quarters of them. Rules are applied when the tracker is
+   drawn, so changing one re-grades past days too. */
 export const HABIT_RULE = { vitamins: 'all', devotions: 'all', practice: 'any',
-                            workout: 'any', cleaning: 'most' };
+                            workout: 'any', cleaning: 'any' };
 export const WEEK_ORDER = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 export const DAY_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const EVERY_DAY = [0, 1, 2, 3, 4, 5, 6];
