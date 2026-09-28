@@ -81,6 +81,8 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 window.addEventListener('focus', () => { if (routinesActive()) pullAndApply(); });
 
 const isChecked = (dk, id) => !!(log()[dk] && log()[dk][id]);
+/* earliest date with anything in the log ('YYYY-MM-DD' sorts as text) */
+const firstLogKey = () => Object.keys(log()).reduce((a, k) => (!a || k < a ? k : a), null);
 function toggle(dk, id){
   const l = log();
   if (!l[dk]) l[dk] = {};
@@ -269,6 +271,10 @@ function habitStatus(dk, habit){
      day (or the tag edited away entirely) reads as 'off', same as before. */
   const ids = stepsForDow(d.getDay()).filter(s => s.habit === habit).map(s => s.id);
   if (!ids.length) return 'off';
+  /* before the first day anything was ticked, nothing was being tracked yet —
+     otherwise scrolling back (or the year view) is a wall of misses */
+  const first = firstLogKey();
+  if (!first || dk < first) return 'off';
   const checked = ids.filter(id => isChecked(dk, id)).length;
   const rule = HABIT_RULE[habit] || 'all';
   const complete = rule === 'any' ? checked > 0
@@ -276,8 +282,10 @@ function habitStatus(dk, habit){
     : checked === ids.length;
   return complete ? 'done' : 'miss';
 }
-function lastDates(n){
+/* n days ending `back` days before today */
+function lastDates(n, back = 0){
   const out = [], base = startOfDay(new Date());
+  base.setDate(base.getDate() - back);
   for (let i = n - 1; i >= 0; i--){ const x = new Date(base); x.setDate(x.getDate() - i); out.push(x); }
   return out;
 }
@@ -313,7 +321,8 @@ function clearSecOpen(dk, key){
 }
 
 /* ---------- view ---------- */
-const view = { date: startOfDay(new Date()), tipsOpen: false, editing: false };
+/* histBack: how many days before today the habit tracker's window ends */
+const view = { date: startOfDay(new Date()), tipsOpen: false, editing: false, histBack: 0 };
 let shopMsg = null;                    // inline note under the shopping list
 export function routinesFocusToday(){ view.date = startOfDay(new Date()); syncOpen(); }
 
@@ -445,19 +454,80 @@ async function drainOwed(dk){
 
 /* One letter per column, sharing the habit rows' grid so it lines up with the
    cells below without knowing their width. */
-function dayLetterRow(){
-  const cells = lastDates(14).map(d =>
+function dayLetterRow(dates){
+  const cells = dates.map(d =>
     `<span class="hDay${isToday(d) ? ' today' : ''}">${'SMTWTFS'[d.getDay()]}</span>`).join('');
   return `<div class="habitRow hHead"><span class="hLabel"></span><div class="hDots">${cells}</div></div>`;
 }
 
-function historyRow(label, habit){
-  const cells = lastDates(14).map(d => {
+function historyRow(label, habit, dates){
+  const cells = dates.map(d => {
     const dk = dateKey(d), st = habitStatus(dk, habit);
     return `<button type="button" class="hCell ${st}${isToday(d) ? ' today' : ''}" data-goto="${dk}"
       title="${dk}${st === 'off' ? '' : ' · ' + st}"></button>`;
   }).join('');
   return `<div class="habitRow h-${habit}"><span class="hLabel">${esc(label)}</span><div class="hDots">${cells}</div></div>`;
+}
+
+const HABITS = [['Supplements', 'vitamins'], ['Devotions', 'devotions'], ['Practice', 'practice'],
+  ['Calories', 'calories'], ['Steps', 'steps'], ['Workout', 'workout'], ['Cleaning', 'cleaning']];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const fmtShort = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+/* ---------- a whole year of one habit ----------
+   A month per row, a day of the month per column, so any date is found by
+   reading across. One habit at a time — seven of these stacked would be a
+   wall. Tapping a day opens it, same as the 14-day grid. */
+const yearView = { habit: 'vitamins', year: new Date().getFullYear() };
+function yearSheet(){
+  const body = openSheet('Habit year', '');
+  function draw(){
+    const { habit, year } = yearView;
+    const todayKey = dateKey(new Date());
+    let done = 0, miss = 0;
+    const rows = MONTHS.map((m, mi) => {
+      const len = new Date(year, mi + 1, 0).getDate();
+      let cells = '';
+      for (let day = 1; day <= 31; day++){
+        if (day > len){ cells += '<span></span>'; continue; }
+        const dk = `${year}-${String(mi + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        if (dk > todayKey){ cells += '<span class="hCell future"></span>'; continue; }
+        const st = habitStatus(dk, habit);
+        if (st === 'done') done++; else if (st === 'miss') miss++;
+        cells += `<button type="button" class="hCell ${st}${dk === todayKey ? ' today' : ''}" data-ygoto="${dk}" title="${dk}${st === 'off' ? '' : ' · ' + st}"></button>`;
+      }
+      return `<span class="yMonth">${m}</span>${cells}`;
+    }).join('');
+    const tracked = done + miss;
+    const thisYear = new Date().getFullYear();
+    body.innerHTML = `
+      <div class="quickRow">${HABITS.map(([label, h]) =>
+        `<button type="button" class="quickChip${h === habit ? ' on' : ''}" data-yhabit="${h}">${esc(label)}</button>`).join('')}</div>
+      <div class="datenav yNav">
+        <button data-ynav="-1" aria-label="Previous year">←</button>
+        <div class="dateLabel"><span>${year}</span></div>
+        <button data-ynav="1" aria-label="Next year"${year >= thisYear ? ' disabled' : ''}>→</button>
+      </div>
+      <div class="cSub yStat">${tracked
+        ? `done ${done} of ${tracked} tracked days · ${Math.round(done / tracked * 100)}%`
+        : 'nothing tracked this year'}</div>
+      <div class="yearGrid h-${habit}">${rows}</div>
+      <div class="hLegend"><span class="hCell done"></span> done <span class="hCell miss"></span> missed <span class="hCell off"></span> not scheduled / no data — tap a day to open it</div>`;
+
+    body.querySelectorAll('[data-yhabit]').forEach(b => b.addEventListener('click', () => {
+      yearView.habit = b.getAttribute('data-yhabit'); draw();
+    }));
+    body.querySelectorAll('[data-ynav]').forEach(b => b.addEventListener('click', () => {
+      yearView.year += +b.getAttribute('data-ynav'); draw();
+    }));
+    body.querySelectorAll('[data-ygoto]').forEach(b => b.addEventListener('click', () => {
+      view.date = startOfDay(new Date(b.getAttribute('data-ygoto') + 'T00:00:00'));
+      closeSheet();
+      renderRoutines();
+      window.scrollTo(0, 0);
+    }));
+  }
+  draw();
 }
 
 export function renderRoutines(){
@@ -600,16 +670,20 @@ export function renderRoutines(){
       count: !stepsOpen && stepsMet ? '✓' : '' });
 
   /* habit tracker — always open: it's the reason to come back to this tab */
-  html += `<div class="sectionTitle">Habit tracker<span class="rNote">last 14 days</span></div>
+  /* the window steps back two weeks at a time; the year sheet is for anything
+     further than a few taps */
+  const hDates = lastDates(14, view.histBack);
+  html += `<div class="sectionTitle">Habit tracker<span class="rNote">${
+      view.histBack ? `${fmtShort(hDates[0])} – ${fmtShort(hDates[13])}` : 'last 14 days'}</span></div>
     <div class="card">
-      ${dayLetterRow()}
-      ${historyRow('Supplements', 'vitamins')}
-      ${historyRow('Devotions', 'devotions')}
-      ${historyRow('Practice', 'practice')}
-      ${historyRow('Calories', 'calories')}
-      ${historyRow('Steps', 'steps')}
-      ${historyRow('Workout', 'workout')}
-      ${historyRow('Cleaning', 'cleaning')}
+      <div class="hNav">
+        <button type="button" class="quickChip" data-hnav="14" aria-label="Two weeks earlier">←</button>
+        ${view.histBack ? '<button type="button" class="quickChip" data-hnav="0">↩ today</button>' : ''}
+        <button type="button" class="quickChip" data-hnav="-14" aria-label="Two weeks later"${view.histBack ? '' : ' disabled'}>→</button>
+        <button type="button" class="quickChip hYear" id="hYear">▦ whole year</button>
+      </div>
+      ${dayLetterRow(hDates)}
+      ${HABITS.map(([label, h]) => historyRow(label, h, hDates)).join('')}
       <div class="hLegend"><span class="hCell done"></span> done <span class="hCell miss"></span> missed <span class="hCell off"></span> not scheduled / no data — tap a day to open it</div>
       <div class="cSub">Calories counts a day done when the Log total is at or under ${T.calMax.toLocaleString()} — in range or under. Steps counts a day done when you tick the box; days you leave alone stay blank rather than counting as a miss. Days skipped in the Log's averages don't count either way. Both goals live in Settings → Daily targets.</div>
     </div>`;
@@ -742,6 +816,17 @@ export function renderRoutines(){
   });
   const tips = root.querySelector('#cleanTips');
   if (tips) tips.addEventListener('toggle', () => { view.tipsOpen = tips.open; });
+  root.querySelectorAll('[data-hnav]').forEach(b => b.addEventListener('click', () => {
+    const y = window.scrollY;
+    const n = +b.getAttribute('data-hnav');
+    view.histBack = n === 0 ? 0 : Math.max(0, view.histBack + n);
+    renderRoutines();
+    window.scrollTo(0, y);
+  }));
+  root.querySelector('#hYear').addEventListener('click', () => {
+    yearView.year = new Date().getFullYear();
+    yearSheet();
+  });
   root.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => {
     view.date = startOfDay(new Date(b.getAttribute('data-goto') + 'T00:00:00'));
     renderRoutines();
