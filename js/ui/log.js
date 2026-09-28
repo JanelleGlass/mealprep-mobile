@@ -2,7 +2,7 @@
    entries list, body card. */
 import { cached, queueFoodEntry, queueBodyMeasurement, deleteLogEntry, setPreference } from '../store.js';
 import { computeForMeal } from '../nutrition.js';
-import { esc, dateKey, isToday, ringSVG, targets, allFoodEntries, allBodyMeasurements,
+import { esc, dateKey, isToday, addDays, ringSVG, targets, allFoodEntries, allBodyMeasurements,
          buildMealCalc, MEAL_TYPES, entryNameWithNote, macroLine } from './common.js';
 
 export const logState = { currentDate: new Date(), plantToggles: {} };
@@ -15,7 +15,7 @@ export function entriesForDate(key){
 
 function weeklyPlants(asOf){
   const end = dateKey(asOf);
-  const start = dateKey(new Date(asOf.getTime() - 6 * 86400000));
+  const start = dateKey(addDays(asOf, -6));
   return allFoodEntries().filter(e => e.is_plant && (e.date || '').slice(0, 10) >= start && (e.date || '').slice(0, 10) <= end).length;
 }
 
@@ -127,7 +127,7 @@ function averageLine(days, skip){
   let counted = 0;
   const today = new Date(); today.setHours(0, 0, 0, 0);
   for (let i = 1; i <= days; i++){
-    const k = dateKey(new Date(today.getTime() - i * 86400000));
+    const k = dateKey(addDays(today, -i));
     if (skip.has(k)) continue;
     const es = entriesForDate(k);
     if (!es.length) continue;
@@ -311,8 +311,8 @@ function parsePastedEntries(text){
 }
 
 export function wireLogTab(rerenderAll){
-  document.getElementById('prevDay').addEventListener('click', () => { logState.currentDate = new Date(logState.currentDate.getTime() - 86400000); renderLog(); });
-  document.getElementById('nextDay').addEventListener('click', () => { logState.currentDate = new Date(logState.currentDate.getTime() + 86400000); renderLog(); });
+  document.getElementById('prevDay').addEventListener('click', () => { logState.currentDate = addDays(logState.currentDate, -1); renderLog(); });
+  document.getElementById('nextDay').addEventListener('click', () => { logState.currentDate = addDays(logState.currentDate, 1); renderLog(); });
   document.getElementById('todayBtn').addEventListener('click', () => {
     logState.currentDate = new Date(); logState.currentDate.setHours(0, 0, 0, 0); renderLog();
   });

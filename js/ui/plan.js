@@ -2,7 +2,7 @@
    or ad-hoc), edit/delete of existing meals. */
 import { cached, upsertRow, deleteRow, replaceChildren, refresh, S } from '../store.js';
 import { computeForMeal } from '../nutrition.js';
-import { esc, dateKey, isToday, startOfWeek, MEAL_TYPES, buildMealCalc, ingredientById,
+import { esc, dateKey, isToday, addDays, startOfWeek, MEAL_TYPES, buildMealCalc, ingredientById,
          recipeById, openSheet, closeSheet, macroLine } from './common.js';
 import { plannedMealHtml, bindPlannedButtons, mealsForDate } from './log.js';
 import { pickIngredient, confirmDialog } from './pickers.js';
@@ -11,14 +11,14 @@ export const planState = { weekStart: startOfWeek(new Date()) };
 
 export function renderPlan(){
   const start = planState.weekStart;
-  const end = new Date(start.getTime() + 6 * 86400000);
+  const end = addDays(start, 6);
   document.getElementById('planWeekLabel').textContent =
     start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' – ' +
     end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const root = document.getElementById('planDays');
   let html = '';
   for (let i = 0; i < 7; i++){
-    const d = new Date(start.getTime() + i * 86400000);
+    const d = addDays(start, i);
     const key = dateKey(d);
     const meals = mealsForDate(key);
     const planned = new Set(meals.map(m => m.meal_type));
@@ -159,6 +159,6 @@ function openMealSheet(meal, date, mealType){
 }
 
 export function wirePlanTab(){
-  document.getElementById('planPrevWeek').addEventListener('click', () => { planState.weekStart = new Date(planState.weekStart.getTime() - 7 * 86400000); renderPlan(); });
-  document.getElementById('planNextWeek').addEventListener('click', () => { planState.weekStart = new Date(planState.weekStart.getTime() + 7 * 86400000); renderPlan(); });
+  document.getElementById('planPrevWeek').addEventListener('click', () => { planState.weekStart = addDays(planState.weekStart, -7); renderPlan(); });
+  document.getElementById('planNextWeek').addEventListener('click', () => { planState.weekStart = addDays(planState.weekStart, 7); renderPlan(); });
 }
