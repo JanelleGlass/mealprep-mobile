@@ -1,13 +1,15 @@
 /* Data access: per-table cache (stale-while-revalidate), CRUD wrappers, and
-   the offline outbox for food-log/body writes.
+   the offline outbox for food-log/body/task writes.
 
    Cached tables render instantly from localStorage; a background refresh
    updates them and calls the registered onChange handler. Editing operations
-   are online-only and refresh their table afterwards.
+   are online-only and refresh their table afterwards — except tasks, whose
+   adds and edits go through the outbox so ticking one off works offline.
 
    Demo mode (supa cfg url === 'demo') reads tests/vectors/fixture.json and
    keeps writes in memory so the UI can be exercised without credentials. */
 import { client, init, demoMode } from './supa.js';
+import { addDaysKey, todayKey } from './taskdates.js';
 
 const CACHE_PREFIX = 'mp_tbl_';
 const OUTBOX_KEY = 'mp_outbox2';
@@ -34,6 +36,10 @@ const TABLE_QUERIES = {
   user_preferences: t => t.select('*'),
   food_log_entries: t => t.select('*').order('date'),
   body_measurements: t => t.select('*').order('date', { ascending: false }),
+  /* every open task, plus what was finished in the last 60 days for the Done list */
+  tasks: t => t.select('*')
+    .or(`done.eq.false,done_at.gte.${new Date(Date.now() - 60 * 86400000).toISOString()}`)
+    .order('created_at'),
 };
 export const ALL_TABLES = Object.keys(TABLE_QUERIES);
 
@@ -169,7 +175,13 @@ export async function setPreference(key, value){
   await refresh('user_preferences');
 }
 
-/* ---------- offline outbox: food log + body only ---------- */
+/* ---------- offline outbox: food log, body, tasks ----------
+   Two kinds of item: { table, row } inserts, upserted by client_id so a retry
+   lands once; and { table, op: 'patch', match, patch } edits to one row, sent
+   in order after the inserts. A patch names its row by id, or by client_id when
+   the row was added offline and has no id yet. Rows are never edited inside
+   the outbox — the item may already be on its way — a later patch goes after
+   it instead. */
 function saveOutbox(){ localStorage.setItem(OUTBOX_KEY, JSON.stringify(S.outbox)); }
 
 export function queueFoodEntry(fields){
@@ -189,29 +201,113 @@ export function queueBodyMeasurement(fields){
   flushOutbox();
 }
 
-export async function flushOutbox(){
-  if (!S.outbox.length) return;
+/* Tasks: one row each, written by this app and by Claude in claude.ai. Every
+   change is a patch of just the fields that changed, so an edit made here
+   can't overwrite a different field Claude changed in the meantime. */
+export function queueTask(fields){
+  const row = { client_id: newClientId(), created_at: new Date().toISOString(),
+    area: 'inbox', bucket: 'now', due: null, note: '', done: false, source: 'app', ...fields };
+  S.outbox.push({ table: 'tasks', row });
+  saveOutbox();
+  S.onChange();
+  flushOutbox();
+  return row;
+}
+
+export function queueTaskPatch(task, patch){
+  const match = task.id != null ? { id: task.id } : { client_id: task.client_id };
+  S.outbox.push({ table: 'tasks', op: 'patch', match, patch });
+  saveOutbox();
+  S.onChange();
+  flushOutbox();
+}
+
+/* Deleting needs a connection, unless the task never left the phone */
+export async function deleteTask(task){
+  while (flushing) await flushing;     // a send in flight may be this task's insert
+  const mine = o => o.table === 'tasks' && (o.op === 'patch'
+    ? (task.id != null && o.match.id === task.id) || (!!task.client_id && o.match.client_id === task.client_id)
+    : !!task.client_id && o.row.client_id === task.client_id);
+  if (S.outbox.some(o => !o.op && mine(o))){
+    S.outbox = S.outbox.filter(o => !mine(o));
+    saveOutbox();
+    S.onChange();
+    return;
+  }
   if (demoMode()){
-    for (const item of S.outbox) demoWrite(item.table, item.row);
-    S.outbox = []; saveOutbox(); S.onChange();
+    const row = (S.tables.tasks || []).find(r => (task.id != null && r.id === task.id) || (!!task.client_id && r.client_id === task.client_id));
+    if (row) demoDelete('tasks', row.id);
+    return;
+  }
+  if (!init()) throw new Error('not connected');
+  const q = client.from('tasks').delete();
+  const { error } = await (task.id != null ? q.eq('id', task.id) : q.eq('client_id', task.client_id));
+  if (error) throw new Error(error.message);
+  S.outbox = S.outbox.filter(o => !mine(o));
+  saveOutbox();
+  try { await refresh('tasks'); } catch { /* the delete landed; the next refresh catches up */ }
+  S.onChange();
+}
+
+/* one flush at a time: a second call while one is running just asks for
+   another pass afterwards, so patches to the same row can't cross */
+let flushing = null, flushAgain = false;
+export function flushOutbox(){
+  if (flushing){ flushAgain = true; return flushing; }
+  flushing = flushOnce().finally(() => {
+    flushing = null;
+    if (flushAgain){ flushAgain = false; flushOutbox(); }
+  });
+  return flushing;
+}
+
+async function flushOnce(){
+  if (!S.outbox.length) return;
+  const batch = [...S.outbox];
+  const sent = new Set();
+  if (demoMode()){
+    for (const item of batch){
+      if (item.op === 'patch'){
+        const [k, v] = Object.entries(item.match)[0];
+        const row = (S.tables[item.table] || []).find(r => r[k] === v);
+        if (row) demoWrite(item.table, { id: row.id, ...item.patch });
+      } else demoWrite(item.table, item.row);
+      sent.add(item);
+    }
+    S.outbox = S.outbox.filter(o => !sent.has(o)); saveOutbox(); S.onChange();
     return;
   }
   if (!init() || !navigator.onLine) return;
+
+  /* a table that fails keeps its items and stops there; the others still go,
+     so a problem with tasks can't hold food log entries hostage */
+  const failed = new Map();      // table → message
+  const touched = new Set();
   const byTable = {};
-  for (const item of S.outbox) (byTable[item.table] ??= []).push(item.row);
-  try {
-    for (const [table, rows] of Object.entries(byTable)){
-      const { error } = await client.from(table)
-        .upsert(rows, { onConflict: 'client_id', ignoreDuplicates: true });
-      if (error) throw new Error(error.message);
-      await refresh(table);
-    }
-    S.outbox = [];
-    saveOutbox();
-    S.onSync('synced · ' + new Date().toLocaleTimeString(), false);
-  } catch (e) {
-    S.onSync('saved on phone — sync failed: ' + e.message, true);
+  for (const item of batch) if (!item.op) (byTable[item.table] ??= []).push(item);
+  for (const [table, items] of Object.entries(byTable)){
+    const { error } = await client.from(table)
+      .upsert(items.map(i => i.row), { onConflict: 'client_id', ignoreDuplicates: true });
+    if (error){ failed.set(table, error.message); continue; }
+    items.forEach(i => sent.add(i));
+    touched.add(table);
   }
+  for (const item of batch){
+    if (item.op !== 'patch' || failed.has(item.table)) continue;
+    const [k, v] = Object.entries(item.match)[0];
+    const { error } = await client.from(item.table).update(item.patch).eq(k, v);
+    if (error){ failed.set(item.table, error.message); continue; }
+    sent.add(item);
+    touched.add(item.table);
+  }
+
+  S.outbox = S.outbox.filter(o => !sent.has(o));
+  saveOutbox();
+  for (const table of touched){
+    try { await refresh(table); } catch { /* written; the next refresh catches up */ }
+  }
+  if (failed.size) S.onSync('saved on phone — sync failed: ' + [...failed.values()][0], true);
+  else S.onSync('synced · ' + new Date().toLocaleTimeString(), false);
   S.onChange();
 }
 
@@ -259,6 +355,13 @@ async function demoLoad(){
       id: i + 1, ingredient_id: ing.id, quantity: i + 1,
     })), quick_add_items: [{ id: 1, name: 'Soft boiled egg', calories: 70, protein_g: 6, fiber_g: 0, iron_mg: 0.6, is_plant: false, sort_order: 0 }],
     user_preferences: [], food_log_entries: [], body_measurements: [],
+    /* fixture dates are days from today, so the demo always has something
+       overdue, due today and coming up */
+    tasks: (fx.tasks || []).map((t, i) => ({ id: i + 1, title: t.title, area: t.area, bucket: t.bucket,
+      due: t.dueIn == null ? null : addDaysKey(todayKey(), t.dueIn), note: t.note || '',
+      done: !!t.done, done_at: t.done ? new Date().toISOString() : null, deferrals: 0,
+      source: 'app', client_id: null, legacy_id: null,
+      created_at: new Date(Date.now() - (60 - i) * 60000).toISOString() })),
   };
   return demoData;
 }

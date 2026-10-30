@@ -1,9 +1,10 @@
-const CACHE = 'mealprep-mobile-v49';
+const CACHE = 'mealprep-mobile-v50';
 const SHELL = ['./', 'index.html', 'app.css', 'manifest.webmanifest', 'icon-180.png', 'icon-512.png',
   'js/app.js', 'js/supa.js', 'js/store.js', 'js/nutrition.js', 'js/backup.js', 'js/syncblob.js', 'js/recipeimport.js',
+  'js/taskdates.js',
   'js/ui/common.js', 'js/ui/log.js', 'js/ui/plan.js', 'js/ui/recipes.js', 'js/ui/pantry.js',
   'js/ui/routines.js', 'js/ui/routineplan.js', 'js/ui/settings.js', 'js/ui/pickers.js',
-  'js/ui/cookplan.js'];
+  'js/ui/cookplan.js', 'js/ui/tasks.js'];
 
 self.addEventListener('install', e => {
   // cache:'reload' bypasses the browser's HTTP cache so a new SW version

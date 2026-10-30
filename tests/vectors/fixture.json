@@ -6654,5 +6654,77 @@
       "ingredientId": 2,
       "quantity": 0.17
     }
+  ],
+  "tasks": [
+    {
+      "title": "Return the library books",
+      "area": "home",
+      "bucket": "now",
+      "dueIn": -2,
+      "note": "Two are a week late already."
+    },
+    {
+      "title": "Reply to the venue about parking",
+      "area": "gigs",
+      "bucket": "now",
+      "dueIn": 0
+    },
+    {
+      "title": "Restring the practice violin",
+      "area": "music",
+      "bucket": "now",
+      "dueIn": 0,
+      "done": true
+    },
+    {
+      "title": "Order rosin and spare E strings",
+      "area": "admin",
+      "bucket": "now",
+      "dueIn": 2
+    },
+    {
+      "title": "Print the group class handouts",
+      "area": "curriculum",
+      "bucket": "now",
+      "dueIn": 5
+    },
+    {
+      "title": "Try the new lentil soup recipe",
+      "area": "inbox",
+      "bucket": "now",
+      "dueIn": null
+    },
+    {
+      "title": "Call the dentist to book a cleaning",
+      "area": "health",
+      "bucket": "now",
+      "dueIn": null
+    },
+    {
+      "title": "Sort receipts for taxes",
+      "area": "admin",
+      "bucket": "next",
+      "dueIn": 12
+    },
+    {
+      "title": "Plan the spring garden beds",
+      "area": "home",
+      "bucket": "later",
+      "dueIn": null,
+      "note": "Tomatoes, beans, squash, herbs."
+    },
+    {
+      "title": "Build a music stand light",
+      "area": "projects",
+      "bucket": "paused",
+      "dueIn": null
+    },
+    {
+      "title": "Water the herb pots",
+      "area": "home",
+      "bucket": "now",
+      "dueIn": -1,
+      "done": true
+    }
   ]
 }

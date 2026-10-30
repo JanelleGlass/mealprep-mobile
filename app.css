@@ -66,7 +66,7 @@ button.secHead{width:100%;background:none;border:none;padding:0;text-align:left;
 form.addForm{background:var(--card);border:1px solid var(--rule);border-radius:var(--radius);padding:14px;}
 .row{display:flex;gap:8px;margin-bottom:8px;}
 .row.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
-input[type=text],input[type=number],input[type=password]{
+input[type=text],input[type=number],input[type=password],input[type=date]{
   font-family:'IBM Plex Sans',sans-serif;background:#fff;border:1px solid var(--rule);
   border-radius:8px;padding:8px 9px;font-size:16px;color:var(--ink);width:100%;
 }
@@ -227,14 +227,15 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .rSub:first-child{margin-top:4px;}
 .taskRow{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--rule);padding:10px 0;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;color:var(--ink);}
 .taskList .taskRow:last-child{border-bottom:none;}
-.taskRow .box{flex-shrink:0;width:18px;height:18px;margin-top:1px;border:1.5px solid var(--rule);border-radius:5px;background:#fff;position:relative;}
-.taskRow.done .box{background:var(--fiber);border-color:var(--fiber);}
-.taskRow.done .box::after{content:"✓";position:absolute;inset:0;color:var(--paper);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.taskRow .box,.tkCheck .box{flex-shrink:0;width:18px;height:18px;margin-top:1px;border:1.5px solid var(--rule);border-radius:5px;background:#fff;position:relative;}
+.taskRow.done .box,.tkRow.done .tkCheck .box{background:var(--fiber);border-color:var(--fiber);}
+.taskRow.done .box::after,.tkRow.done .tkCheck .box::after{content:"✓";position:absolute;inset:0;color:var(--paper);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
 .taskRow .tText{flex:1;min-width:0;}
-.taskRow .tTitle{display:block;font-size:13px;line-height:1.35;}
+.taskRow .tTitle,.tkBody .tTitle{display:block;font-size:13px;line-height:1.35;}
 .taskRow .tDesc{display:block;font-size:11px;color:var(--ink-soft);line-height:1.4;margin-top:2px;}
-.taskRow.done .tTitle{color:var(--ink-soft);text-decoration:line-through;}
+.taskRow.done .tTitle,.tkRow.done .tTitle{color:var(--ink-soft);text-decoration:line-through;}
 .taskRow.done .tDesc{opacity:0.6;}
+.taskRow .tDesc.late{color:var(--iron);}
 /* recipes nested under a parent step (cook for Sabbath / meal prep) */
 .taskRow.child{padding-left:26px;position:relative;}
 .taskRow.child::before{content:"";position:absolute;left:9px;top:0;bottom:0;width:1px;background:var(--rule);}
@@ -250,6 +251,36 @@ button.saveBtn{padding:9px 16px;align-self:flex-end;}
 .todoAdd{display:flex;gap:6px;align-items:center;margin:10px 0;}
 .todoAdd input[type=text]{flex:1;min-width:0;}
 .todoAdd .quickChip{flex-shrink:0;}
+/* ✎ beside a to-do: opens the task's edit sheet */
+.todoRow .edit{align-self:center;background:none;border:none;color:var(--ink-soft);font-size:14px;cursor:pointer;padding:4px 6px;line-height:1;}
+/* to-dos from before the tasks table: shown, but no longer tickable */
+.taskRow:disabled{cursor:default;}
+
+/* ---------- tasks tab ---------- */
+/* a row is two buttons: the box ticks it, the rest opens the edit sheet */
+.tkRow{display:flex;align-items:flex-start;border-bottom:1px solid var(--rule);}
+.taskList .tkRow:last-child{border-bottom:none;}
+.tkCheck{display:flex;flex-shrink:0;background:none;border:none;padding:11px 12px 11px 0;cursor:pointer;}
+.tkBody{display:block;flex:1;min-width:0;text-align:left;background:none;border:none;padding:10px 0;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;color:var(--ink);}
+.tkBody .tTitle{overflow-wrap:anywhere;}
+.tkMeta{display:flex;flex-wrap:wrap;gap:2px 10px;margin-top:3px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-soft);}
+.tkDue.late{color:var(--iron);font-weight:600;}
+.tkDue.today{color:var(--fiber);font-weight:600;}
+.tkTag{border:1px solid var(--rule);border-radius:10px;padding:0 6px;}
+.tkNote{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;font-size:11px;color:var(--ink-soft);line-height:1.4;margin-top:3px;}
+.sectionTitle.tkLate{color:var(--iron);}
+.tkLead{font-size:11px;color:var(--ink-soft);margin:-4px 0 6px;}
+.tkEmpty{text-align:center;padding:22px 14px;font-size:12px;color:var(--ink-soft);}
+.tkEmpty strong{display:block;font-family:'Fraunces',serif;font-size:15px;color:var(--ink);margin-bottom:4px;}
+/* edit sheet */
+.tkDueRow{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+.tkDueRow input[type=date]{flex:1;min-width:0;min-height:38px;}
+.tkDueRow .quickChip{flex-shrink:0;}
+.tkRest{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:-2px 0 10px;font-size:11px;color:var(--iron);}
+.sheetBody textarea.tkNoteIn{font-family:'IBM Plex Sans',sans-serif;font-size:16px;min-height:84px;}
+.tkConfirm{margin-top:14px;font-size:13px;font-weight:600;}
+.sheetBody .save.tkDanger{background:var(--iron);}
+.quickChip.tkDel{color:var(--iron);margin-top:10px;}
 /* editing a routine: rows swap the checkbox for rename + remove */
 /* a recipe variation, filed under the recipe it was copied from */
 .card.varCard{margin-left:14px;border-left:2px solid var(--gold);border-radius:0 var(--radius) var(--radius) 0;}
