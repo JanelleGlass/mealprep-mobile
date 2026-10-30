@@ -151,9 +151,14 @@ async function loadAll(){
   const token = await getToken();
   const today = dateKey(new Date());
   const since = dateKey(lastDates(14)[0]);
-  const [entries, prefs] = await Promise.all([
+  // today's to-dos, as the app's Routines tab shows them: due today, plus
+  // anything overdue that's still open or was ticked off today
+  const midnight = new Date(); midnight.setHours(0, 0, 0, 0);
+  const [entries, prefs, tasks] = await Promise.all([
     rest(token, `food_log_entries?date=gte.${since}&select=date,calories,protein_g,fiber_g,iron_mg`),
     rest(token, 'user_preferences?select=key,value'),
+    rest(token, `tasks?select=title,done&due=lte.${today}`
+      + `&or=(done.eq.false,due.eq.${today},done_at.gte.${midnight.toISOString()})&order=due,created_at`),
   ]);
   if (!Array.isArray(entries) || !Array.isArray(prefs))
     throw new Error((entries && entries.message) || (prefs && prefs.message) || 'could not load data');
@@ -178,8 +183,12 @@ async function loadAll(){
   const routines = plan && Array.isArray(plan.routines) ? plan.routines : SEED_ROUTINES;
   const skip = new Set((raw('LogSkipDates') || '').split(',').filter(Boolean));
 
+  // to-dos live in the tasks table now; the old per-day '__todo' lists in
+  // RoutinesLog are only read for the days that still have one. A missing
+  // tasks table (not set up yet) just means no to-dos rather than an error.
   const day = log[today] || {};
-  const todos = (day.__todo || []).map(x => ({ t: x.t, done: !!day[x.id] }));
+  const todos = (day.__todo || []).map(x => ({ t: x.t, done: !!day[x.id] }))
+    .concat(Array.isArray(tasks) ? tasks.map(x => ({ t: x.title, done: !!x.done })) : []);
 
   return {
     T, eaten: t.cal,

@@ -1,10 +1,13 @@
 /* Routines tab: opens on today's combined to-do list (one-off to-dos, daily
    items, workout, cleaning), tracks completion per date as a habit history,
    and shows a weekly overview. What the list contains lives in routineplan.js and is editable;
-   what has been ticked off lives here, per date, under 'routines.log'. */
-import { esc, dateKey, isToday, startOfDay, recipeById, targets, allFoodEntries,
+   what has been ticked off lives here, per date, under 'routines.log'. The
+   one-off to-dos are rows in the tasks table, shared with the Tasks tab. */
+import { esc, dateKey, isToday, startOfDay, addDays, recipeById, targets, allFoodEntries, allTasks,
          collapsibleSection, openSheet, closeSheet } from './common.js';
-import { cached, refresh } from '../store.js';
+import { S, cached, refresh, queueTask, queueTaskPatch } from '../store.js';
+import { taskKey, findTask, toggleTask, dueLabel, openTaskSheet } from './tasks.js';
+import { nextTaskDay } from '../taskdates.js';
 import { createSyncedBlob } from '../syncblob.js';
 import { confirmDialog } from './pickers.js';
 import { addToPantry } from './pantry.js';
@@ -33,6 +36,7 @@ const log = () => routinesLog.get();
 /* on tab open: send anything pending, pull the latest, then re-render */
 async function syncOpen(){
   shopMsg = null;
+  const tasksPull = refresh('tasks').catch(() => {});   // offline, or no table yet
   try {
     if (routinesLog.isDirty()) await routinesLog.push();
     if (planIsDirty()) await planPush();
@@ -42,6 +46,7 @@ async function syncOpen(){
     planReconcile();
     routinePlanReconcile();
   } catch { /* offline — local copy stands */ }
+  await tasksPull;
   prunePlan();
   renderRoutines();
   startPolling();
@@ -57,17 +62,26 @@ let pollTimer = null;
 const routinesActive = () => document.getElementById('tab-routines')?.classList.contains('active');
 
 async function pullAndApply(){
-  /* offline, or we hold unsynced local edits in any of the blobs */
-  if (!navigator.onLine || routinesLog.isDirty() || planIsDirty() || routinePlanIsDirty()) return;
+  if (!navigator.onLine) return;
   if (view.editing) return;                      // mid-edit: don't yank the list away
   const todoIn = document.getElementById('todoIn');
   if (todoIn && (todoIn.value || document.activeElement === todoIn)) return;  // typing a to-do
-  try { await refresh('user_preferences'); } catch { return; }
-  if (!routinesLog.changedRemotely() && !planChangedRemotely()
-      && !routinePlanChangedRemotely()) return;  // nothing new
+  /* the blobs are skipped while we hold unsynced edits in any of them. Tasks
+     are rows, and unsent task edits ride on top from the outbox, so a pull
+     can't eat them — they're pulled regardless. */
+  const blobsClean = !routinesLog.isDirty() && !planIsDirty() && !routinePlanIsDirty();
+  const tasksBefore = JSON.stringify(cached('tasks'));
+  const [, prefsOk] = await Promise.all([
+    refresh('tasks').catch(() => null),
+    blobsClean ? refresh('user_preferences').then(() => true, () => false) : false,
+  ]);
+  const tasksChanged = JSON.stringify(cached('tasks')) !== tasksBefore;
+  if (!tasksChanged && !(prefsOk && (routinesLog.changedRemotely() || planChangedRemotely()
+      || routinePlanChangedRemotely()))) return;  // nothing new
+  if (!routinesActive()) return;
   const y = window.scrollY;
-  renderRoutines();                              // reconcile() inside adopts the synced copies
-  window.scrollTo(0, y);
+  S.onChange();                                  // renderRoutines() — reconcile() inside adopts the synced copies;
+  window.scrollTo(0, y);                         // waits instead if you've started typing a to-do meanwhile
 }
 function startPolling(){
   if (pollTimer) return;
@@ -114,49 +128,40 @@ function setStepsDone(dk, done){
 }
 
 /* ---------- to-dos ----------
-   One-off items for a single date, kept in the same routines log so they sync
-   with everything else. The list itself sits under the reserved '__todo' key as
-   [{ id, t }]; ticking one is an ordinary check under its 'td…' id, so the
-   progress count and toggle() treat it like any other row. */
+   One-off items are rows in the tasks table (see tasks.js), shared with the
+   Tasks tab and with Claude. A day's list is whatever is due that day; today's
+   also picks up anything overdue, and keeps the overdue ones you tick today in
+   view so they don't vanish under your finger.
+
+   Before that table, to-dos lived in this log under the reserved '__todo' key
+   as [{ id, t }], ticked as ordinary 'td…' checks. The days that have one still
+   show it, read-only; nothing writes there any more. */
 const TODO_KEY = '__todo';
-const todosFor = dk => (log()[dk] || {})[TODO_KEY] || [];
-function addTodo(dk, t){
-  const l = log();
-  const day = l[dk] || (l[dk] = {});
-  const list = day[TODO_KEY] || (day[TODO_KEY] = []);
-  let id;
-  do { id = 'td' + Math.random().toString(36).slice(2, 7); } while (list.some(x => x.id === id));
-  list.push({ id, t });
-  routinesLog.save();
+const legacyTodos = dk => (log()[dk] || {})[TODO_KEY] || [];
+
+function dayTasks(dk){
+  const today = dateKey(new Date());
+  const doneToday = t => !!t.done_at && dateKey(new Date(t.done_at)) === today;
+  return allTasks()
+    .filter(t => t.due === dk || (dk === today && t.due && t.due < dk && (!t.done || doneToday(t))))
+    .sort((a, b) => a.due < b.due ? -1 : a.due > b.due ? 1 : (a.created_at || '') < (b.created_at || '') ? -1 : 1);
 }
-function removeTodo(dk, id){
-  const day = log()[dk];
-  if (!day) return;
-  day[TODO_KEY] = (day[TODO_KEY] || []).filter(x => x.id !== id);
-  if (!day[TODO_KEY].length) delete day[TODO_KEY];
-  delete day[id];
-  if (!Object.keys(day).length) delete log()[dk];
-  routinesLog.save();
+
+/* a to-do row: tapping it ticks the task, ✎ opens its edit sheet (which is
+   also where it gets deleted, behind a confirm) */
+function todoRow(dk, t){
+  const k = esc(taskKey(t));
+  const late = t.due !== dk && dueLabel(t.due);
+  return `<div class="todoRow"><button type="button" class="taskRow${t.done ? ' done' : ''}" data-tick="${k}">
+      <span class="box"></span>
+      <span class="tText"><span class="tTitle">${esc(t.title)}</span>${
+        late ? `<span class="tDesc late">${esc(late.text)}</span>` : ''}</span>
+    </button>
+    <button type="button" class="edit" data-edittask="${k}" aria-label="Edit to-do">✎</button></div>`;
 }
-/* carry whatever is still unticked onto the next day's list; ticked ones stay
-   put as the record of that day */
-function moveUnfinished(dk, nextDk){
-  const l = log(), day = l[dk];
-  const moving = (day?.[TODO_KEY] || []).filter(x => !day[x.id]);
-  if (!moving.length) return 0;
-  day[TODO_KEY] = day[TODO_KEY].filter(x => day[x.id]);
-  if (!day[TODO_KEY].length) delete day[TODO_KEY];
-  if (!Object.keys(day).length) delete l[dk];
-  const next = l[nextDk] || (l[nextDk] = {});
-  const list = next[TODO_KEY] || (next[TODO_KEY] = []);
-  for (const x of moving){
-    /* ids are only unique within a day; a clash would inherit that day's tick */
-    while (list.some(y => y.id === x.id) || next[x.id]) x.id = 'td' + Math.random().toString(36).slice(2, 7);
-    list.push(x);
-  }
-  routinesLog.save();
-  return moving.length;
-}
+const legacyRow = (dk, t) => `<button type="button" class="taskRow${isChecked(dk, t.id) ? ' done' : ''}" disabled>
+    <span class="box"></span><span class="tText"><span class="tTitle">${esc(t.t)}</span></span>
+  </button>`;
 
 /* ---------- calories ----------
    Read-only view of the Log tab's entries: calories per date, rebuilt each
@@ -560,11 +565,13 @@ export function renderRoutines(){
   const root = document.getElementById('routinesRoot');
   const dk = dateKey(view.date);
   const sections = sectionsFor(view.date);
-  const todos = todosFor(dk);
+  const todos = dayTasks(dk);
+  const legacy = legacyTodos(dk);
   const allIds = sections.filter(s => s.countInProgress !== false)
     .flatMap(s => s.groups.flatMap(g => g.tasks.map(t => t.id)))
-    .concat(todos.map(t => t.id));
-  const done = allIds.filter(id => isChecked(dk, id)).length;
+    .concat(legacy.map(t => t.id));
+  const done = allIds.filter(id => isChecked(dk, id)).length + todos.filter(t => t.done).length;
+  const total = allIds.length + todos.length;
   const today = isToday(view.date);
 
   /* date nav */
@@ -576,7 +583,7 @@ export function renderRoutines(){
     <button data-nav="next" aria-label="Next day">→</button>
   </div>`;
 
-  html += `<div class="dayProg">${done} / ${allIds.length} done</div>
+  html += `<div class="dayProg">${done} / ${total} done</div>
     <div class="quickRow rEditRow">
       <button type="button" class="quickChip${view.editing ? ' on' : ''}" id="rEdit">${
         view.editing ? '✓ done editing' : '✎ edit routines'}</button>
@@ -593,24 +600,27 @@ export function renderRoutines(){
 
   /* to-dos first: always there (even empty) so there's somewhere to add one.
      Deliberately left out of sectionOf — finishing them shouldn't fold away the
-     box you'd type the next one into. The ✕ can't live inside taskRow (already
+     box you'd type the next one into. The ✎ can't live inside taskRow (already
      a button), so each row wraps it. */
-  const todoDone = todos.filter(t => isChecked(dk, t.id)).length;
-  const nextDate = new Date(view.date); nextDate.setDate(nextDate.getDate() + 1);
+  const todoCount = todos.length + legacy.length;
+  const todoDone = todos.filter(t => t.done).length + legacy.filter(t => isChecked(dk, t.id)).length;
+  const unfinished = todos.filter(t => !t.done);
+  /* the next day, stepping over Saturday (the rest day): Friday's go to Sunday */
+  const moveTo = nextTaskDay(dk);
+  const moveToDate = startOfDay(new Date(moveTo + 'T00:00:00'));
+  const moveLabel = today && moveTo === dateKey(addDays(view.date, 1)) ? 'tomorrow' : dayName(moveToDate);
   const todoOpen = secOpen(dk, 'todo') ?? true;
   openState.set('todo', todoOpen);
   html += collapsibleSection('todo', 'To-Do', todoOpen, `<div class="card taskList sec-todo">${
-      todos.map(t => `<div class="todoRow">${taskRow(dk, t)}
-        <button type="button" class="del" data-rmtodo="${t.id}" aria-label="Remove to-do">✕</button></div>`).join('')}
+      legacy.map(t => legacyRow(dk, t)).join('')}${todos.map(t => todoRow(dk, t)).join('')}
       <form class="todoAdd" id="todoForm" autocomplete="off">
-        <input type="text" id="todoIn" placeholder="add a to-do for ${esc(today ? 'today' : dayName(view.date))}" enterkeyhint="done">
+        <input type="text" id="todoIn" maxlength="200" placeholder="add a to-do for ${esc(today ? 'today' : dayName(view.date))}" enterkeyhint="done">
         <button type="submit" class="quickChip">＋ add</button>
-      </form>${todos.length > todoDone ? `
+      </form>${unfinished.length ? `
       <div class="quickRow"><button type="button" class="quickChip" id="todoMove">↪ move ${
-        todos.length - todoDone === 1 ? 'unfinished to-do' : `${todos.length - todoDone} unfinished`} to ${
-        today ? 'tomorrow' : dayName(nextDate)}</button></div>` : ''}
-    </div>`, { note: todos.length ? '' : 'nothing yet',
-      count: todoOpen || !todos.length ? '' : `${todoDone} / ${todos.length}` });
+        unfinished.length === 1 ? 'unfinished to-do' : `${unfinished.length} unfinished`} to ${moveLabel}</button></div>` : ''}
+    </div>`, { note: todoCount ? '' : 'nothing yet',
+      count: todoOpen || !todoCount ? '' : `${todoDone} / ${todoCount}` });
 
   sections.forEach(sec => {
     const hue = sec.hue ? ` sec-${sec.hue}` : '';
@@ -794,7 +804,7 @@ export function renderRoutines(){
        by dropping to the open default, rather than pinning it open — so a
        section you deliberately collapsed earlier isn't reopened behind you. */
     const key = sectionOf.get(id), kin = sectionIds.get(key) || [];
-    if (!key) { /* a to-do: its section never folds itself */ }
+    if (!key) { /* not in a folding section */ }
     else if (kin.length && kin.every(x => isChecked(dk, x))) setSecOpen(dk, key, false);
     else clearSecOpen(dk, key);
     renderRoutines();
@@ -802,28 +812,36 @@ export function renderRoutines(){
     /* just added to the cart → put it in the pantry (unchecking never removes) */
     if (id.startsWith('sh:') && !wasChecked) drainOwed(dk);
   }));
-  root.querySelector('#todoForm')?.addEventListener('submit', e => {
-    e.preventDefault();
-    const t = root.querySelector('#todoIn').value.trim();
+  /* to-dos write to the tasks table through the outbox, which repaints via
+     S.onChange — so these just keep the scroll where it was */
+  root.querySelectorAll('[data-tick]').forEach(b => b.addEventListener('click', () => {
+    const t = findTask(b.getAttribute('data-tick'));
     if (!t) return;
     const y = window.scrollY;
-    addTodo(dk, t);
+    toggleTask(t);
+    window.scrollTo(0, y);
+  }));
+  root.querySelectorAll('[data-edittask]').forEach(b => b.addEventListener('click', () => {
+    const t = findTask(b.getAttribute('data-edittask'));
+    if (t) openTaskSheet(t);
+  }));
+  root.querySelector('#todoForm')?.addEventListener('submit', e => {
+    e.preventDefault();
+    const input = root.querySelector('#todoIn');
+    const t = input.value.trim();
+    if (!t) return;
+    const y = window.scrollY;
+    input.value = '';
+    queueTask({ title: t, due: dk });
     renderRoutines();
     window.scrollTo(0, y);
     document.getElementById('todoIn')?.focus();   // keep the keyboard up for the next one
   });
   root.querySelector('#todoMove')?.addEventListener('click', () => {
     const y = window.scrollY;
-    moveUnfinished(dk, dateKey(nextDate));
-    renderRoutines();
+    for (const t of unfinished) queueTaskPatch(t, { due: moveTo });
     window.scrollTo(0, y);
   });
-  root.querySelectorAll('[data-rmtodo]').forEach(b => b.addEventListener('click', () => {
-    const y = window.scrollY;
-    removeTodo(dk, b.getAttribute('data-rmtodo'));
-    renderRoutines();
-    window.scrollTo(0, y);
-  }));
   root.querySelectorAll('[data-rmrec]').forEach(b => b.addEventListener('click', async () => {
     const [slot, rid] = b.getAttribute('data-rmrec').split(':');
     if (!(await confirmDialog(`Remove "${b.getAttribute('data-rname')}" from this day?`))) return;

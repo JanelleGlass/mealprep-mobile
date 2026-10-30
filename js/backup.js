@@ -46,7 +46,7 @@ export async function runBackup(onProgress){
   if (!pat) throw new Error('paste your GitHub token first');
   const tables = ['nutritions', 'ingredients', 'recipes', 'recipe_ingredients', 'meals',
                   'meal_ingredients', 'pantry_items', 'food_log_entries', 'body_measurements',
-                  'quick_add_items', 'user_preferences'];
+                  'quick_add_items', 'user_preferences', 'tasks'];
   const doc = { version: 2, exportedAt: new Date().toISOString(), tables: {} };
   for (const t of tables){
     onProgress?.(`reading ${t}…`);

@@ -88,6 +88,24 @@ export function allBodyMeasurements(){
   return synced.concat(pending).sort((a, b) => a.date < b.date ? 1 : -1);
 }
 
+/* tasks as they should show: synced rows with unsent edits laid over them,
+   plus tasks added offline that haven't landed yet */
+export function allTasks(){
+  const rows = (cached('tasks') || []).map(t => ({ ...t }));
+  const have = new Set(rows.map(t => t.client_id).filter(Boolean));
+  for (const o of S.outbox){
+    if (o.table !== 'tasks') continue;
+    if (!o.op){
+      if (!have.has(o.row.client_id)){ rows.push({ ...o.row }); have.add(o.row.client_id); }
+      continue;
+    }
+    const [k, v] = Object.entries(o.match)[0];
+    const t = rows.find(r => r[k] === v);
+    if (t) Object.assign(t, o.patch);
+  }
+  return rows;
+}
+
 export function targets(){
   const rows = cached('user_preferences') || [];
   const num = (k, dflt) => { const r = rows.find(p => p.key === k); const v = r ? parseFloat(r.value) : NaN; return isNaN(v) ? dflt : v; };
