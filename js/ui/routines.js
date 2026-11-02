@@ -496,6 +496,8 @@ function historyRow(label, habit, dates){
   return `<div class="habitRow h-${habit}"><span class="hLabel">${esc(label)}</span><div class="hDots">${cells}</div></div>`;
 }
 
+/* the habits whose routines go above the to-dos on the day's list */
+const TODO_AFTER = ['vitamins', 'devotions', 'practice', 'workout'];
 const HABITS = [['Supplements', 'vitamins'], ['Devotions', 'devotions'], ['Practice', 'practice'],
   ['Calories', 'calories'], ['Steps', 'steps'], ['Workout', 'workout'], ['Cleaning', 'cleaning']];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -598,10 +600,17 @@ export function renderRoutines(){
   const sectionIds = new Map();        // section key → its task ids
   const routineSecs = sections.filter(s => s.routine);   // Shopping is generated, not a routine
 
-  /* to-dos first: always there (even empty) so there's somewhere to add one.
+  /* to-dos: always there (even empty) so there's somewhere to add one. They come
+     after the habit routines (Daily, Practice, the day's workout) and ahead of
+     the chores; a day with none of those starts with them. Found by habit tag,
+     not title, so renaming or reordering routines moves them along.
      Deliberately left out of sectionOf — finishing them shouldn't fold away the
      box you'd type the next one into. The ✎ can't live inside taskRow (already
      a button), so each row wraps it. */
+  const leadsTodos = r => !!r && [r.habit, ...(r.steps || []).map(s => s.habit)]
+    .some(h => TODO_AFTER.includes(h));
+  let todoAfter = -1;
+  sections.forEach((s, i) => { if (leadsTodos(s.routine)) todoAfter = i; });
   const todoCount = todos.length + legacy.length;
   const todoDone = todos.filter(t => t.done).length + legacy.filter(t => isChecked(dk, t.id)).length;
   const unfinished = todos.filter(t => !t.done);
@@ -611,7 +620,7 @@ export function renderRoutines(){
   const moveLabel = today && moveTo === dateKey(addDays(view.date, 1)) ? 'tomorrow' : dayName(moveToDate);
   const todoOpen = secOpen(dk, 'todo') ?? true;
   openState.set('todo', todoOpen);
-  html += collapsibleSection('todo', 'To-Do', todoOpen, `<div class="card taskList sec-todo">${
+  const todoHtml = collapsibleSection('todo', 'To-Do', todoOpen, `<div class="card taskList sec-todo">${
       legacy.map(t => legacyRow(dk, t)).join('')}${todos.map(t => todoRow(dk, t)).join('')}
       <form class="todoAdd" id="todoForm" autocomplete="off">
         <input type="text" id="todoIn" maxlength="200" placeholder="add a to-do for ${esc(today ? 'today' : dayName(view.date))}" enterkeyhint="done">
@@ -621,8 +630,9 @@ export function renderRoutines(){
         unfinished.length === 1 ? 'unfinished to-do' : `${unfinished.length} unfinished`} to ${moveLabel}</button></div>` : ''}
     </div>`, { note: todoCount ? '' : 'nothing yet',
       count: todoOpen || !todoCount ? '' : `${todoDone} / ${todoCount}` });
+  if (todoAfter < 0) html += todoHtml;
 
-  sections.forEach(sec => {
+  sections.forEach((sec, i) => {
     const hue = sec.hue ? ` sec-${sec.hue}` : '';
     const ids = sec.groups.flatMap(g => g.tasks.map(t => t.id));
     ids.forEach(id => sectionOf.set(id, sec.key));
@@ -670,6 +680,7 @@ export function renderRoutines(){
       : collapsibleSection(sec.key, sec.title, open, body,
           { hue: sec.hue, note: sec.note,
             count: open || !ids.length ? '' : `${secDone} / ${ids.length}` });
+    if (i === todoAfter) html += todoHtml;
   });
 
   /* routines that don't land on this day are invisible here, so editing needs a
